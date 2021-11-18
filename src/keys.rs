@@ -1,3 +1,4 @@
+use base64::decode as base64_decode;
 use ed25519_dalek::{Keypair, PublicKey, SecretKey, SECRET_KEY_LENGTH};
 use rand::rngs::OsRng;
 
@@ -44,6 +45,10 @@ impl AlgorandKeys {
         base32_encode(&[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat())
             [0..ALGORAND_ADDRESS_LENGTH]
             .to_string()
+    }
+
+    pub fn from_base_64_encoded_secret(s: &str) -> Result<Self> {
+        Self::from_bytes(&base64_decode(s)?[..SECRET_KEY_LENGTH])
     }
 }
 
@@ -103,6 +108,16 @@ mod tests {
         let address = get_sample_address();
         let result = address.to_address();
         let expected_result = "SCBGSYG3BCPOKY3CMZQA2VVJ6QPV2A36LSIKDAAH4OCPYFKYMA65KIOP7U";
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_x() {
+        let base64_encoded_secret = "IEirzzmZ3mDcl/qj25Ffo71s/dDvFxIGS2H89LaViFbn8PhNBoEd+fMcjYeLEVX0Zx1RoYXCAJCGZ/RJWHBooQ==";
+        let keys = AlgorandKeys::from_base_64_encoded_secret(base64_encoded_secret).unwrap();
+        let result = keys.to_address();
+        // NOTE: Sample taken from js-algorand-sdk
+        let expected_result = "47YPQTIGQEO7T4Y4RWDYWEKV6RTR2UNBQXBABEEGM72ESWDQNCQ52OPASU";
         assert_eq!(result, expected_result);
     }
 }

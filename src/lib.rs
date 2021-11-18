@@ -6,6 +6,4 @@ mod errors;
 mod keys;
 mod types;
 
-pub use crate::{
-    keys::AlgorandKeys,
-};
+pub use crate::keys::AlgorandKeys;

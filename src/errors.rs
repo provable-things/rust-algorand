@@ -10,5 +10,9 @@ quick_error! {
             from()
             display("✘ Ed25519 cryptography error: {}", err)
         }
+        Base64DecodeError(err: base64::DecodeError) {
+            from()
+            display("✘ Base64 decoder error: {}", err)
+        }
     }
 }
