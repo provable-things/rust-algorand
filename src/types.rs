@@ -2,5 +2,6 @@ use std::result;
 
 use crate::errors::AppError;
 
-pub type Bytes = Vec<u8>;
+pub type Byte = u8;
+pub type Bytes = Vec<Byte>;
 pub type Result<T> = result::Result<T, AppError>;
