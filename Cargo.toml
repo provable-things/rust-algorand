@@ -1,0 +1,10 @@
+[package]
+name = "rust-algorand"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hex = "0.4.3"
+rand = "0.7.3"
+sha2 = "0.9.8"
+ed25519-dalek = "1.0.1"
