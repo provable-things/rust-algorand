@@ -13,24 +13,10 @@ const ALGORAND_ADDRESS_LENGTH: usize = 58;
 #[derive(Debug)]
 pub struct AlgorandKeys(Keypair);
 
+/// ## AlgorandKeys
+///
+/// A struct holding a public and private asymmetric key pair derived from the ed25519 curve.
 impl AlgorandKeys {
-    pub fn create_random() -> Self {
-        Self(Keypair::generate(&mut OsRng {}))
-    }
-
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
-        let secret_key = SecretKey::from_bytes(bytes)?;
-        let public_key: PublicKey = (&secret_key).into();
-        Ok(Self(Keypair {
-            secret: secret_key,
-            public: public_key,
-        }))
-    }
-
-    pub fn to_bytes(&self) -> Bytes {
-        self.0.secret.to_bytes().to_vec()
-    }
-
     fn to_pub_key_bytes(&self) -> [u8; SECRET_KEY_LENGTH] {
         self.0.public.to_bytes()
     }
@@ -41,12 +27,44 @@ impl AlgorandKeys {
             .to_vec()
     }
 
+    /// ## Create Random
+    ///
+    /// Generates a random keypair using entropy from the operating system.
+    pub fn create_random() -> Self {
+        Self(Keypair::generate(&mut OsRng {}))
+    }
+
+    /// ## From Bytes
+    ///
+    /// Create the algorand key pair from the 32 bytes of a private key.
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+        let secret_key = SecretKey::from_bytes(bytes)?;
+        let public_key: PublicKey = (&secret_key).into();
+        Ok(Self(Keypair {
+            secret: secret_key,
+            public: public_key,
+        }))
+    }
+
+    /// ## To Bytes
+    ///
+    /// Convert the private key to bytes.
+    pub fn to_bytes(&self) -> Bytes {
+        self.0.secret.to_bytes().to_vec()
+    }
+
+    /// ## To Address
+    ///
+    /// Convert the algorand keypair to an algorand address.
     pub fn to_address(&self) -> String {
         base32_encode(&[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat())
             [0..ALGORAND_ADDRESS_LENGTH]
             .to_string()
     }
 
+    /// ## To Address
+    ///
+    /// Create the keypair from a base64 encoded key pair.
     pub fn from_base_64_encoded_secret(s: &str) -> Result<Self> {
         Self::from_bytes(&base64_decode(s)?[..SECRET_KEY_LENGTH])
     }
