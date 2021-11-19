@@ -14,5 +14,9 @@ quick_error! {
             from()
             display("✘ Base64 decoder error: {}", err)
         }
+        IOError(err: std::io::Error) {
+            from()
+            display("✘ I/O error: {}", err)
+        }
     }
 }
