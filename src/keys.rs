@@ -130,7 +130,7 @@ mod tests {
     }
 
     #[test]
-    fn should_x() {
+    fn should_decode_base_64_encoded_secret() {
         let base64_encoded_secret = "IEirzzmZ3mDcl/qj25Ffo71s/dDvFxIGS2H89LaViFbn8PhNBoEd+fMcjYeLEVX0Zx1RoYXCAJCGZ/RJWHBooQ==";
         let keys = AlgorandKeys::from_base_64_encoded_secret(base64_encoded_secret).unwrap();
         let result = keys.to_address();
