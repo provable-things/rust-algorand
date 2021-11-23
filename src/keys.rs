@@ -178,4 +178,12 @@ mod tests {
         let expected_result = get_sample_private_key_bytes();
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_convert_mnemonic_to_address() {
+        let mnemonic = "income valve harsh cat anger online hole quality economy tiny alarm pipe great forget language cereal swear humble rely desk sell palm zebra abstract grab";
+        let expected_result = "GKDMGXNL44BCEQ4M7HUBPKPY3H5O6DMI7YG36GD2WZU2MPFWMVY4RWG3FE";
+        let result = AlgorandKeys::from_mnemonic(mnemonic).unwrap().to_address();
+        assert_eq!(result, expected_result);
+    }
 }
