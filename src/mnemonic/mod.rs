@@ -1,7 +1,5 @@
 mod english_bip39_wordlist;
 
-use std::{collections::HashMap, fs::read_to_string};
-
 use crate::{
     crypto_utils::sha512_256_hash_bytes,
     mnemonic::english_bip39_wordlist::{ENGLISH_BIP_39_WORDS_HASH_MAP, ENGLISH_BIP_39_WORD_LIST},
@@ -142,7 +140,7 @@ fn convert_mnemonic_to_words(mnemonic: &str) -> Result<Vec<&str>> {
     }
 }
 
-fn convert_mnemonic_to_bytes(mnemonic: &str) -> Result<Bytes> {
+pub fn convert_mnemonic_to_bytes(mnemonic: &str) -> Result<Bytes> {
     let words = convert_mnemonic_to_words(mnemonic)?;
     let bytes = safely_get_indices_from_words(words.clone())
         .map(|ref indices| convert_u11_array_to_bytes(indices))?;

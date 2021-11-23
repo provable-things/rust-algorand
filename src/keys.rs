@@ -4,7 +4,7 @@ use rand::rngs::OsRng;
 
 use crate::{
     crypto_utils::{base32_encode, sha512_256_hash_bytes},
-    mnemonic::convert_bytes_to_mnemonic,
+    mnemonic::{convert_bytes_to_mnemonic, convert_mnemonic_to_bytes},
     types::{Bytes, Result},
 };
 
@@ -76,6 +76,13 @@ impl AlgorandKeys {
     pub fn to_mnemonic(&self) -> Result<String> {
         convert_bytes_to_mnemonic(&self.to_bytes())
     }
+
+    /// ## From Mnemonic
+    ///
+    /// Get the algorand keys from a mnemonic.
+    pub fn from_mnemonic(mnemonic: &str) -> Result<Self> {
+        convert_mnemonic_to_bytes(mnemonic).and_then(|ref bytes| Self::from_bytes(bytes))
+    }
 }
 
 #[cfg(test)]
@@ -86,7 +93,7 @@ mod tests {
         hex::decode("39564e488e19cdaf66684e06e285afa18ea3cb9f6e9e129d2d97379002b5f86e").unwrap()
     }
 
-    fn get_sample_private_key() -> AlgorandKeys {
+    fn get_sample_algorand_keys() -> AlgorandKeys {
         AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
     }
 
@@ -153,9 +160,22 @@ mod tests {
 
     #[test]
     fn should_convert_key_to_mnemonic() {
-        let key = get_sample_private_key();
+        let key = get_sample_algorand_keys();
         let result = key.to_mnemonic().unwrap();
-        let expected_result = "shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip";
+        let expected_result = get_sample_mnemonic();
+        assert_eq!(result, expected_result);
+    }
+
+    fn get_sample_mnemonic() -> &'static str {
+        "shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip"
+    }
+
+    #[test]
+    fn should_get_alogrand_keys_from_mnemonic() {
+        let mnemonic = get_sample_mnemonic();
+        let keys = AlgorandKeys::from_mnemonic(mnemonic).unwrap();
+        let result = keys.to_bytes();
+        let expected_result = get_sample_private_key_bytes();
         assert_eq!(result, expected_result);
     }
 }
