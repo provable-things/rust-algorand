@@ -77,7 +77,7 @@ fn get_checksum_word_from_bytes(bytes: &[Byte]) -> Result<&str> {
         &sha512_256_hash_bytes(bytes)[..2],
     ))
     .and_then(|words| {
-        if words.len() == 0 {
+        if words.is_empty() {
             Err("Error getting checksum word from bytes!".into())
         } else {
             Ok(words[0])
@@ -111,11 +111,11 @@ fn safely_get_word_from_list<'a>(index: usize) -> Result<&'a str> {
     }
 }
 
-fn safely_get_index_from_word<'a>(word: &str) -> Result<u32> {
+fn safely_get_index_from_word(word: &str) -> Result<u32> {
     ENGLISH_BIP_39_WORD_LIST
         .iter()
         .position(|bip_39_word| *bip_39_word == word)
-        .ok_or(format!("No '{}' in english BIP39 word list!", word).into())
+        .ok_or_else(|| format!("No '{}' in english BIP39 word list!", word).into())
         .map(|u_size| u_size as u32)
 }
 
@@ -127,7 +127,7 @@ fn safely_get_indices_from_words(words: Vec<&str>) -> Result<Vec<u32>> {
 }
 
 fn convert_mnemonic_to_words(mnemonic: &str) -> Result<Vec<&str>> {
-    let words: Vec<&str> = mnemonic.split(" ").collect();
+    let words: Vec<&str> = mnemonic.split(' ').collect();
     let number_of_words_in_mnemonic = words.len();
     if number_of_words_in_mnemonic != NUMBER_OF_WORDS_IN_MNEMONIC {
         Err(format!(
