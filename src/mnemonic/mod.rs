@@ -8,6 +8,8 @@ use crate::{
     types::{Byte, Bytes, Result},
 };
 
+// TODO make a struct out of this!
+
 const BITS_IN_A_BYTE: usize = 8;
 const NUMBER_OF_BITS_PER_WORD: usize = 11;
 const NUMBER_OF_WORDS_IN_MNEMONIC: usize = 25;
@@ -62,7 +64,7 @@ fn convert_u11_array_to_words<'a>(u11_array: Vec<u32>) -> Result<Vec<&'a str>> {
         .collect()
 }
 
-fn convert_bytes_to_mnemonic(bytes: &[Byte]) -> Result<String> {
+pub fn convert_bytes_to_mnemonic(bytes: &[Byte]) -> Result<String> {
     convert_u11_array_to_words(convert_bytes_to_u11_array(bytes))
         .and_then(|mut words| {
             words.push(get_checksum_word_from_bytes(bytes)?);

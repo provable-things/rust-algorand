@@ -4,6 +4,7 @@ use rand::rngs::OsRng;
 
 use crate::{
     crypto_utils::{base32_encode, sha512_256_hash_bytes},
+    mnemonic::convert_bytes_to_mnemonic,
     types::{Bytes, Result},
 };
 
@@ -68,6 +69,13 @@ impl AlgorandKeys {
     pub fn from_base_64_encoded_secret(s: &str) -> Result<Self> {
         Self::from_bytes(&base64_decode(s)?[..SECRET_KEY_LENGTH])
     }
+
+    /// ## To Mnemonic
+    ///
+    /// Output the private key as a human-readable mnemonic.
+    pub fn to_mnemonic(&self) -> Result<String> {
+        convert_bytes_to_mnemonic(&self.to_bytes())
+    }
 }
 
 #[cfg(test)]
@@ -76,6 +84,10 @@ mod tests {
 
     fn get_sample_private_key_bytes() -> Bytes {
         hex::decode("39564e488e19cdaf66684e06e285afa18ea3cb9f6e9e129d2d97379002b5f86e").unwrap()
+    }
+
+    fn get_sample_private_key() -> AlgorandKeys {
+        AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
     }
 
     fn get_sample_address() -> AlgorandKeys {
@@ -136,6 +148,14 @@ mod tests {
         let result = keys.to_address();
         // NOTE: Sample taken from js-algorand-sdk
         let expected_result = "47YPQTIGQEO7T4Y4RWDYWEKV6RTR2UNBQXBABEEGM72ESWDQNCQ52OPASU";
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_convert_key_to_mnemonic() {
+        let key = get_sample_private_key();
+        let result = key.to_mnemonic().unwrap();
+        let expected_result = "shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip";
         assert_eq!(result, expected_result);
     }
 }
