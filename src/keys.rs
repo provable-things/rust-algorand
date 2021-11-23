@@ -4,7 +4,7 @@ use rand::rngs::OsRng;
 
 use crate::{
     crypto_utils::{base32_encode, sha512_256_hash_bytes},
-    mnemonic::{convert_bytes_to_mnemonic, convert_mnemonic_to_bytes},
+    mnemonic::AlgorandMnemonic,
     types::{Bytes, Result},
 };
 
@@ -73,15 +73,17 @@ impl AlgorandKeys {
     /// ## To Mnemonic
     ///
     /// Output the private key as a human-readable mnemonic.
-    pub fn to_mnemonic(&self) -> Result<String> {
-        convert_bytes_to_mnemonic(&self.to_bytes())
+    pub fn to_mnemonic(&self) -> Result<AlgorandMnemonic> {
+        AlgorandMnemonic::from_bytes(&self.to_bytes())
     }
 
     /// ## From Mnemonic
     ///
     /// Get the algorand keys from a mnemonic.
-    pub fn from_mnemonic(mnemonic: &str) -> Result<Self> {
-        convert_mnemonic_to_bytes(mnemonic).and_then(|ref bytes| Self::from_bytes(bytes))
+    pub fn from_mnemonic(mnemonic: &AlgorandMnemonic) -> Result<Self> {
+        mnemonic
+            .to_bytes()
+            .and_then(|ref bytes| Self::from_bytes(bytes))
     }
 }
 
@@ -99,6 +101,10 @@ mod tests {
 
     fn get_sample_address() -> AlgorandKeys {
         AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
+    }
+
+    fn get_sample_mnemonic() -> AlgorandMnemonic {
+        AlgorandMnemonic::from_str("shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip").unwrap()
     }
 
     #[test]
@@ -166,14 +172,10 @@ mod tests {
         assert_eq!(result, expected_result);
     }
 
-    fn get_sample_mnemonic() -> &'static str {
-        "shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip"
-    }
-
     #[test]
     fn should_get_alogrand_keys_from_mnemonic() {
         let mnemonic = get_sample_mnemonic();
-        let keys = AlgorandKeys::from_mnemonic(mnemonic).unwrap();
+        let keys = AlgorandKeys::from_mnemonic(&mnemonic).unwrap();
         let result = keys.to_bytes();
         let expected_result = get_sample_private_key_bytes();
         assert_eq!(result, expected_result);
@@ -181,9 +183,10 @@ mod tests {
 
     #[test]
     fn should_convert_mnemonic_to_address() {
-        let mnemonic = "income valve harsh cat anger online hole quality economy tiny alarm pipe great forget language cereal swear humble rely desk sell palm zebra abstract grab";
+        let mnemonic_str = "income valve harsh cat anger online hole quality economy tiny alarm pipe great forget language cereal swear humble rely desk sell palm zebra abstract grab";
+        let mnemonic = AlgorandMnemonic::from_str(mnemonic_str).unwrap();
         let expected_result = "GKDMGXNL44BCEQ4M7HUBPKPY3H5O6DMI7YG36GD2WZU2MPFWMVY4RWG3FE";
-        let result = AlgorandKeys::from_mnemonic(mnemonic).unwrap().to_address();
+        let result = AlgorandKeys::from_mnemonic(&mnemonic).unwrap().to_address();
         assert_eq!(result, expected_result);
     }
 }
