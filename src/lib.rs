@@ -9,6 +9,7 @@ extern crate lazy_static;
 mod address;
 mod crypto_utils;
 mod errors;
+mod hash;
 mod keys;
 mod mnemonic;
 mod types;
