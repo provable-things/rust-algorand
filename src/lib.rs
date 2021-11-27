@@ -7,8 +7,8 @@ extern crate quick_error;
 extern crate lazy_static;
 
 mod address;
-mod crypto_utils;
 mod constants;
+mod crypto_utils;
 mod errors;
 mod hash;
 mod keys;

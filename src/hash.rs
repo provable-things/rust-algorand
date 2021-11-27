@@ -1,7 +1,7 @@
-use base64::decode as base64_decode;
+use base64::{decode as base64_decode, encode as base64_encode};
 
 use crate::{
-    crypto_utils::base32_encode,
+    constants::ALGORAND_MAINNET_GENESIS_HASH,
     types::{Byte, Result},
 };
 
@@ -41,8 +41,15 @@ impl AlgorandHash {
     /// ## To Base 64
     ///
     /// Converts the AlgorandHash to it's base-64 encoded counterpart.
-    fn to_base_64(&self) -> String {
-        base32_encode(&self.0)
+    pub fn to_base_64(&self) -> String {
+        base64_encode(&self.0)
+    }
+
+    /// ## Mainnet Genesis Hash
+    ///
+    /// Get the mainnet genesis hash.
+    pub fn mainnet_genesis_hash() -> Result<Self> {
+        Self::from_base_64(ALGORAND_MAINNET_GENESIS_HASH)
     }
 
     #[cfg(test)]

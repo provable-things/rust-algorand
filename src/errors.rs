@@ -18,5 +18,9 @@ quick_error! {
             from()
             display("✘ I/O error: {}", err)
         }
+        TryFromSliceError(err: std::array::TryFromSliceError) {
+            from()
+            display("✘ Try from slice error: {}", err)
+        }
     }
 }
