@@ -1,11 +1,11 @@
 use base64::decode as base64_decode;
-use ed25519_dalek::{Keypair, PublicKey, SecretKey, SECRET_KEY_LENGTH};
+use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature, Signer, SECRET_KEY_LENGTH};
 use rand::rngs::OsRng;
 
 use crate::{
     crypto_utils::{base32_encode, sha512_256_hash_bytes},
     mnemonic::AlgorandMnemonic,
-    types::{Bytes, Result},
+    types::{Byte, Bytes, Result},
 };
 
 const ALGORAND_CHECKSUM_LENGTH: usize = 4;
@@ -84,6 +84,13 @@ impl AlgorandKeys {
         mnemonic
             .to_bytes()
             .and_then(|ref bytes| Self::from_bytes(bytes))
+    }
+
+    /// ## Sign
+    ///
+    /// Sign the passed in message bytes with the private key.
+    pub fn sign(&self, message: &[Byte]) -> Signature {
+        self.0.sign(message)
     }
 }
 
@@ -187,6 +194,15 @@ mod tests {
         let mnemonic = AlgorandMnemonic::from_str(mnemonic_str).unwrap();
         let expected_result = "GKDMGXNL44BCEQ4M7HUBPKPY3H5O6DMI7YG36GD2WZU2MPFWMVY4RWG3FE";
         let result = AlgorandKeys::from_mnemonic(&mnemonic).unwrap().to_address();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_sign_message() {
+        let keys = get_sample_algorand_keys();
+        let message = b"some message";
+        let result = hex::encode(keys.sign(&message.to_vec()).to_bytes());
+        let expected_result = "2abcdf146c0c222b7955181fde447c5818a28fd69c3d88e487ef8e8dfc1bd4319dd8a810d9bfbdb52c38c9346e57801e8d0bef6968eaac7c3913ad51ee21c00e";
         assert_eq!(result, expected_result);
     }
 }
