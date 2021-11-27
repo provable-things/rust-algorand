@@ -3,6 +3,7 @@ use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature, Signer, SECRET_KEY
 use rand::rngs::OsRng;
 
 use crate::{
+    address::AlgorandAddress,
     crypto_utils::{base32_encode, sha512_256_hash_bytes},
     mnemonic::AlgorandMnemonic,
     types::{Byte, Bytes, Result},
@@ -57,7 +58,7 @@ impl AlgorandKeys {
     /// ## To Address
     ///
     /// Convert the algorand keypair to an algorand address.
-    pub fn to_address(&self) -> String {
+    pub fn to_address(&self) -> AlgorandAddress {
         base32_encode(&[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat())
             [0..ALGORAND_ADDRESS_LENGTH]
             .to_string()

@@ -6,6 +6,7 @@ extern crate quick_error;
 #[macro_use]
 extern crate lazy_static;
 
+mod address;
 mod crypto_utils;
 mod errors;
 mod keys;
