@@ -93,6 +93,13 @@ impl AlgorandKeys {
     pub fn sign(&self, message: &[Byte]) -> Signature {
         self.0.sign(message)
     }
+
+    /// ## Verify
+    ///
+    /// Verify the passed in message & signature were signed by this keypair.
+    pub fn verify(&self, message: &[Byte], signature: &Signature) -> Result<()> {
+        Ok(self.0.verify(message, signature)?)
+    }
 }
 
 #[cfg(test)]
@@ -198,12 +205,40 @@ mod tests {
         assert_eq!(result, expected_result);
     }
 
+    fn get_expected_signature_hex() -> String {
+        "2abcdf146c0c222b7955181fde447c5818a28fd69c3d88e487ef8e8dfc1bd4319dd8a810d9bfbdb52c38c9346e57801e8d0bef6968eaac7c3913ad51ee21c00e".to_string()
+    }
+
+    fn get_message_to_sign() -> Bytes {
+        b"some message".to_vec()
+    }
+
     #[test]
     fn should_sign_message() {
         let keys = get_sample_algorand_keys();
-        let message = b"some message";
-        let result = hex::encode(keys.sign(&message.to_vec()).to_bytes());
-        let expected_result = "2abcdf146c0c222b7955181fde447c5818a28fd69c3d88e487ef8e8dfc1bd4319dd8a810d9bfbdb52c38c9346e57801e8d0bef6968eaac7c3913ad51ee21c00e";
+        let message = get_message_to_sign();
+        let result = hex::encode(keys.sign(&message).to_bytes());
+        let expected_result = get_expected_signature_hex();
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_verify_message_signature() {
+        let keys = get_sample_algorand_keys();
+        let message = get_message_to_sign();
+        let signature = keys.sign(&message);
+        let result = keys.verify(&message, &signature);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn should_error_if_signature_is_not_valid() {
+        let keys_1 = AlgorandKeys::create_random();
+        let keys_2 = get_sample_algorand_keys();
+        assert_ne!(keys_1.to_address(), keys_2.to_address());
+        let message = get_message_to_sign();
+        let signature = keys_1.sign(&message);
+        let result = keys_2.verify(&message, &signature);
+        assert!(result.is_err());
     }
 }
