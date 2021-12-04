@@ -22,5 +22,13 @@ quick_error! {
             from()
             display("✘ Try from slice error: {}", err)
         }
+        RustMessagePackError(err: rmp_serde::encode::Error) {
+            from()
+            display("✘ Rust message pack error: {}", err)
+        }
+        InfallibleError(err: std::convert::Infallible) {
+            from()
+            display("✘ Infallible error: {}", err)
+        }
     }
 }
