@@ -8,6 +8,7 @@ extern crate lazy_static;
 
 mod algorand_address;
 mod constants;
+mod algorand_traits;
 mod crypto_utils;
 mod errors;
 mod hash;
