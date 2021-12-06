@@ -13,9 +13,9 @@ mod constants;
 mod crypto_utils;
 mod errors;
 mod hash;
-mod keys;
+mod algorand_keys;
 mod mnemonic;
 mod test_utils;
 mod types;
 
-pub use crate::keys::AlgorandKeys;
+pub use crate::algorand_keys::AlgorandKeys;

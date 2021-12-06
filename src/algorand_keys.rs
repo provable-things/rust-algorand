@@ -1,16 +1,28 @@
 use base64::decode as base64_decode;
-use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature, Signer, SECRET_KEY_LENGTH};
+use derive_more::Constructor;
+use ed25519_dalek::{
+    Keypair,
+    PublicKey,
+    SecretKey,
+    Signature as DalekSignature,
+    Signer,
+    PUBLIC_KEY_LENGTH,
+    SECRET_KEY_LENGTH,
+};
 use rand::rngs::OsRng;
+use serde::Serialize;
 
 use crate::{
-    address::AlgorandAddress,
-    crypto_utils::{base32_encode, sha512_256_hash_bytes},
+    algorand_address::{
+        AlgorandAddress,
+        ALGORAND_ADDRESS_BASE_32_NUM_BYTES,
+        ALGORAND_CHECKSUM_NUM_BYTES,
+    },
+    algorand_signature::AlgorandSignature,
+    crypto_utils::{base32_encode_with_padding, sha512_256_hash_bytes},
     mnemonic::AlgorandMnemonic,
     types::{Byte, Bytes, Result},
 };
-
-const ALGORAND_CHECKSUM_LENGTH: usize = 4;
-const ALGORAND_ADDRESS_LENGTH: usize = 58;
 
 #[derive(Debug)]
 pub struct AlgorandKeys(Keypair);
@@ -25,7 +37,7 @@ impl AlgorandKeys {
 
     fn compute_checksum(&self) -> Bytes {
         sha512_256_hash_bytes(&self.to_pub_key_bytes())
-            [SECRET_KEY_LENGTH - ALGORAND_CHECKSUM_LENGTH..]
+            [PUBLIC_KEY_LENGTH - ALGORAND_CHECKSUM_NUM_BYTES..]
             .to_vec()
     }
 
@@ -58,10 +70,10 @@ impl AlgorandKeys {
     /// ## To Address
     ///
     /// Convert the algorand keypair to an algorand address.
-    pub fn to_address(&self) -> AlgorandAddress {
-        base32_encode(&[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat())
-            [0..ALGORAND_ADDRESS_LENGTH]
-            .to_string()
+    pub fn to_address(&self) -> Result<AlgorandAddress> {
+        AlgorandAddress::from_bytes(
+            &[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat(),
+        )
     }
 
     /// ## To Address
@@ -90,37 +102,29 @@ impl AlgorandKeys {
     /// ## Sign
     ///
     /// Sign the passed in message bytes with the private key.
-    pub fn sign(&self, message: &[Byte]) -> Signature {
-        self.0.sign(message)
+    pub fn sign(&self, message: &[Byte]) -> AlgorandSignature {
+        AlgorandSignature::from_byte_array(self.0.sign(message).to_bytes())
     }
 
     /// ## Verify
     ///
     /// Verify the passed in message & signature were signed by this keypair.
-    pub fn verify(&self, message: &[Byte], signature: &Signature) -> Result<()> {
-        Ok(self.0.verify(message, signature)?)
+    pub fn verify(&self, message: &[Byte], signature: &AlgorandSignature) -> Result<()> {
+        Ok(self
+            .0
+            .verify(message, &DalekSignature::new(signature.to_byte_array()))?)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn get_sample_private_key_bytes() -> Bytes {
-        hex::decode("39564e488e19cdaf66684e06e285afa18ea3cb9f6e9e129d2d97379002b5f86e").unwrap()
-    }
-
-    fn get_sample_algorand_keys() -> AlgorandKeys {
-        AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
-    }
-
-    fn get_sample_address() -> AlgorandKeys {
-        AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
-    }
-
-    fn get_sample_mnemonic() -> AlgorandMnemonic {
-        AlgorandMnemonic::from_str("shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip").unwrap()
-    }
+    use crate::test_utils::{
+        get_sample_address,
+        get_sample_algorand_keys,
+        get_sample_mnemonic,
+        get_sample_private_key_bytes,
+    };
 
     #[test]
     fn should_create_random_keys() {
@@ -164,7 +168,7 @@ mod tests {
     #[test]
     fn should_get_address_from_keys() {
         let address = get_sample_address();
-        let result = address.to_address();
+        let result = address.to_address().unwrap().to_string();
         let expected_result = "SCBGSYG3BCPOKY3CMZQA2VVJ6QPV2A36LSIKDAAH4OCPYFKYMA65KIOP7U";
         assert_eq!(result, expected_result);
     }
@@ -173,7 +177,7 @@ mod tests {
     fn should_decode_base_64_encoded_secret() {
         let base64_encoded_secret = "IEirzzmZ3mDcl/qj25Ffo71s/dDvFxIGS2H89LaViFbn8PhNBoEd+fMcjYeLEVX0Zx1RoYXCAJCGZ/RJWHBooQ==";
         let keys = AlgorandKeys::from_base_64_encoded_secret(base64_encoded_secret).unwrap();
-        let result = keys.to_address();
+        let result = keys.to_address().unwrap().to_string();
         // NOTE: Sample taken from js-algorand-sdk
         let expected_result = "47YPQTIGQEO7T4Y4RWDYWEKV6RTR2UNBQXBABEEGM72ESWDQNCQ52OPASU";
         assert_eq!(result, expected_result);
@@ -201,7 +205,11 @@ mod tests {
         let mnemonic_str = "income valve harsh cat anger online hole quality economy tiny alarm pipe great forget language cereal swear humble rely desk sell palm zebra abstract grab";
         let mnemonic = AlgorandMnemonic::from_str(mnemonic_str).unwrap();
         let expected_result = "GKDMGXNL44BCEQ4M7HUBPKPY3H5O6DMI7YG36GD2WZU2MPFWMVY4RWG3FE";
-        let result = AlgorandKeys::from_mnemonic(&mnemonic).unwrap().to_address();
+        let result = AlgorandKeys::from_mnemonic(&mnemonic)
+            .unwrap()
+            .to_address()
+            .unwrap()
+            .to_string();
         assert_eq!(result, expected_result);
     }
 
@@ -217,7 +225,7 @@ mod tests {
     fn should_sign_message() {
         let keys = get_sample_algorand_keys();
         let message = get_message_to_sign();
-        let result = hex::encode(keys.sign(&message).to_bytes());
+        let result = hex::encode(keys.sign(&message).to_byte_array());
         let expected_result = get_expected_signature_hex();
         assert_eq!(result, expected_result);
     }
@@ -235,7 +243,7 @@ mod tests {
     fn should_error_if_signature_is_not_valid() {
         let keys_1 = AlgorandKeys::create_random();
         let keys_2 = get_sample_algorand_keys();
-        assert_ne!(keys_1.to_address(), keys_2.to_address());
+        assert_ne!(keys_1.to_address().unwrap(), keys_2.to_address().unwrap());
         let message = get_message_to_sign();
         let signature = keys_1.sign(&message);
         let result = keys_2.verify(&message, &signature);
