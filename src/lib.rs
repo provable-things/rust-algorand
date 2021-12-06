@@ -15,6 +15,7 @@ mod errors;
 mod hash;
 mod keys;
 mod mnemonic;
+mod test_utils;
 mod types;
 
 pub use crate::keys::AlgorandKeys;
