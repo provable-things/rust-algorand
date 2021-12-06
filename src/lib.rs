@@ -7,13 +7,13 @@ extern crate quick_error;
 extern crate lazy_static;
 
 mod algorand_address;
+mod algorand_hash;
+mod algorand_keys;
 mod algorand_signature;
 mod algorand_traits;
 mod constants;
 mod crypto_utils;
 mod errors;
-mod hash;
-mod algorand_keys;
 mod mnemonic;
 mod test_utils;
 mod types;

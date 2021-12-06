@@ -1,16 +1,22 @@
+use std::fmt;
+
 use base64::{decode as base64_decode, encode as base64_encode};
+use derive_more::Constructor;
+use serde::{Serialize, Serializer};
 
 use crate::{
     constants::ALGORAND_MAINNET_GENESIS_HASH,
-    types::{Byte, Result},
+    crypto_utils::base32_encode_with_no_padding,
+    types::{Byte, Bytes, Result},
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
 
 /// ## AlgorandHash
 ///
-/// Stuct to hold the Algorand Hash type.
-#[derive(Debug, Clone, PartialEq, Eq)]
+/// Stuct to hold the Algorand Hash type, and have the correct serialization and display formats
+/// implemented upon it.
+#[derive(Debug, Clone, PartialEq, Eq, Constructor)]
 pub struct AlgorandHash([Byte; ALGORAND_HASH_NUM_BYTES]);
 
 impl AlgorandHash {
@@ -31,20 +37,6 @@ impl AlgorandHash {
         }
     }
 
-    /// ## From Base 64
-    ///
-    /// Creates the AlgorandHash struct from a base-64 encoded string.
-    pub fn from_base_64(s: &str) -> Result<Self> {
-        Self::from_slice(&base64_decode(s)?)
-    }
-
-    /// ## To Base 64
-    ///
-    /// Converts the AlgorandHash to it's base-64 encoded counterpart.
-    pub fn to_base_64(&self) -> String {
-        base64_encode(&self.0)
-    }
-
     /// ## Mainnet Genesis Hash
     ///
     /// Get the mainnet genesis hash.
@@ -52,9 +44,42 @@ impl AlgorandHash {
         Self::from_base_64(ALGORAND_MAINNET_GENESIS_HASH)
     }
 
+    /// # To Bytes
+    ///
+    /// Convert the underlying hash array to a vector of bytes.
+    pub fn to_bytes(&self) -> Bytes {
+        self.0.to_vec()
+    }
+
+    fn from_base_64(s: &str) -> Result<Self> {
+        Self::from_slice(&base64_decode(s)?)
+    }
+
+    fn to_base_64(&self) -> String {
+        base64_encode(&self.0)
+    }
+
     #[cfg(test)]
     fn to_hex(&self) -> String {
         hex::encode(self.0)
+    }
+}
+
+impl fmt::Display for AlgorandHash {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_base_64())
+    }
+}
+
+impl Serialize for AlgorandHash {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<<S as Serializer>::Ok, <S as Serializer>::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_bytes(&self.0)
     }
 }
 
@@ -79,7 +104,7 @@ mod tests {
     fn should_get_hash_from_slice() {
         let bytes = get_sample_32_bytes();
         let hash = AlgorandHash::from_slice(&bytes).unwrap();
-        let result = hash.0.to_vec();
+        let result = hash.to_bytes();
         assert_eq!(result, bytes);
     }
 
