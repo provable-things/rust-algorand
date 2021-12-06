@@ -18,9 +18,9 @@ use crate::{
         ALGORAND_ADDRESS_BASE_32_NUM_BYTES,
         ALGORAND_CHECKSUM_NUM_BYTES,
     },
+    algorand_mnemonic::AlgorandMnemonic,
     algorand_signature::AlgorandSignature,
     crypto_utils::{base32_encode_with_padding, sha512_256_hash_bytes},
-    mnemonic::AlgorandMnemonic,
     types::{Byte, Bytes, Result},
 };
 

@@ -11,10 +11,10 @@ mod algorand_hash;
 mod algorand_keys;
 mod algorand_signature;
 mod algorand_traits;
+mod algorand_transaction;
 mod constants;
 mod crypto_utils;
 mod errors;
-mod mnemonic;
 mod test_utils;
 mod types;
 

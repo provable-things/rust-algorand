@@ -3,8 +3,11 @@ use std::fmt;
 mod english_bip39_wordlist;
 
 use crate::{
+    algorand_mnemonic::english_bip39_wordlist::{
+        ENGLISH_BIP_39_WORDS_HASH_MAP,
+        ENGLISH_BIP_39_WORD_LIST,
+    },
     crypto_utils::sha512_256_hash_bytes,
-    mnemonic::english_bip39_wordlist::{ENGLISH_BIP_39_WORDS_HASH_MAP, ENGLISH_BIP_39_WORD_LIST},
     types::{Byte, Bytes, Result},
 };
 
