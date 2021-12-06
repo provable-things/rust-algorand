@@ -5,7 +5,7 @@ use serde::{Serialize, Serializer};
 
 use crate::{
     crypto_utils::base32_encode_with_no_padding,
-    types::{Byte, Bytes, Result},
+    algorand_types::{Byte, Bytes, Result},
 };
 
 const ALGORAND_SIGNATURE_NUM_BYTES: usize = 64;

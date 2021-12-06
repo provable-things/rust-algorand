@@ -17,6 +17,6 @@ mod constants;
 mod crypto_utils;
 mod errors;
 mod test_utils;
-mod types;
+mod algorand_types;
 
 pub use crate::algorand_keys::AlgorandKeys;

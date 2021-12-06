@@ -6,7 +6,7 @@ use std::{
 
 use serde::{Serialize, Serializer};
 
-use crate::types::Result;
+use crate::algorand_types::Result;
 
 const ALGORAND_MINIMUM_FEE: u64 = 1_000;
 const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;

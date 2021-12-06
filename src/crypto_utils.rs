@@ -1,7 +1,7 @@
 use base32::{decode as decodeFromBase32, encode as encodeInBase32, Alphabet as Base32Alphabet};
 use sha2::{Digest, Sha512Trunc256};
 
-use crate::types::{Byte, Bytes, Result};
+use crate::algorand_types::{Byte, Bytes, Result};
 
 pub fn sha512_256_hash_bytes(bytes: &[u8]) -> Bytes {
     let mut hasher = Sha512Trunc256::new();

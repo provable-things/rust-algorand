@@ -1,7 +1,7 @@
 use rmp_serde;
 use serde::Serialize;
 
-use crate::types::{Bytes, Result};
+use crate::algorand_types::{Bytes, Result};
 
 /// To Message-Pack Bytes
 ///

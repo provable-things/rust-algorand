@@ -3,7 +3,7 @@ use serde::{Serialize, Serializer};
 
 use crate::{
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
-    types::{Byte, Bytes, Result},
+    algorand_types::{Byte, Bytes, Result},
 };
 
 pub const ALGORAND_PUB_KEY_NUM_BYTES: usize = 32;
