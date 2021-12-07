@@ -4,8 +4,9 @@ use derive_more::Constructor;
 use ed25519_dalek::Signature;
 use serde::Serialize;
 
-pub(crate) mod pay_transaction;
-pub(crate) mod transaction_test_utils;
+mod pay_transaction;
+mod transaction_test_utils;
+mod transaction_type;
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -14,6 +15,7 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
+    algorand_transaction::transaction_type::AlgorandTransactionType,
     algorand_types::{Byte, Bytes, Result},
     constants::ALGORAND_MAX_NUM_ROUNDS,
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
@@ -128,7 +130,7 @@ pub(crate) struct AlgorandTransaction {
     ///
     /// Specifies the type of tx.
     #[serde(rename(serialize = "type"))]
-    txn_type: String,
+    txn_type: AlgorandTransactionType,
 }
 
 impl AlgorandTransaction {
