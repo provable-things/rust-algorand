@@ -20,8 +20,8 @@ use crate::{
     },
     algorand_mnemonic::AlgorandMnemonic,
     algorand_signature::AlgorandSignature,
-    crypto_utils::{base32_encode_with_padding, sha512_256_hash_bytes},
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::{base32_encode_with_padding, sha512_256_hash_bytes},
 };
 
 #[derive(Debug)]

@@ -7,8 +7,8 @@ use crate::{
         ENGLISH_BIP_39_WORDS_HASH_MAP,
         ENGLISH_BIP_39_WORD_LIST,
     },
-    crypto_utils::sha512_256_hash_bytes,
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::sha512_256_hash_bytes,
 };
 
 const BITS_IN_A_BYTE: usize = 8;

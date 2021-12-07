@@ -2,8 +2,8 @@ use base64::encode as base64_encode;
 use serde::{Serialize, Serializer};
 
 use crate::{
-    crypto_utils::{base32_decode, base32_encode_with_no_padding},
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::{base32_decode, base32_encode_with_no_padding},
 };
 
 pub const ALGORAND_PUB_KEY_NUM_BYTES: usize = 32;

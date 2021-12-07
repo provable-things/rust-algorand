@@ -14,10 +14,10 @@ mod algorand_mnemonic;
 mod algorand_signature;
 mod algorand_traits;
 mod algorand_transaction;
+mod algorand_types;
 mod constants;
 mod crypto_utils;
 mod errors;
 mod test_utils;
-mod algorand_types;
 
 pub use crate::algorand_keys::AlgorandKeys;

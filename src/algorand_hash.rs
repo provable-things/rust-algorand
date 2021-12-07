@@ -5,9 +5,9 @@ use derive_more::Constructor;
 use serde::{Serialize, Serializer};
 
 use crate::{
+    algorand_types::{Byte, Bytes, Result},
     constants::ALGORAND_MAINNET_GENESIS_HASH,
     crypto_utils::base32_encode_with_no_padding,
-    algorand_types::{Byte, Bytes, Result},
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
