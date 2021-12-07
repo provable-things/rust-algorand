@@ -53,10 +53,10 @@ impl AlgorandTransaction {
         Ok(Self {
             note,
             sender,
-            amount,
-            receiver,
             genesis_hash,
             first_valid_round,
+            amount: Some(amount),
+            receiver: Some(receiver),
             txn_type: AlgorandTransactionType::Pay,
             fee: fee.check_if_satisfies_minimum_fee()?.0,
             last_valid_round: calculated_last_valid_round,
@@ -64,6 +64,7 @@ impl AlgorandTransaction {
             lease: None,
             rekey_to: None,
             genesis_id: None,
+            asset_parameters: None,
             close_remainder_to: None,
         })
     }

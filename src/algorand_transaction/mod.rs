@@ -7,6 +7,7 @@ use serde::Serialize;
 mod pay_transaction;
 mod transaction_test_utils;
 mod transaction_type;
+mod asset_config_transaction;
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -15,7 +16,10 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
-    algorand_transaction::transaction_type::AlgorandTransactionType,
+    algorand_transaction::{
+        transaction_type::AlgorandTransactionType,
+        asset_config_transaction::AssetParameters,
+    },
     algorand_types::{Byte, Bytes, Result},
     constants::ALGORAND_MAX_NUM_ROUNDS,
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
@@ -32,15 +36,29 @@ pub(crate) struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"))]
-    amount: u64,
+    #[serde(
+        rename(serialize = "amt"),
+        skip_serializing_if = "Option::is_none",
+     )]
+    amount: Option<u64>,
+
+    /// ## Asset Parameters
+    ///
+    /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
+    #[serde(
+        rename(serialize = "apar"),
+        skip_serializing_if = "Option::is_none",
+    )]
+    asset_parameters: Option<AssetParameters>,
 
     /// ## Close Remainder To
     ///
     /// When set, it indicates that the tx is requesting that the sendng account should be closed.
     /// All remaining funds after the tx fee & amount are paid are be transferred to this address.
-    #[serde(rename(serialize = "close"))]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename(serialize = "close"),
+        skip_serializing_if = "Option::is_none",
+    )]
     close_remainder_to: Option<AlgorandAddress>,
 
     /// ## Fee
@@ -58,9 +76,11 @@ pub(crate) struct AlgorandTransaction {
     /// ## Genesis ID
     ///
     /// The human-readable form of the genesis hash.
-    #[serde(rename(serialize = "gen"))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[serde(skip_serializing)]
+    #[serde(
+        skip_serializing,
+        rename(serialize = "gen"),
+        skip_serializing_if = "Option::is_none",
+    )]
     genesis_id: Option<String>,
 
     /// ## Genesis Hash
@@ -72,8 +92,10 @@ pub(crate) struct AlgorandTransaction {
     /// ## Group
     ///
     /// The hash of the tx group this tx belongs to, if any.
-    #[serde(rename(serialize = "group"))]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename(serialize = "group"),
+        skip_serializing_if = "Option::is_none",
+    )]
     group: Option<AlgorandHash>,
 
     /// ## Last Valid Round
@@ -110,14 +132,19 @@ pub(crate) struct AlgorandTransaction {
     /// ## Receiver
     ///
     /// The address of the account whom receives the amount.
-    #[serde(rename(serialize = "rcv"))]
-    receiver: AlgorandAddress,
+    #[serde(
+        rename(serialize = "rcv"),
+        skip_serializing_if = "Option::is_none",
+    )]
+    receiver: Option<AlgorandAddress>,
 
     /// ## RekeyTo
     ///
     /// Specifies the authorized address. This address will be used to authorize all future txs.
-    #[serde(rename(serialize = "rekey"))]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename(serialize = "rekey"),
+        skip_serializing_if = "Option::is_none",
+    )]
     rekey_to: Option<AlgorandAddress>,
 
     /// ## Sender
@@ -139,7 +166,7 @@ impl AlgorandTransaction {
     }
 
     fn prefix_tx_byte(bytes: &[Byte]) -> Bytes {
-        let mut suffix = bytes.clone();
+        let suffix = bytes.clone();
         let mut prefix = b"TX".to_vec();
         prefix.extend_from_slice(&suffix);
         prefix
