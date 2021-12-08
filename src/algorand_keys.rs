@@ -159,16 +159,16 @@ mod tests {
 
     #[test]
     fn should_compute_checksum_of_keys() {
-        let address = get_sample_address();
-        let result = hex::encode(address.compute_checksum());
+        let keys = get_sample_algorand_keys();
+        let result = hex::encode(keys.compute_checksum());
         let expected_result = "d521cffd";
         assert_eq!(result, expected_result);
     }
 
     #[test]
     fn should_get_address_from_keys() {
-        let address = get_sample_address();
-        let result = address.to_address().unwrap().to_string();
+        let keys = get_sample_algorand_keys();
+        let result = keys.to_address().unwrap().to_string();
         let expected_result = "SCBGSYG3BCPOKY3CMZQA2VVJ6QPV2A36LSIKDAAH4OCPYFKYMA65KIOP7U";
         assert_eq!(result, expected_result);
     }
