@@ -12,22 +12,6 @@ use crate::{
 };
 
 impl AlgorandTransaction {
-    fn calculate_last_valid_round(
-        first_valid_round: u64,
-        last_valid_round: Option<u64>,
-    ) -> Result<u64> {
-        match last_valid_round {
-            None => Ok(first_valid_round + ALGORAND_MAX_NUM_ROUNDS),
-            Some(last_valid_round_number) => {
-                if last_valid_round_number <= first_valid_round {
-                    Err("Last valid round must be > than first valid round!".into())
-                } else {
-                    Ok(last_valid_round_number)
-                }
-            },
-        }
-    }
-
     /// ## New Payment Transaction
     ///
     /// Create a new, simple payment transaction with an optional note.

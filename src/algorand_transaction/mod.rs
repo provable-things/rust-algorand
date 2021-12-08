@@ -4,10 +4,10 @@ use derive_more::Constructor;
 use ed25519_dalek::Signature;
 use serde::Serialize;
 
+mod asset_config_transaction;
 mod pay_transaction;
 mod transaction_test_utils;
 mod transaction_type;
-mod asset_config_transaction;
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -17,8 +17,8 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transaction::{
-        transaction_type::AlgorandTransactionType,
         asset_config_transaction::AssetParameters,
+        transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
     constants::ALGORAND_MAX_NUM_ROUNDS,
@@ -36,29 +36,20 @@ pub(crate) struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(
-        rename(serialize = "amt"),
-        skip_serializing_if = "Option::is_none",
-     )]
+    #[serde(rename(serialize = "amt"), skip_serializing_if = "Option::is_none")]
     amount: Option<u64>,
 
     /// ## Asset Parameters
     ///
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
-    #[serde(
-        rename(serialize = "apar"),
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename(serialize = "apar"), skip_serializing_if = "Option::is_none")]
     asset_parameters: Option<AssetParameters>,
 
     /// ## Close Remainder To
     ///
     /// When set, it indicates that the tx is requesting that the sendng account should be closed.
     /// All remaining funds after the tx fee & amount are paid are be transferred to this address.
-    #[serde(
-        rename(serialize = "close"),
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename(serialize = "close"), skip_serializing_if = "Option::is_none")]
     close_remainder_to: Option<AlgorandAddress>,
 
     /// ## Fee
@@ -79,7 +70,7 @@ pub(crate) struct AlgorandTransaction {
     #[serde(
         skip_serializing,
         rename(serialize = "gen"),
-        skip_serializing_if = "Option::is_none",
+        skip_serializing_if = "Option::is_none"
     )]
     genesis_id: Option<String>,
 
@@ -92,10 +83,7 @@ pub(crate) struct AlgorandTransaction {
     /// ## Group
     ///
     /// The hash of the tx group this tx belongs to, if any.
-    #[serde(
-        rename(serialize = "group"),
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename(serialize = "group"), skip_serializing_if = "Option::is_none")]
     group: Option<AlgorandHash>,
 
     /// ## Last Valid Round
@@ -132,19 +120,13 @@ pub(crate) struct AlgorandTransaction {
     /// ## Receiver
     ///
     /// The address of the account whom receives the amount.
-    #[serde(
-        rename(serialize = "rcv"),
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename(serialize = "rcv"), skip_serializing_if = "Option::is_none")]
     receiver: Option<AlgorandAddress>,
 
     /// ## RekeyTo
     ///
     /// Specifies the authorized address. This address will be used to authorize all future txs.
-    #[serde(
-        rename(serialize = "rekey"),
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename(serialize = "rekey"), skip_serializing_if = "Option::is_none")]
     rekey_to: Option<AlgorandAddress>,
 
     /// ## Sender
@@ -179,6 +161,22 @@ impl AlgorandTransaction {
 
     fn to_raw_tx_id(&self) -> Result<AlgorandHash> {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_for_signing()?))
+    }
+
+    pub(crate) fn calculate_last_valid_round(
+        first_valid_round: u64,
+        last_valid_round: Option<u64>,
+    ) -> Result<u64> {
+        match last_valid_round {
+            None => Ok(first_valid_round + ALGORAND_MAX_NUM_ROUNDS),
+            Some(last_valid_round_number) => {
+                if last_valid_round_number <= first_valid_round {
+                    Err("Last valid round must be > than first valid round!".into())
+                } else {
+                    Ok(last_valid_round_number)
+                }
+            },
+        }
     }
 
     /// ## To ID
