@@ -15,7 +15,7 @@ pub(crate) const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;
 pub struct MicroAlgos(pub(crate) u64);
 
 impl MicroAlgos {
-    fn from_algos(u_64: u64) -> Self {
+    pub fn from_algos(u_64: u64) -> Self {
         Self(u_64 / MICRO_ALGOS_MULTIPLIER)
     }
 
