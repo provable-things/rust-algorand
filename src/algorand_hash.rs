@@ -5,8 +5,8 @@ use derive_more::Constructor;
 use serde::{Serialize, Serializer};
 
 use crate::{
+    algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_types::{Byte, Bytes, Result},
-    constants::ALGORAND_MAINNET_GENESIS_HASH,
     crypto_utils::base32_encode_with_no_padding,
 };
 

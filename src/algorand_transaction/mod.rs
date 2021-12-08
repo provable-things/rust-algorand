@@ -21,7 +21,7 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
-    constants::ALGORAND_MAX_NUM_ROUNDS,
+    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 

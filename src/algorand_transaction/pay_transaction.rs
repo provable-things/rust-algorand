@@ -1,5 +1,6 @@
 use crate::{
     algorand_address::AlgorandAddress,
+    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
@@ -7,7 +8,6 @@ use crate::{
     algorand_traits::ToMsgPackBytes,
     algorand_transaction::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
     algorand_types::{Byte, Bytes, Result},
-    constants::ALGORAND_MAX_NUM_ROUNDS,
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 
@@ -58,8 +58,8 @@ impl AlgorandTransaction {
 mod tests {
     use super::*;
     use crate::{
+        algorand_constants::ALGORAND_MAINNET_GENESIS_ID,
         algorand_transaction::transaction_test_utils::get_sample_pay_tx,
-        constants::ALGORAND_MAINNET_GENESIS_ID,
         errors::AppError,
         test_utils::get_sample_algorand_keys,
     };

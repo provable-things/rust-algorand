@@ -11,8 +11,8 @@ pub enum AlgorandTransactionType {
 impl fmt::Display for AlgorandTransactionType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Pay => write!(f, "{}", "pay"),
-            Self::AssetConfiguration => write!(f, "{}", "acfg"),
+            Self::Pay => write!(f, "pay"),
+            Self::AssetConfiguration => write!(f, "acfg"),
         }
     }
 }
