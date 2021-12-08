@@ -11,7 +11,7 @@ pub(crate) fn get_sample_pay_tx() -> AlgorandTransaction {
     let note = None;
     let last_valid_round = None;
     AlgorandTransaction::new_payment_tx(
-        1337,
+        1001337,
         MicroAlgos::minimum_fee(),
         note,
         first_valid_round,

@@ -16,7 +16,7 @@ impl AlgorandTransaction {
     ///
     /// Create a new, simple payment transaction with an optional note.
     pub fn new_payment_tx(
-        amount: u64, // FIXME check this is above 100,000 minimum!
+        amount: u64,
         fee: MicroAlgos,
         note: Option<Bytes>,
         first_valid_round: u64,
@@ -39,11 +39,11 @@ impl AlgorandTransaction {
             sender,
             genesis_hash,
             first_valid_round,
-            amount: Some(amount),
             receiver: Some(receiver),
             txn_type: AlgorandTransactionType::Pay,
             fee: fee.check_if_satisfies_minimum_fee()?.0,
             last_valid_round: calculated_last_valid_round,
+            amount: Some(Self::check_amount_is_above_minimum(amount)?),
             group: None,
             lease: None,
             rekey_to: None,
@@ -104,7 +104,7 @@ mod tests {
     fn should_encode_tx_to_msg_pack_bytes() {
         let tx = get_sample_pay_tx();
         let result = hex::encode(tx.to_msg_pack_bytes().unwrap());
-        let expected_result = "88a3616d74cd0539a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
+        let expected_result = "88a3616d74ce000f4779a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
         assert_eq!(result, expected_result);
     }
 
@@ -112,7 +112,7 @@ mod tests {
     fn should_encode_tx_for_signing() {
         let tx = get_sample_pay_tx();
         let result = hex::encode(tx.encode_for_signing().unwrap());
-        let expected_result = "545888a3616d74cd0539a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
+        let expected_result = "545888a3616d74ce000f4779a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
         assert_eq!(result, expected_result);
     }
 
@@ -120,7 +120,7 @@ mod tests {
     fn should_get_transaction_hash() {
         let tx = get_sample_pay_tx();
         let result = tx.to_id().unwrap();
-        let expected_result = "CT3DHZ5ZK6VZWXIMDZXAVIVH6DA4V26HWBPCHIZGHLVWFEOC7P6A";
+        let expected_result = "4J3U5D7WUZN235TPZKPBKEGZTQC4DEXINFCZZIDTL3LRF562ZUXQ";
         assert_eq!(result, expected_result);
     }
 
@@ -130,7 +130,7 @@ mod tests {
         let keys = get_sample_algorand_keys();
         let signed_tx = tx.sign(&keys).unwrap();
         let result = hex::encode(signed_tx.to_msg_pack_bytes().unwrap());
-        let expected_result = "82a3736967c440a6e1b839f2f0109afa914694264e1fcee2ce3b5858ff46c436a69ece9f9630d9d182b1307f4bb8a1807e785326f91beded1a6d1a2368c1e0644b58bf6bc60f06a374786e88a3616d74cd0539a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
+        let expected_result = "82a3736967c4402e222c86ac989bc5ba5e1e19a5020a3e28fe295818648e4b0e845b772b2220334969530b6236f902efbec584aed004526be0c662f8a2d3083563ec5a4c28bb00a374786e88a3616d74ce000f4779a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
         assert_eq!(result, expected_result);
     }
 }
