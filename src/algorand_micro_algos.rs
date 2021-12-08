@@ -9,7 +9,7 @@ use serde::{Serialize, Serializer};
 use crate::algorand_types::Result;
 
 const ALGORAND_MINIMUM_FEE: u64 = 1_000;
-const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;
+pub(crate) const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct MicroAlgos(pub(crate) u64);

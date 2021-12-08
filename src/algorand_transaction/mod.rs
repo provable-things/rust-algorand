@@ -11,9 +11,10 @@ mod transaction_type;
 
 use crate::{
     algorand_address::AlgorandAddress,
+    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
-    algorand_micro_algos::MicroAlgos,
+    algorand_micro_algos::{MicroAlgos, MICRO_ALGOS_MULTIPLIER},
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transaction::{
@@ -21,7 +22,6 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
-    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 
@@ -148,9 +148,9 @@ impl AlgorandTransaction {
     }
 
     fn prefix_tx_byte(bytes: &[Byte]) -> Bytes {
-        let suffix = bytes.clone();
+        let suffix = bytes;
         let mut prefix = b"TX".to_vec();
-        prefix.extend_from_slice(&suffix);
+        prefix.extend_from_slice(suffix);
         prefix
     }
 
@@ -161,6 +161,18 @@ impl AlgorandTransaction {
 
     fn to_raw_tx_id(&self) -> Result<AlgorandHash> {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_for_signing()?))
+    }
+
+    pub(crate) fn check_amount_is_above_minimum(amount: u64) -> Result<u64> {
+        if amount >= MICRO_ALGOS_MULTIPLIER {
+            Ok(amount)
+        } else {
+            Err(format!(
+                "Amount is < minimum amount of {} algos!",
+                MICRO_ALGOS_MULTIPLIER
+            )
+            .into())
+        }
     }
 
     pub(crate) fn calculate_last_valid_round(
@@ -220,5 +232,32 @@ pub struct AlgorandSignedTransaction {
 impl AlgorandSignedTransaction {
     fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::errors::AppError;
+
+    #[test]
+    fn amount_greater_than_minimum_should_pass_amount_check() {
+        let amount = MICRO_ALGOS_MULTIPLIER + 1;
+        let result = AlgorandTransaction::check_amount_is_above_minimum(amount);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn amount_less_than_than_minimum_should_fail_amount_check() {
+        let amount = MICRO_ALGOS_MULTIPLIER - 1;
+        let expected_error = format!(
+            "Amount is < minimum amount of {} algos!",
+            MICRO_ALGOS_MULTIPLIER
+        );
+        match AlgorandTransaction::check_amount_is_above_minimum(amount) {
+            Ok(_) => panic!("Should not have succeeded!"),
+            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(_) => panic!("Wrong error received!"),
+        }
     }
 }
