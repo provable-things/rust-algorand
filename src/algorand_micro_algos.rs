@@ -1,10 +1,7 @@
 use std::{
-    cmp::Ordering,
     fmt,
     ops::{Add, Mul, Sub},
 };
-
-use serde::{Serialize, Serializer};
 
 use crate::algorand_types::Result;
 

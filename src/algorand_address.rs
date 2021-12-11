@@ -8,7 +8,6 @@ use crate::{
 
 pub const ALGORAND_PUB_KEY_NUM_BYTES: usize = 32;
 pub const ALGORAND_CHECKSUM_NUM_BYTES: usize = 4;
-pub const ALGORAND_ADDRESS_BASE_32_NUM_BYTES: usize = 58;
 
 const ALGORAND_ADDRESS_NUM_BYTES: usize = ALGORAND_PUB_KEY_NUM_BYTES + ALGORAND_CHECKSUM_NUM_BYTES;
 
@@ -39,6 +38,7 @@ impl AlgorandAddress {
         base32_decode(s).and_then(|ref bytes| Self::from_bytes(bytes))
     }
 
+    #[cfg(test)]
     fn to_bytes(&self) -> Bytes {
         self.0.to_vec()
     }

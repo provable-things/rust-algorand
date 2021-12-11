@@ -1,5 +1,4 @@
 use base64::decode as base64_decode;
-use derive_more::Constructor;
 use ed25519_dalek::{
     Keypair,
     PublicKey,
@@ -10,18 +9,13 @@ use ed25519_dalek::{
     SECRET_KEY_LENGTH,
 };
 use rand::rngs::OsRng;
-use serde::Serialize;
 
 use crate::{
-    algorand_address::{
-        AlgorandAddress,
-        ALGORAND_ADDRESS_BASE_32_NUM_BYTES,
-        ALGORAND_CHECKSUM_NUM_BYTES,
-    },
+    algorand_address::{AlgorandAddress, ALGORAND_CHECKSUM_NUM_BYTES},
     algorand_mnemonic::AlgorandMnemonic,
     algorand_signature::AlgorandSignature,
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::{base32_encode_with_padding, sha512_256_hash_bytes},
+    crypto_utils::sha512_256_hash_bytes,
 };
 
 #[derive(Debug)]

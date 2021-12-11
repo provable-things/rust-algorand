@@ -1,4 +1,3 @@
-use derive_more::Constructor;
 use serde::Serialize;
 
 use crate::{
@@ -7,7 +6,7 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_transaction::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
-    algorand_types::{Bytes, Result},
+    algorand_types::Result,
 };
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize)]
@@ -105,7 +104,11 @@ impl AssetParameters {
 }
 
 impl AlgorandTransaction {
-    fn new_asset_configuration_tx(
+    /// ## New Asset Configuration Transaction
+    ///
+    /// An AssetConfigTx is used to create an asset, modify certain parameters of an asset, or
+    /// destroy an asset.
+    pub fn new_asset_configuration_tx(
         fee: MicroAlgos,
         first_valid_round: u64,
         sender: AlgorandAddress,
@@ -147,15 +150,12 @@ impl AlgorandTransaction {
 mod tests {
     use super::*;
     use crate::{
-        algorand_keys::AlgorandKeys,
-        algorand_mnemonic::AlgorandMnemonic,
         algorand_traits::ToMsgPackBytes,
         test_utils::{get_sample_algorand_address, get_sample_algorand_keys},
     };
 
     #[test]
     fn should_sign_asset_config_transaction_correctly() {
-        let amount = 0;
         let fee = MicroAlgos(1000);
         let first_valid = 1000;
         let sender = get_sample_algorand_address();

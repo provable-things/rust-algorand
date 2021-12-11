@@ -1,4 +1,5 @@
 #![cfg(test)]
+
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,

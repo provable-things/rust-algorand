@@ -1,7 +1,6 @@
 #![allow(clippy::too_many_arguments)]
 
 use derive_more::Constructor;
-use ed25519_dalek::Signature;
 use serde::Serialize;
 
 mod asset_config_transaction;
@@ -15,7 +14,7 @@ use crate::{
     algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
-    algorand_micro_algos::{MicroAlgos, MICRO_ALGOS_MULTIPLIER},
+    algorand_micro_algos::MICRO_ALGOS_MULTIPLIER,
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transaction::{
@@ -33,7 +32,7 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 ///
 /// A struct holding the various fields required in an Algorand Transaction.
 #[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize)]
-pub(crate) struct AlgorandTransaction {
+pub struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
@@ -246,7 +245,7 @@ pub struct AlgorandSignedTransaction {
 }
 
 impl AlgorandSignedTransaction {
-    fn to_hex(&self) -> Result<String> {
+    pub fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
     }
 }

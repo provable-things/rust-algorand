@@ -7,7 +7,12 @@ use crate::{
 };
 
 impl AlgorandTransaction {
-    fn new_asset_destroy_tx(
+    /// ## New Asset Destroy Transaction
+    ///
+    /// A Destroy Transaction is issued to remove an asset from the Algorand ledger. To destroy an
+    /// existing asset on Algorand, the original creator must be in possession of all units of the
+    /// asset and the manager must send and therefore authorize the transaction.
+    pub fn new_asset_destroy_tx(
         asset_id: u64,
         fee: MicroAlgos,
         first_valid_round: u64,
@@ -41,11 +46,7 @@ impl AlgorandTransaction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        algorand_keys::AlgorandKeys,
-        algorand_mnemonic::AlgorandMnemonic,
-        test_utils::{get_sample_algorand_address, get_sample_algorand_keys},
-    };
+    use crate::test_utils::{get_sample_algorand_address, get_sample_algorand_keys};
 
     #[test]
     fn should_sign_asset_destory_transaction() {

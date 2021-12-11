@@ -13,10 +13,6 @@ fn base_32_encode_maybe_with_padding(bytes: &[Byte], padding: bool) -> String {
     encodeInBase32(Base32Alphabet::RFC4648 { padding }, bytes)
 }
 
-pub fn base32_encode_with_padding(bytes: &[Byte]) -> String {
-    base_32_encode_maybe_with_padding(bytes, true)
-}
-
 pub fn base32_encode_with_no_padding(bytes: &[Byte]) -> String {
     base_32_encode_maybe_with_padding(bytes, false)
 }

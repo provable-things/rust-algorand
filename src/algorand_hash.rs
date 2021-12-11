@@ -7,7 +7,6 @@ use serde::{Serialize, Serializer};
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::base32_encode_with_no_padding,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;

@@ -1,14 +1,9 @@
 use crate::{
     algorand_address::AlgorandAddress,
-    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_hash::AlgorandHash,
-    algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
-    algorand_signature::AlgorandSignature,
-    algorand_traits::ToMsgPackBytes,
     algorand_transaction::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
-    algorand_types::{Byte, Bytes, Result},
-    crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
+    algorand_types::{Bytes, Result},
 };
 
 impl AlgorandTransaction {
@@ -25,7 +20,8 @@ impl AlgorandTransaction {
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<Self> {
-        let calculated_last_valid_round = Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
+        let calculated_last_valid_round =
+            Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
         Ok(Self {
             note,
             sender,
@@ -51,7 +47,7 @@ impl AlgorandTransaction {
 mod tests {
     use super::*;
     use crate::{
-        algorand_constants::ALGORAND_MAINNET_GENESIS_ID,
+        algorand_traits::ToMsgPackBytes,
         algorand_transaction::transaction_test_utils::get_sample_pay_tx,
         errors::AppError,
         test_utils::get_sample_algorand_keys,
