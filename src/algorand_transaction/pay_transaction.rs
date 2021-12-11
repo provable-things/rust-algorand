@@ -25,15 +25,7 @@ impl AlgorandTransaction {
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<Self> {
-        let calculated_last_valid_round =
-            Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
-        if calculated_last_valid_round > first_valid_round + ALGORAND_MAX_NUM_ROUNDS {
-            return Err(format!(
-                "Last valid round of {} is > {} away from first valid round of {}!",
-                calculated_last_valid_round, ALGORAND_MAX_NUM_ROUNDS, first_valid_round
-            )
-            .into());
-        };
+        let calculated_last_valid_round = Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
         Ok(Self {
             note,
             sender,
@@ -46,6 +38,7 @@ impl AlgorandTransaction {
             amount: Some(Self::check_amount_is_above_minimum(amount)?),
             group: None,
             lease: None,
+            asset_id: None,
             rekey_to: None,
             genesis_id: None,
             asset_parameters: None,

@@ -179,15 +179,24 @@ impl AlgorandTransaction {
         first_valid_round: u64,
         last_valid_round: Option<u64>,
     ) -> Result<u64> {
-        match last_valid_round {
-            None => Ok(first_valid_round + ALGORAND_MAX_NUM_ROUNDS),
+        let last_round: u64 = match last_valid_round {
+            None => first_valid_round + ALGORAND_MAX_NUM_ROUNDS,
             Some(last_valid_round_number) => {
                 if last_valid_round_number <= first_valid_round {
-                    Err("Last valid round must be > than first valid round!".into())
+                    return Err("Last valid round must be > than first valid round!".into());
                 } else {
-                    Ok(last_valid_round_number)
+                    last_valid_round_number
                 }
             },
+        };
+        if last_round > first_valid_round + ALGORAND_MAX_NUM_ROUNDS {
+            return Err(format!(
+                "Last valid round of {} is > {} away from first valid round of {}!",
+                last_round, ALGORAND_MAX_NUM_ROUNDS, first_valid_round
+            )
+            .into());
+        } else {
+            Ok(last_round)
         }
     }
 
