@@ -23,5 +23,9 @@ pub fn get_sample_algorand_address() -> AlgorandAddress {
 }
 
 pub fn get_sample_mnemonic() -> AlgorandMnemonic {
-    AlgorandMnemonic::from_str("shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip").unwrap()
+    AlgorandMnemonic::from_str(&get_sample_mnemonic_string()).unwrap()
+}
+
+pub fn get_sample_mnemonic_string() -> String {
+    "shrimp deer category ocean olive program drip example dolphin bleak style tube either very insane oyster pelican reopen slide address ahead coil jelly about gossip".to_string()
 }

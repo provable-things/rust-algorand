@@ -23,7 +23,7 @@ mod test_utils;
 pub use crate::{
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
-    algorand_mnemonic::AlgorandMnemonic,
     algorand_micro_algos::MicroAlgos,
+    algorand_mnemonic::AlgorandMnemonic,
     algorand_transaction::AlgorandTransaction,
 };

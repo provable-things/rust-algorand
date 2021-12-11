@@ -93,6 +93,13 @@ impl AlgorandKeys {
             .and_then(|ref bytes| Self::from_bytes(bytes))
     }
 
+    /// ## From Mnemonic Str
+    ///
+    /// Get the algorand keys from a mnemonic string.
+    pub fn from_mnemonic_str(s: &str) -> Result<Self> {
+        AlgorandMnemonic::from_str(s).and_then(|ref mnemonic| Self::from_mnemonic(mnemonic))
+    }
+
     /// ## Sign
     ///
     /// Sign the passed in message bytes with the private key.
@@ -116,6 +123,7 @@ mod tests {
     use crate::test_utils::{
         get_sample_algorand_keys,
         get_sample_mnemonic,
+        get_sample_mnemonic_string,
         get_sample_private_key_bytes,
     };
 
@@ -241,5 +249,15 @@ mod tests {
         let signature = keys_1.sign(&message);
         let result = keys_2.verify(&message, &signature);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn should_get_keys_from_mnemonic_str() {
+        let mnemonic_string = get_sample_mnemonic_string();
+        let keys = AlgorandKeys::from_mnemonic_str(&mnemonic_string).unwrap();
+        let result = keys.to_address().unwrap().to_string();
+        let expected_result =
+            "SCBGSYG3BCPOKY3CMZQA2VVJ6QPV2A36LSIKDAAH4OCPYFKYMA65KIOP7U".to_string();
+        assert_eq!(result, expected_result);
     }
 }
