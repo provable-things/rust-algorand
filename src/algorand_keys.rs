@@ -120,7 +120,6 @@ impl AlgorandKeys {
 mod tests {
     use super::*;
     use crate::test_utils::{
-        get_sample_address,
         get_sample_algorand_keys,
         get_sample_mnemonic,
         get_sample_private_key_bytes,

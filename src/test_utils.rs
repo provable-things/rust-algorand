@@ -13,7 +13,7 @@ pub fn get_sample_algorand_keys() -> AlgorandKeys {
     AlgorandKeys::from_bytes(&get_sample_private_key_bytes()).unwrap()
 }
 
-pub fn get_sample_address() -> AlgorandAddress {
+pub fn get_sample_algorand_address() -> AlgorandAddress {
     AlgorandKeys::from_bytes(&get_sample_private_key_bytes())
         .unwrap()
         .to_address()

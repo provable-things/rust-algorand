@@ -110,7 +110,10 @@ mod tests {
             "Fee is below the minimum algorand fee of {} MicroAlgos!",
             ALGORAND_MINIMUM_FEE
         );
-        match MicroAlgos::from_algos(num).unwrap().check_if_satisfies_minimum_fee() {
+        match MicroAlgos::from_algos(num)
+            .unwrap()
+            .check_if_satisfies_minimum_fee()
+        {
             Ok(_) => panic!("Should not have succeeded!"),
             Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong err received!"),
