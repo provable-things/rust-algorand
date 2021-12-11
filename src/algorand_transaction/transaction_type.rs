@@ -5,6 +5,7 @@ use serde::{Serialize, Serializer};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AlgorandTransactionType {
     Pay,
+    AssetTransfer,
     AssetConfiguration,
 }
 
@@ -12,6 +13,7 @@ impl fmt::Display for AlgorandTransactionType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Pay => write!(f, "pay"),
+            Self::AssetTransfer => write!(f, "axfer"),
             Self::AssetConfiguration => write!(f, "acfg"),
         }
     }

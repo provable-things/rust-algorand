@@ -20,8 +20,6 @@ impl AlgorandTransaction {
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<Self> {
-        let calculated_last_valid_round =
-            Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
         Ok(Self {
             note,
             sender,
@@ -30,14 +28,20 @@ impl AlgorandTransaction {
             receiver: Some(receiver),
             txn_type: AlgorandTransactionType::Pay,
             fee: fee.check_if_satisfies_minimum_fee()?.0,
-            last_valid_round: calculated_last_valid_round,
             amount: Some(Self::check_amount_is_above_minimum(amount)?),
+            last_valid_round: Self::calculate_last_valid_round(
+                first_valid_round,
+                last_valid_round,
+            )?,
             group: None,
             lease: None,
             asset_id: None,
             rekey_to: None,
             genesis_id: None,
+            asset_amount: None,
+            asset_receiver: None,
             asset_parameters: None,
+            transfer_asset_id: None,
             close_remainder_to: None,
         })
     }

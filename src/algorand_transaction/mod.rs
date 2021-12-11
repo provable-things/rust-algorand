@@ -5,6 +5,7 @@ use serde::Serialize;
 
 mod asset_config_transaction;
 mod asset_destroy_transaction;
+mod asset_transfer_transaction;
 mod pay_transaction;
 mod transaction_test_utils;
 mod transaction_type;
@@ -33,6 +34,12 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 /// A struct holding the various fields required in an Algorand Transaction.
 #[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize)]
 pub struct AlgorandTransaction {
+    /// ## Asset Amount
+    ///
+    /// The amount of an asset to transfer.
+    #[serde(rename(serialize = "aamt"), skip_serializing_if = "Option::is_none")]
+    asset_amount: Option<u64>,
+
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
@@ -44,6 +51,12 @@ pub struct AlgorandTransaction {
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
     #[serde(rename(serialize = "apar"), skip_serializing_if = "Option::is_none")]
     asset_parameters: Option<AssetParameters>,
+
+    /// ## Asset Receiver
+    ///
+    /// The asset receiver in an asset transfer transaction.
+    #[serde(rename(serialize = "arcv"), skip_serializing_if = "Option::is_none")]
+    asset_receiver: Option<AlgorandAddress>,
 
     /// ## Asset ID
     ///
@@ -146,6 +159,12 @@ pub struct AlgorandTransaction {
     /// Specifies the type of tx.
     #[serde(rename(serialize = "type"))]
     txn_type: AlgorandTransactionType,
+
+    /// ## Asset ID
+    ///
+    /// The unique ID of the asset to be transferred.
+    #[serde(rename(serialize = "xaid"), skip_serializing_if = "Option::is_none")]
+    transfer_asset_id: Option<u64>,
 }
 
 impl AlgorandTransaction {

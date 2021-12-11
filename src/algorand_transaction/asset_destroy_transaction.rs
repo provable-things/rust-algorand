@@ -37,7 +37,10 @@ impl AlgorandTransaction {
             rekey_to: None,
             receiver: None,
             genesis_id: None,
+            asset_amount: None,
+            asset_receiver: None,
             asset_parameters: None,
+            transfer_asset_id: None,
             close_remainder_to: None,
         })
     }
