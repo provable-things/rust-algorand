@@ -134,6 +134,7 @@ impl AlgorandTransaction {
             group: None,
             lease: None,
             amount: None,
+            asset_id: None,
             rekey_to: None,
             receiver: None,
             genesis_id: None,
@@ -149,7 +150,7 @@ mod tests {
         algorand_keys::AlgorandKeys,
         algorand_mnemonic::AlgorandMnemonic,
         algorand_traits::ToMsgPackBytes,
-        test_utils::{get_sample_address, get_sample_algorand_keys},
+        test_utils::{get_sample_algorand_address, get_sample_algorand_keys},
     };
 
     #[test]
@@ -157,7 +158,7 @@ mod tests {
         let amount = 0;
         let fee = MicroAlgos(1000);
         let first_valid = 1000;
-        let sender = get_sample_address();
+        let sender = get_sample_algorand_address();
         let genesis_hash = AlgorandHash::mainnet_genesis_hash().unwrap();
         let last_valid_round = None;
         let asset_parameters = AssetParameters::new(

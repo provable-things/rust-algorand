@@ -5,6 +5,7 @@ use ed25519_dalek::Signature;
 use serde::Serialize;
 
 mod asset_config_transaction;
+mod asset_destroy_transaction;
 mod pay_transaction;
 mod transaction_test_utils;
 mod transaction_type;
@@ -44,6 +45,12 @@ pub(crate) struct AlgorandTransaction {
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
     #[serde(rename(serialize = "apar"), skip_serializing_if = "Option::is_none")]
     asset_parameters: Option<AssetParameters>,
+
+    /// ## Asset ID
+    ///
+    /// An ID pointing to an asset on the Algorand blockchain.
+    #[serde(rename(serialize = "caid"), skip_serializing_if = "Option::is_none")]
+    asset_id: Option<u64>,
 
     /// ## Close Remainder To
     ///
