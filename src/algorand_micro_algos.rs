@@ -3,12 +3,14 @@ use std::{
     ops::{Add, Mul, Sub},
 };
 
+use serde::{Serialize, Serializer};
+
 use crate::algorand_types::Result;
 
 const ALGORAND_MINIMUM_FEE: u64 = 1_000;
 pub(crate) const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct MicroAlgos(pub(crate) u64);
 
 impl MicroAlgos {
@@ -78,6 +80,18 @@ impl Mul<u64> for MicroAlgos {
 
     fn mul(self, rhs: u64) -> Self::Output {
         MicroAlgos(self.0 * rhs)
+    }
+}
+
+impl Serialize for MicroAlgos {
+    fn serialize<S>(
+        &self,
+        serializer: S,
+    ) -> std::result::Result<<S as Serializer>::Ok, <S as Serializer>::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_u64(self.0)
     }
 }
 

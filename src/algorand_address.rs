@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use base64::encode as base64_encode;
 use serde::{Serialize, Serializer};
 
@@ -71,6 +73,12 @@ impl Serialize for AlgorandAddress {
 impl std::fmt::Display for AlgorandAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.to_base32())
+    }
+}
+
+impl Default for AlgorandAddress {
+    fn default() -> Self {
+        Self([0u8; ALGORAND_ADDRESS_NUM_BYTES])
     }
 }
 
