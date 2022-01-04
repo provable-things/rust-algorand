@@ -2,7 +2,7 @@ use std::fmt;
 
 use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
-use serde::{Serialize, Serializer};
+use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
@@ -15,7 +15,7 @@ const ALGORAND_HASH_NUM_BYTES: usize = 32;
 ///
 /// Stuct to hold the Algorand Hash type, and have the correct serialization and display formats
 /// implemented upon it.
-#[derive(Debug, Clone, PartialEq, Eq, Default, Constructor)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Constructor, Deserialize)]
 pub struct AlgorandHash([Byte; ALGORAND_HASH_NUM_BYTES]);
 
 impl AlgorandHash {
@@ -65,6 +65,20 @@ impl AlgorandHash {
     #[cfg(test)]
     fn to_hex(&self) -> String {
         hex::encode(self.0)
+    }
+
+    fn from_bytes(bytes: &[Byte]) -> Result<Self> {
+        let num_bytes = bytes.len();
+        if num_bytes != 32 {
+            return Err(format!(
+                "Cannot get algorandHash from bytes! Got {}, expected {}!",
+                num_bytes, ALGORAND_HASH_NUM_BYTES
+            )
+            .into());
+        }
+        let mut byte_array = [0u8; 32];
+        byte_array.copy_from_slice(bytes);
+        Ok(Self(byte_array))
     }
 }
 

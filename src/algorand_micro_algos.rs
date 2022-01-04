@@ -3,14 +3,14 @@ use std::{
     ops::{Add, Mul, Sub},
 };
 
-use serde::{Serialize, Serializer};
+use serde::{Deserialize, Serialize, Serializer};
 
 use crate::algorand_types::Result;
 
 const ALGORAND_MINIMUM_FEE: u64 = 1_000;
 pub(crate) const MICRO_ALGOS_MULTIPLIER: u64 = 1_000_000;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Deserialize)]
 pub struct MicroAlgos(pub(crate) u64);
 
 impl MicroAlgos {
