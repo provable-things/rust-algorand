@@ -30,5 +30,9 @@ quick_error! {
             from()
             display("✘ Infallible error: {}", err)
         }
+        SerdeJsonError(err: serde_json::Error) {
+            from()
+            display("✘ Serde json error: {}", err)
+        }
     }
 }
