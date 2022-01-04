@@ -2,6 +2,7 @@
 
 use derive_more::Constructor;
 use serde::Serialize;
+use serde_with::skip_serializing_none;
 
 mod asset_config_transaction;
 mod asset_destroy_transaction;
@@ -32,43 +33,44 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 /// ## An Algorand Transaction
 ///
 /// A struct holding the various fields required in an Algorand Transaction.
+#[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize)]
 pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
     /// The amount of an asset to transfer.
-    #[serde(rename(serialize = "aamt"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "aamt"))]
     asset_amount: Option<u64>,
 
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "amt"))]
     amount: Option<u64>,
 
     /// ## Asset Parameters
     ///
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
-    #[serde(rename(serialize = "apar"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "apar"))]
     asset_parameters: Option<AssetParameters>,
 
     /// ## Asset Receiver
     ///
     /// The asset receiver in an asset transfer transaction.
-    #[serde(rename(serialize = "arcv"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "arcv"))]
     asset_receiver: Option<AlgorandAddress>,
 
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
-    #[serde(rename(serialize = "caid"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "caid"))]
     asset_id: Option<u64>,
 
     /// ## Close Remainder To
     ///
     /// When set, it indicates that the tx is requesting that the sendng account should be closed.
     /// All remaining funds after the tx fee & amount are paid are be transferred to this address.
-    #[serde(rename(serialize = "close"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "close"))]
     close_remainder_to: Option<AlgorandAddress>,
 
     /// ## Fee
@@ -86,11 +88,7 @@ pub struct AlgorandTransaction {
     /// ## Genesis ID
     ///
     /// The human-readable form of the genesis hash.
-    #[serde(
-        skip_serializing,
-        rename(serialize = "gen"),
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(skip_serializing, rename(serialize = "gen"))]
     genesis_id: Option<String>,
 
     /// ## Genesis Hash
@@ -102,7 +100,7 @@ pub struct AlgorandTransaction {
     /// ## Group
     ///
     /// The hash of the tx group this tx belongs to, if any.
-    #[serde(rename(serialize = "group"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "group"))]
     group: Option<AlgorandHash>,
 
     /// ## Last Valid Round
@@ -123,29 +121,24 @@ pub struct AlgorandTransaction {
     /// spends. For example, if I send a tx to the network and later realize my fee was too
     /// low, I could send another tx with a higher fee, but the same lease value. This would
     /// ensure that only one of those txs ends up getting confirmed during the validity period.
-    #[serde(skip_serializing_if = "Option::is_none")]
     lease: Option<AlgorandHash>,
 
     /// # Note
     /// #
     /// Any data up to 1000 bytes.
-    #[serde(
-        rename = "note",
-        with = "serde_bytes",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(rename = "note", with = "serde_bytes")]
     note: Option<Bytes>,
 
     /// ## Receiver
     ///
     /// The address of the account whom receives the amount.
-    #[serde(rename(serialize = "rcv"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "rcv"))]
     receiver: Option<AlgorandAddress>,
 
     /// ## RekeyTo
     ///
     /// Specifies the authorized address. This address will be used to authorize all future txs.
-    #[serde(rename(serialize = "rekey"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "rekey"))]
     rekey_to: Option<AlgorandAddress>,
 
     /// ## Sender
@@ -163,7 +156,7 @@ pub struct AlgorandTransaction {
     /// ## Asset ID
     ///
     /// The unique ID of the asset to be transferred.
-    #[serde(rename(serialize = "xaid"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "xaid"))]
     transfer_asset_id: Option<u64>,
 }
 

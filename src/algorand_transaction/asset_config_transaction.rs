@@ -1,4 +1,5 @@
 use serde::Serialize;
+use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -9,6 +10,7 @@ use crate::{
     algorand_types::Result,
 };
 
+#[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize)]
 pub struct AssetParameters {
     #[serde(rename(serialize = "am"))]
@@ -35,7 +37,7 @@ pub struct AssetParameters {
     /// ## Default Frozen
     ///
     /// Whether the asset is created in a froze state.
-    #[serde(rename(serialize = "df"), skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "df"))]
     default_frozen: Option<bool>,
 
     /// ## Freeze Address
