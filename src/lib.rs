@@ -7,6 +7,7 @@ extern crate quick_error;
 extern crate lazy_static;
 
 mod algorand_address;
+mod algorand_blocks;
 mod algorand_constants;
 mod algorand_hash;
 mod algorand_keys;
