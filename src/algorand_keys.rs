@@ -11,7 +11,8 @@ use ed25519_dalek::{
 use rand::rngs::OsRng;
 
 use crate::{
-    algorand_address::{AlgorandAddress, ALGORAND_CHECKSUM_NUM_BYTES},
+    algorand_address::{AlgorandAddress, ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES},
+    algorand_checksum::AlgorandChecksum,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_signature::AlgorandSignature,
     algorand_types::{Byte, Bytes, Result},
@@ -31,7 +32,7 @@ impl AlgorandKeys {
 
     fn compute_checksum(&self) -> Bytes {
         sha512_256_hash_bytes(&self.to_pub_key_bytes())
-            [PUBLIC_KEY_LENGTH - ALGORAND_CHECKSUM_NUM_BYTES..]
+            [PUBLIC_KEY_LENGTH - ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES..PUBLIC_KEY_LENGTH]
             .to_vec()
     }
 
@@ -65,9 +66,7 @@ impl AlgorandKeys {
     ///
     /// Convert the algorand keypair to an algorand address.
     pub fn to_address(&self) -> Result<AlgorandAddress> {
-        AlgorandAddress::from_bytes(
-            &[self.to_pub_key_bytes().to_vec(), self.compute_checksum()].concat(),
-        )
+        AlgorandAddress::from_bytes(&self.to_pub_key_bytes())
     }
 
     /// ## To Address
