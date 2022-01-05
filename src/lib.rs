@@ -8,6 +8,7 @@ extern crate lazy_static;
 
 mod algorand_address;
 mod algorand_blocks;
+mod algorand_checksum;
 mod algorand_compact_certificates;
 mod algorand_constants;
 mod algorand_hash;
