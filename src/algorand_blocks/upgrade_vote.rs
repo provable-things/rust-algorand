@@ -5,7 +5,7 @@ use serde_with::skip_serializing_none;
 use crate::algorand_types::Result;
 
 #[skip_serializing_none]
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeVote {
     #[serde(rename = "upgradeprop")]
     upgrade_propose: Option<String>,
@@ -31,7 +31,7 @@ impl UpgradeVote {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeVoteJson {
     #[serde(rename = "upgrade-propose")]
     upgrade_propose: Option<String>,
