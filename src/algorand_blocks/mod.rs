@@ -42,36 +42,38 @@ pub struct AlgorandBlock {
 #[skip_serializing_none]
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct AlgorandBlockHeader {
-    #[serde(rename = "compact-certificates")]
+    #[serde(rename = "cc")]
     compact_certificates: Option<CompactCertificates>,
 
-    #[serde(rename = "genesis-hash")]
+    #[serde(rename = "gh")]
     genesis_hash: AlgorandHash,
 
-    #[serde(rename = "genesis-id")]
+    #[serde(rename = "gen")]
     genesis_id: String,
 
-    #[serde(rename = "previous-block-hash")]
+    #[serde(rename = "prev")]
     previous_block_hash: AlgorandHash,
 
     rewards: RewardsState,
 
+    #[serde(rename = "rnd")]
     round: u64,
 
-    /// Contains cryptographic entropy which can be used to determine a committee.
     seed: AlgorandHash,
 
+    #[serde(rename = "ts")]
     timestamp: i64,
-    #[serde(rename = "transactions-root")]
+
+    #[serde(rename = "txn")]
     transactions_root: Option<AlgorandHash>,
 
-    #[serde(rename = "txn-counter")]
+    #[serde(rename = "tc")]
     transactions_counter: u64,
 
-    #[serde(rename = "upgrade-state")]
+    #[serde(flatten)]
     upgrade_state: Option<UpgradeState>,
 
-    #[serde(rename = "upgrade-vote")]
+    #[serde(flatten)]
     upgrade_vote: Option<UpgradeVote>,
 
     #[serde(flatten)]
@@ -85,6 +87,10 @@ impl AlgorandBlockHeader {
 
     fn from_str(s: &str) -> Result<Self> {
         AlgorandBlockHeaderJson::from_str(s).and_then(|json| json.to_block_header())
+    }
+
+    fn to_json() -> AlgorandBlockHeaderJson {
+        unimplemented!() // TODO! FIXME
     }
 }
 
