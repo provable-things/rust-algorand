@@ -32,8 +32,13 @@ pub struct CompactCertificateState {
 
 #[derive(Serialize, Deserialize)]
 struct CompactCertificateStateJson {
+    #[serde(rename = "compact-cert-voters")]
     compact_cert_voters: String,
+
+    #[serde(rename = "compact-cert-next-round")]
     compact_cert_next_round: u64,
+
+    #[serde(rename = "compact-cert-voters-total")]
     compact_cert_voters_total: u64,
 }
 
