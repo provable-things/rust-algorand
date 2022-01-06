@@ -4,10 +4,44 @@ use serde_with::skip_serializing_none;
 
 use crate::algorand_types::Result;
 
-/// Tracks the protocol upgrade state machine.
 #[skip_serializing_none]
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeState {
+    #[serde(rename = "proto")]
+    current_protocol: String,
+
+    #[serde(rename = "nextproto")]
+    next_protocol: Option<String>,
+
+    #[serde(rename = "nextyes")]
+    next_protocol_approvals: Option<u64>,
+
+    #[serde(rename = "nextbefore")]
+    next_protocol_vote_before: Option<u64>,
+
+    #[serde(rename = "nextswitch")]
+    next_protocol_switch_on: Option<u64>,
+}
+
+impl UpgradeState {
+    fn from_json(json: UpgradeStateJson) -> Self {
+        Self {
+            next_protocol: json.next_protocol,
+            current_protocol: json.current_protocol,
+            next_protocol_approvals: json.next_protocol_approvals,
+            next_protocol_switch_on: json.next_protocol_switch_on,
+            next_protocol_vote_before: json.next_protocol_vote_before,
+        }
+    }
+
+    pub fn from_str(s: &str) -> Result<Self> {
+        UpgradeStateJson::from_str(s).map(Self::from_json)
+    }
+}
+
+#[skip_serializing_none]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+pub struct UpgradeStateJson {
     #[serde(rename = "current-protocol")]
     current_protocol: String,
 
@@ -24,7 +58,7 @@ pub struct UpgradeState {
     next_protocol_switch_on: Option<u64>,
 }
 
-impl UpgradeState {
+impl UpgradeStateJson {
     pub fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
     }
