@@ -1,6 +1,6 @@
 use std::fmt;
 
-use serde::{Serialize, Serializer, Deserialize};
+use serde::{Deserialize, Serialize, Serializer};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub enum AlgorandTransactionType {

@@ -1,3 +1,4 @@
+pub(crate) mod participation_updates;
 pub(crate) mod rewards_state;
 pub(crate) mod test_utils;
 pub(crate) mod upgrade_state;
@@ -12,6 +13,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::{
+        participation_updates::ParticipationUpdates,
         rewards_state::RewardsState,
         upgrade_state::UpgradeState,
         upgrade_vote::UpgradeVote,
@@ -71,6 +73,9 @@ struct AlgorandBlockHeader {
 
     #[serde(rename = "upgrade-vote")]
     upgrade_vote: Option<UpgradeVote>,
+
+    #[serde(flatten)]
+    participation_updates: Option<ParticipationUpdates>,
 }
 
 impl AlgorandBlockHeader {
@@ -115,6 +120,9 @@ struct AlgorandBlockHeaderJson {
 
     #[serde(rename = "upgrade-vote")]
     upgrade_vote: Option<JsonValue>,
+
+    #[serde(rename = "participation-updates")]
+    participation_updates: Option<JsonValue>,
 }
 
 impl AlgorandBlockHeaderJson {
@@ -132,10 +140,16 @@ impl AlgorandBlockHeaderJson {
             timestamp: self.timestamp,
             genesis_id: self.genesis_id.clone(),
             seed: AlgorandHash::from_str(&self.seed)?,
-            transactions_counter:self.transactions_counter,
+            transactions_counter: self.transactions_counter,
             genesis_hash: AlgorandHash::from_str(&self.genesis_hash)?,
             rewards: RewardsState::from_str(&self.rewards.to_string())?,
             previous_block_hash: AlgorandHash::from_str(&self.previous_block_hash)?,
+            participation_updates: match &self.participation_updates {
+                Some(updates) => {
+                    Result::Ok(Some(ParticipationUpdates::from_str(&updates.to_string())?))
+                },
+                None => Result::Ok(None),
+            }?,
             compact_certificates: match &self.compact_certificates {
                 None => Result::Ok(None),
                 Some(certs) => {
@@ -151,20 +165,22 @@ impl AlgorandBlockHeaderJson {
                             hash_map.insert(i as u64, cert);
                         });
                     Ok(Some(hash_map))
-                }
+                },
             }?,
             transactions_root: match &self.transactions_root {
                 Some(root) => Result::Ok(Some(AlgorandHash::from_str(&root)?)),
                 None => Ok(None),
             }?,
             upgrade_state: match &self.upgrade_state {
-                Some(state_json) => Result::Ok(Some(UpgradeState::from_str(&state_json.to_string())?)),
+                Some(state_json) => {
+                    Result::Ok(Some(UpgradeState::from_str(&state_json.to_string())?))
+                },
                 None => Ok(None),
             }?,
             upgrade_vote: match &self.upgrade_vote {
                 Some(vote_json) => Result::Ok(Some(UpgradeVote::from_str(&vote_json.to_string())?)),
                 None => Ok(None),
-            }?
+            }?,
         })
     }
 }
@@ -182,8 +198,6 @@ mod tests {
         result.unwrap();
     }
 }
-
-
 
 /*
 impl Block {
