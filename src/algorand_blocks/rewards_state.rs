@@ -9,30 +9,30 @@ use crate::{algorand_address::AlgorandAddress, algorand_types::Result};
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct RewardsState {
     /// Accepts transaction fees.
-    #[serde(rename = "fees-sink")]
+    #[serde(rename = "fees")]
     fee_sink: AlgorandAddress,
 
     /// Accepts periodic injections from `fees` and continually redistributes them to addresses as
     /// rewards.
-    #[serde(rename = "rewards-pool")]
+    #[serde(rename = "rwd")]
     rewards_pool: AlgorandAddress,
 
     /// Specifies how many rewards, in MicroAlgos, have been distributed to each
     /// config.Protocol.RewardUnit of MicroAlgos since genesis.
-    #[serde(rename = "rewards-level", default)]
+    #[serde(rename = "earn", default)]
     rewards_level: Option<u64>,
 
     /// The number of new MicroAlgos added to the participation stake from rewards at the next
     /// round.
-    #[serde(rename = "rewards-rate", default)]
+    #[serde(rename = "rate", default)]
     rewards_rate: Option<u64>,
 
     /// The number of leftover MicroAlgos after rewards distribution.
-    #[serde(rename = "rewards-residue", default)]
+    #[serde(rename = "frac", default)]
     rewards_residue: Option<u64>,
 
     /// The round at which the RewardsRate will be recalculated.
-    #[serde(rename = "rewards-calculation-round")]
+    #[serde(rename = "rwcalr")]
     rewards_calculation_round: u64,
 }
 
