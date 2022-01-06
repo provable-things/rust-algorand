@@ -1,7 +1,7 @@
 #![allow(clippy::too_many_arguments)]
 
 use derive_more::Constructor;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 mod asset_config_transaction;
@@ -34,7 +34,7 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 ///
 /// A struct holding the various fields required in an Algorand Transaction.
 #[skip_serializing_none]
-#[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize, Deserialize)]
 pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///

@@ -1,8 +1,8 @@
 use std::fmt;
 
-use serde::{Serialize, Serializer};
+use serde::{Serialize, Serializer, Deserialize};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub enum AlgorandTransactionType {
     Pay,
     AssetTransfer,

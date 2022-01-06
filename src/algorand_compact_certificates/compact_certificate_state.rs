@@ -64,7 +64,7 @@ impl CompactCertificateState {
         }
     }
 
-    fn from_str(s: &str) -> Result<Self> {
+    pub fn from_str(s: &str) -> Result<Self> {
         CompactCertificateStateJson::from_str(s).and_then(Self::from_json)
     }
 
