@@ -30,16 +30,16 @@ pub struct CompactCertificateState {
     compact_cert_next_round: u64,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CompactCertificateStateJson {
+#[derive(Debug, Clone, Default, Eq, PartialEq, Serialize, Deserialize)]
+pub struct CompactCertificateStateJson {
     #[serde(rename = "compact-cert-voters")]
-    compact_cert_voters: String,
+    pub compact_cert_voters: String,
 
     #[serde(rename = "compact-cert-next-round")]
-    compact_cert_next_round: u64,
+    pub compact_cert_next_round: u64,
 
     #[serde(rename = "compact-cert-voters-total")]
-    compact_cert_voters_total: u64,
+    pub compact_cert_voters_total: u64,
 }
 
 impl CompactCertificateStateJson {
@@ -53,7 +53,7 @@ impl CompactCertificateStateJson {
 }
 
 impl CompactCertificateState {
-    fn from_json(json: CompactCertificateStateJson) -> Result<Self> {
+    pub fn from_json(json: &CompactCertificateStateJson) -> Result<Self> {
         Ok(Self {
             compact_cert_next_round: json.compact_cert_next_round,
             compact_cert_voters_total: MicroAlgos(json.compact_cert_voters_total),
@@ -70,7 +70,7 @@ impl CompactCertificateState {
     }
 
     pub fn from_str(s: &str) -> Result<Self> {
-        CompactCertificateStateJson::from_str(s).and_then(Self::from_json)
+        CompactCertificateStateJson::from_str(s).and_then(|ref json| Self::from_json(json))
     }
 
     fn to_str(&self) -> Result<String> {

@@ -18,29 +18,35 @@ pub struct UpgradeVote {
 }
 
 impl UpgradeVote {
-    fn from_json(json: UpgradeVoteJson) -> Self {
+    pub fn from_json(json: &UpgradeVoteJson) -> Self {
         Self {
-            upgrade_delay: json.upgrade_delay,
-            upgrade_propose: json.upgrade_propose,
-            upgrade_approve: json.upgrade_approve,
+            upgrade_delay: match json.upgrade_delay {
+                None | Some(0) => None,
+                Some(thing) => Some(thing),
+            },
+            upgrade_approve: match json.upgrade_approve {
+                None | Some(false) => None,
+                Some(thing) => Some(thing),
+            },
+            upgrade_propose: json.upgrade_propose.clone(),
         }
     }
 
     pub fn from_str(s: &str) -> Result<Self> {
-        UpgradeVoteJson::from_str(s).map(Self::from_json)
+        UpgradeVoteJson::from_str(s).map(|ref json| Self::from_json(json))
     }
 }
 
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeVoteJson {
     #[serde(rename = "upgrade-propose")]
-    upgrade_propose: Option<String>,
+    pub upgrade_propose: Option<String>,
 
     #[serde(rename = "upgrade-delay")]
-    upgrade_delay: Option<u64>,
+    pub upgrade_delay: Option<u64>,
 
     #[serde(rename = "upgrade-approve")]
-    upgrade_approve: Option<bool>,
+    pub upgrade_approve: Option<bool>,
 }
 
 impl UpgradeVoteJson {

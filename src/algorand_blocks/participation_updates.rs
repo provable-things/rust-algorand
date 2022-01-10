@@ -9,7 +9,7 @@ pub struct ParticipationUpdates {
 }
 
 impl ParticipationUpdates {
-    fn from_json(json: ParticipationUpdatesJson) -> Result<Self> {
+    pub fn from_json(json: &ParticipationUpdatesJson) -> Result<Self> {
         Ok(Self {
             expired_participation_accounts: json
                 .expired_participation_accounts
@@ -20,14 +20,14 @@ impl ParticipationUpdates {
     }
 
     pub fn from_str(s: &str) -> Result<Self> {
-        ParticipationUpdatesJson::from_str(s).and_then(Self::from_json)
+        ParticipationUpdatesJson::from_str(s).and_then(|ref json| Self::from_json(json))
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-struct ParticipationUpdatesJson {
+pub struct ParticipationUpdatesJson {
     #[serde(rename = "expired-participation-accounts")]
-    expired_participation_accounts: Vec<String>,
+    pub expired_participation_accounts: Vec<String>,
 }
 
 impl ParticipationUpdatesJson {

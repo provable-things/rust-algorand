@@ -6,7 +6,7 @@ use crate::{algorand_address::AlgorandAddress, algorand_types::Result};
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RewardsState {
     /// Accepts transaction fees.
     #[serde(rename = "fees")]
@@ -37,6 +37,10 @@ pub struct RewardsState {
 }
 
 impl RewardsState {
+    pub fn from_json(json: &RewardsStateJson) -> Result<Self> {
+        json.to_rewards_state()
+    }
+
     pub fn from_str(s: &str) -> Result<Self> {
         RewardsStateJson::from_str(s).and_then(|json| json.to_rewards_state())
     }
@@ -44,25 +48,25 @@ impl RewardsState {
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RewardsStateJson {
     #[serde(rename = "fee-sink")]
-    fee_sink: String,
+    pub fee_sink: String,
 
     #[serde(rename = "rewards-pool")]
-    rewards_pool: String,
+    pub rewards_pool: String,
 
     #[serde(rename = "rewards-level", default)]
-    rewards_level: Option<u64>,
+    pub rewards_level: Option<u64>,
 
     #[serde(rename = "rewards-rate", default)]
-    rewards_rate: Option<u64>,
+    pub rewards_rate: Option<u64>,
 
     #[serde(rename = "rewards-residue", default)]
-    rewards_residue: Option<u64>,
+    pub rewards_residue: Option<u64>,
 
     #[serde(rename = "rewards-calculation-round")]
-    rewards_calculation_round: u64,
+    pub rewards_calculation_round: u64,
 }
 
 impl RewardsStateJson {
