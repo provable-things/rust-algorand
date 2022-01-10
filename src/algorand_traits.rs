@@ -1,4 +1,3 @@
-use rmp_serde;
 use serde::Serialize;
 
 use crate::algorand_types::{Bytes, Result};

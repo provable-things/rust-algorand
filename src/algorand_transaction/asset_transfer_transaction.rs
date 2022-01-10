@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
@@ -92,6 +90,8 @@ impl AlgorandTransaction {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use super::*;
     use crate::{
         algorand_hash::AlgorandHash,

@@ -1,24 +1,19 @@
-use std::{collections::HashMap, str::FromStr};
+use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value as JsonValue;
 use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::{
-        participation_updates::{ParticipationUpdates, ParticipationUpdatesJson},
-        rewards_state::{RewardsState, RewardsStateJson},
-        upgrade_state::{UpgradeState, UpgradeStateJson},
-        upgrade_vote::{UpgradeVote, UpgradeVoteJson},
+        participation_updates::ParticipationUpdatesJson,
+        rewards_state::RewardsStateJson,
+        upgrade_state::UpgradeStateJson,
+        upgrade_vote::UpgradeVoteJson,
     },
-    algorand_compact_certificates::{
-        compact_certificate_state::{CompactCertificateState, CompactCertificateStateJson},
-        CompactCertificates,
-    },
+    algorand_compact_certificates::compact_certificate_state::CompactCertificateStateJson,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
-    algorand_transaction::AlgorandTransaction,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
     errors::AppError,
@@ -161,16 +156,16 @@ impl AlgorandBlockHeader {
                 Some(cert) => Some(MicroAlgos::from_algos(cert.compact_cert_voters_total)?),
                 None => None,
             },
-            compact_cert_next_round: match &json.compact_certificates {
-                Some(cert) => Some(cert.compact_cert_next_round),
-                None => None,
-            },
+            compact_cert_next_round: json
+                .compact_certificates
+                .as_ref()
+                .map(|cert| cert.compact_cert_next_round),
             rewards_rate: match &json.rewards {
-                Some(rewards) => rewards.rewards_rate.clone(),
+                Some(rewards) => rewards.rewards_rate,
                 None => None,
             },
             rewards_level: match &json.rewards {
-                Some(rewards) => rewards.rewards_level.clone(),
+                Some(rewards) => rewards.rewards_level,
                 None => None,
             },
             rewards_residue: match &json.rewards {
@@ -185,18 +180,18 @@ impl AlgorandBlockHeader {
                 Some(rewards) => Some(AlgorandAddress::from_str(&rewards.rewards_pool)?),
                 None => None,
             },
-            rewards_calculation_round: match &json.rewards {
-                Some(rewards) => Some(rewards.rewards_calculation_round.clone()),
-                None => None,
-            },
+            rewards_calculation_round: json
+                .rewards
+                .as_ref()
+                .map(|rewards| rewards.rewards_calculation_round),
             next_protocol: match &json.upgrade_state {
                 Some(upgrade_state) => upgrade_state.next_protocol.clone(),
                 None => None,
             },
-            current_protocol: match &json.upgrade_state {
-                Some(upgrade_state) => Some(upgrade_state.current_protocol.clone()),
-                None => None,
-            },
+            current_protocol: json
+                .upgrade_state
+                .as_ref()
+                .map(|upgrade_state| upgrade_state.current_protocol.clone()),
             next_protocol_approvals: match &json.upgrade_state {
                 None => None,
                 Some(upgrade_state) => match upgrade_state.next_protocol_approvals {
@@ -254,7 +249,7 @@ impl FromStr for AlgorandBlockHeader {
     type Err = AppError;
 
     fn from_str(s: &str) -> Result<Self> {
-        AlgorandBlockJson::from_str(s).and_then(|ref json| Self::from_json(json))
+        AlgorandBlockJson::from_str(s).and_then(|json| Self::from_json(&json))
     }
 }
 
@@ -336,7 +331,6 @@ mod tests {
     #[test]
     fn should_get_alogrand_block_header_hash() {
         let block = get_sample_block_header_n(0);
-        let message_bytes = hex::encode(block.to_msg_pack_bytes().unwrap());
         let result = block.hash().unwrap();
         let expected_result = get_sample_block_header_n(1).previous_block_hash.clone();
         assert_eq!(result, expected_result);

@@ -78,12 +78,12 @@ pub struct RewardsStateJson {
 impl RewardsStateJson {
     fn to_rewards_state(&self) -> Result<RewardsState> {
         Ok(RewardsState {
-            rewards_rate: self.rewards_rate.clone(),
-            rewards_level: self.rewards_level.clone(),
-            rewards_residue: self.rewards_residue.clone(),
+            rewards_rate: self.rewards_rate,
+            rewards_level: self.rewards_level,
+            rewards_residue: self.rewards_residue,
             fee_sink: AlgorandAddress::from_str(&self.fee_sink)?,
+            rewards_calculation_round: self.rewards_calculation_round,
             rewards_pool: AlgorandAddress::from_str(&self.rewards_pool)?,
-            rewards_calculation_round: self.rewards_calculation_round.clone(),
         })
     }
 }

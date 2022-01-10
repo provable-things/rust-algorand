@@ -1,23 +1,28 @@
 use std::str::FromStr;
 
 use base64::decode as base64_decode;
+#[cfg(test)]
+use ed25519_dalek::PUBLIC_KEY_LENGTH;
 use ed25519_dalek::{
     Keypair,
     PublicKey,
     SecretKey,
     Signature as DalekSignature,
     Signer,
-    PUBLIC_KEY_LENGTH,
     SECRET_KEY_LENGTH,
 };
 use rand::rngs::OsRng;
 
 use crate::{
-    algorand_address::{AlgorandAddress, ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES},
+    algorand_address::AlgorandAddress,
     algorand_checksum::AlgorandChecksum,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_signature::AlgorandSignature,
     algorand_types::{Byte, Bytes, Result},
+};
+#[cfg(test)]
+use crate::{
+    algorand_address::ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES,
     crypto_utils::sha512_256_hash_bytes,
 };
 
@@ -32,6 +37,7 @@ impl AlgorandKeys {
         self.0.public.to_bytes()
     }
 
+    #[cfg(test)]
     fn compute_checksum(&self) -> Bytes {
         sha512_256_hash_bytes(&self.to_pub_key_bytes())
             [PUBLIC_KEY_LENGTH - ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES..PUBLIC_KEY_LENGTH]
@@ -98,7 +104,7 @@ impl AlgorandKeys {
     ///
     /// Get the algorand keys from a mnemonic string.
     pub fn from_mnemonic_str(s: &str) -> Result<Self> {
-        AlgorandMnemonic::from_str(s).and_then(|ref mnemonic| Self::from_mnemonic(mnemonic))
+        AlgorandMnemonic::from_str(s).and_then(|mnemonic| Self::from_mnemonic(&mnemonic))
     }
 
     /// ## Sign

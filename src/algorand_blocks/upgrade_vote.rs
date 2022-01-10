@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 use serde_with::skip_serializing_none;
 
 use crate::{algorand_types::Result, errors::AppError};
@@ -39,7 +38,7 @@ impl FromStr for UpgradeVote {
     type Err = AppError;
 
     fn from_str(s: &str) -> Result<Self> {
-        UpgradeVoteJson::from_str(s).map(|ref json| Self::from_json(json))
+        UpgradeVoteJson::from_str(s).map(|json| Self::from_json(&json))
     }
 }
 

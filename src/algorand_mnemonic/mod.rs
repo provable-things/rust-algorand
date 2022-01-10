@@ -12,7 +12,7 @@ use crate::{
     errors::AppError,
 };
 
-type u11Array = Vec<u32>;
+type U11Array = Vec<u32>;
 const BITS_IN_A_BYTE: usize = 8;
 const NUMBER_OF_BITS_PER_WORD: usize = 11;
 const NUMBER_OF_WORDS_IN_MNEMONIC: usize = 25;
@@ -73,7 +73,7 @@ impl AlgorandMnemonic {
             .map(Self::convert_words_to_mnemonic)
     }
 
-    fn convert_bytes_to_u11_array(bytes: &[Byte]) -> u11Array {
+    fn convert_bytes_to_u11_array(bytes: &[Byte]) -> U11Array {
         const ELEVEN_BITS_MASK: u32 = 0x7ffu32;
         let mut buffer = 0u32;
         let mut bit_count = 0;
@@ -126,7 +126,7 @@ impl AlgorandMnemonic {
         }
     }
 
-    fn convert_u11_array_to_words<'a>(u11_array: u11Array) -> Result<Vec<&'a str>> {
+    fn convert_u11_array_to_words<'a>(u11_array: U11Array) -> Result<Vec<&'a str>> {
         u11_array
             .iter()
             .map(|u11| *u11 as usize)
@@ -187,7 +187,7 @@ impl AlgorandMnemonic {
             .map(|u_size| u_size as u32)
     }
 
-    fn safely_get_indices_from_words(words: Vec<&str>) -> Result<u11Array> {
+    fn safely_get_indices_from_words(words: Vec<&str>) -> Result<U11Array> {
         words
             .iter()
             .map(|word| Self::safely_get_index_from_word(word))

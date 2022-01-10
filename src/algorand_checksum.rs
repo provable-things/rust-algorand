@@ -4,8 +4,6 @@ use crate::{
 };
 
 const ALGORAND_MAX_CHECKSUM_BYTES: usize = 32;
-const ALGORAND_ADDRESS_NUM_CHECKSUM_BYTES: usize = 3;
-const ALGORAND_MNEMONIC_NUM_CHECKSUM_BYTES: usize = 2;
 
 pub enum CheckSummableType {
     AlgorandAddress,

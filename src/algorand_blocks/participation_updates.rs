@@ -26,7 +26,7 @@ impl FromStr for ParticipationUpdates {
     type Err = AppError;
 
     fn from_str(s: &str) -> Result<Self> {
-        ParticipationUpdatesJson::from_str(s).and_then(|ref json| Self::from_json(json))
+        ParticipationUpdatesJson::from_str(s).and_then(|json| Self::from_json(&json))
     }
 }
 

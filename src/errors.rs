@@ -1,6 +1,6 @@
 quick_error! {
     #[derive(Debug)]
-    pub enum AppError {
+    pub enum AppError { // FIXME Rename to `AlgorandError`?
         Custom(err: String) {
             from()
             from(err: &str) -> (err.into())

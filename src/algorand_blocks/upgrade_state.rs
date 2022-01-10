@@ -41,7 +41,7 @@ impl FromStr for UpgradeState {
     type Err = AppError;
 
     fn from_str(s: &str) -> Result<Self> {
-        UpgradeStateJson::from_str(s).map(|ref json| Self::from_json(json))
+        UpgradeStateJson::from_str(s).map(|json| Self::from_json(&json))
     }
 }
 
@@ -69,11 +69,5 @@ impl FromStr for UpgradeStateJson {
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
-    }
-}
-
-impl UpgradeStateJson {
-    pub fn to_string(&self) -> Result<String> {
-        Ok(serde_json::to_string(self)?)
     }
 }
