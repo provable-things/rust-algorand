@@ -55,10 +55,10 @@ pub trait AlgorandChecksum {
     }
 
     fn append_checksum_bytes(&self) -> Result<Bytes> {
-        let mut returnValue = self.to_bytes()?;
+        let mut return_value = self.to_bytes()?;
         self.get_checksum_bytes()?
             .iter()
-            .for_each(|byte| returnValue.push(*byte));
-        Ok(returnValue)
+            .for_each(|byte| return_value.push(*byte));
+        Ok(return_value)
     }
 }

@@ -1,4 +1,5 @@
 #![cfg(test)]
+use std::str::FromStr;
 
 use crate::{
     algorand_address::AlgorandAddress,

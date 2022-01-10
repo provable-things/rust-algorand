@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, str::FromStr};
 
 mod english_bip39_wordlist;
 
@@ -9,6 +9,7 @@ use crate::{
         ENGLISH_BIP_39_WORD_LIST,
     },
     algorand_types::{Byte, Bytes, Result},
+    errors::AppError,
 };
 
 type u11Array = Vec<u32>;
@@ -70,18 +71,6 @@ impl AlgorandMnemonic {
                 Ok(words)
             })
             .map(Self::convert_words_to_mnemonic)
-    }
-
-    /// ## From Str
-    ///
-    /// Converts a str to an AlgorandMnemonic.
-    pub fn from_str(s: &str) -> Result<Self> {
-        Self::check_number_of_words(Self::str_to_words(s)).and_then(|words| {
-            match Self::safely_get_indices_from_words(words) {
-                Ok(_) => Ok(Self(s.to_string())),
-                Err(e) => Err(e),
-            }
-        })
     }
 
     fn convert_bytes_to_u11_array(bytes: &[Byte]) -> u11Array {
@@ -227,10 +216,25 @@ impl AlgorandMnemonic {
     }
 }
 
+impl FromStr for AlgorandMnemonic {
+    type Err = AppError;
+
+    /// ## From Str
+    ///
+    /// Converts a str to an AlgorandMnemonic.
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        Self::check_number_of_words(Self::str_to_words(s)).and_then(|words| {
+            match Self::safely_get_indices_from_words(words) {
+                Ok(_) => Ok(Self(s.to_string())),
+                Err(e) => Err(e),
+            }
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AppError;
 
     fn get_sample_mnemonic() -> AlgorandMnemonic {
         AlgorandMnemonic::convert_words_to_mnemonic(get_sample_words())

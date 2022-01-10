@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -5,6 +7,7 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Bytes, Result},
+    errors::AppError,
 };
 
 /// Tracks the state of compact certificates.
@@ -43,12 +46,24 @@ pub struct CompactCertificateStateJson {
 }
 
 impl CompactCertificateStateJson {
+    fn to_str(&self) -> Result<String> {
+        Ok(serde_json::to_string(self)?)
+    }
+}
+
+impl FromStr for CompactCertificateStateJson {
+    type Err = AppError;
+
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
     }
+}
 
-    fn to_str(&self) -> Result<String> {
-        Ok(serde_json::to_string(self)?)
+impl FromStr for CompactCertificateState {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        CompactCertificateStateJson::from_str(s).and_then(|ref json| Self::from_json(json))
     }
 }
 
@@ -67,10 +82,6 @@ impl CompactCertificateState {
             compact_cert_voters: self.compact_cert_voters.to_string(),
             compact_cert_voters_total: self.compact_cert_voters_total.0,
         }
-    }
-
-    pub fn from_str(s: &str) -> Result<Self> {
-        CompactCertificateStateJson::from_str(s).and_then(|ref json| Self::from_json(json))
     }
 
     fn to_str(&self) -> Result<String> {

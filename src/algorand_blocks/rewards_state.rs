@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AppError};
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
@@ -40,8 +42,12 @@ impl RewardsState {
     pub fn from_json(json: &RewardsStateJson) -> Result<Self> {
         json.to_rewards_state()
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self> {
+impl FromStr for RewardsState {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
         RewardsStateJson::from_str(s).and_then(|json| json.to_rewards_state())
     }
 }
@@ -70,10 +76,6 @@ pub struct RewardsStateJson {
 }
 
 impl RewardsStateJson {
-    fn from_str(s: &str) -> Result<Self> {
-        Ok(serde_json::from_str(s)?)
-    }
-
     fn to_rewards_state(&self) -> Result<RewardsState> {
         Ok(RewardsState {
             rewards_rate: self.rewards_rate.clone(),
@@ -83,5 +85,13 @@ impl RewardsStateJson {
             rewards_pool: AlgorandAddress::from_str(&self.rewards_pool)?,
             rewards_calculation_round: self.rewards_calculation_round.clone(),
         })
+    }
+}
+
+impl FromStr for RewardsStateJson {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(serde_json::from_str(s)?)
     }
 }

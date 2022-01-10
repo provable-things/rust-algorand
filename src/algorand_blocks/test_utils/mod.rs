@@ -1,5 +1,5 @@
 #![cfg(test)]
-use std::fs::read_to_string;
+use std::{fs::read_to_string, str::FromStr};
 
 use paste::paste;
 

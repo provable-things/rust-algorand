@@ -1,4 +1,4 @@
-use std::default::Default;
+use std::{default::Default, str::FromStr};
 
 use base64::encode as base64_encode;
 use serde::{Deserialize, Serialize, Serializer};
@@ -7,6 +7,7 @@ use crate::{
     algorand_checksum::{AlgorandChecksum, CheckSummableType},
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
+    errors::AppError,
 };
 
 pub const ALGORAND_ADDRESS_NUM_BYTES: usize = 32;
@@ -45,11 +46,6 @@ impl AlgorandAddress {
         } else {
             Ok(Self(bytes.try_into()?))
         }
-    }
-
-    pub fn from_str(s: &str) -> Result<Self> {
-        base32_decode(s)
-            .and_then(|ref bytes| Self::from_bytes(&bytes[..ALGORAND_ADDRESS_NUM_BYTES]))
     }
 
     pub fn to_base64(&self) -> Result<String> {
@@ -91,6 +87,15 @@ impl std::fmt::Display for AlgorandAddress {
 impl Default for AlgorandAddress {
     fn default() -> Self {
         Self([0u8; ALGORAND_ADDRESS_NUM_BYTES])
+    }
+}
+
+impl FromStr for AlgorandAddress {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        base32_decode(s)
+            .and_then(|ref bytes| Self::from_bytes(&bytes[..ALGORAND_ADDRESS_NUM_BYTES]))
     }
 }
 

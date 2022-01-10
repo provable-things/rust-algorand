@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, str::FromStr};
 
 use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
@@ -7,6 +7,7 @@ use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_types::{Byte, Bytes, Result},
+    errors::AppError,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -54,10 +55,6 @@ impl AlgorandHash {
         Self::from_slice(&base64_decode(s)?)
     }
 
-    pub fn from_str(s: &str) -> Result<Self> {
-        Self::from_base_64(s)
-    }
-
     fn to_base_64(&self) -> String {
         base64_encode(&self.0)
     }
@@ -97,6 +94,14 @@ impl Serialize for AlgorandHash {
         S: Serializer,
     {
         serializer.serialize_bytes(&self.0)
+    }
+}
+
+impl FromStr for AlgorandHash {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Self::from_base_64(s)
     }
 }
 

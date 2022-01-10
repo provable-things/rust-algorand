@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::algorand_types::Result;
+use crate::{algorand_types::Result, errors::AppError};
 
 #[skip_serializing_none]
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
@@ -33,8 +35,12 @@ impl UpgradeState {
             next_protocol_vote_before: json.next_protocol_vote_before,
         }
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self> {
+impl FromStr for UpgradeState {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
         UpgradeStateJson::from_str(s).map(|ref json| Self::from_json(json))
     }
 }
@@ -58,11 +64,15 @@ pub struct UpgradeStateJson {
     pub next_protocol_switch_on: Option<u64>,
 }
 
-impl UpgradeStateJson {
-    pub fn from_str(s: &str) -> Result<Self> {
+impl FromStr for UpgradeStateJson {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
     }
+}
 
+impl UpgradeStateJson {
     pub fn to_string(&self) -> Result<String> {
         Ok(serde_json::to_string(self)?)
     }

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use base64::decode as base64_decode;
 use ed25519_dalek::{
     Keypair,

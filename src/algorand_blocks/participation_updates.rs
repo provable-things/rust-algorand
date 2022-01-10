@@ -1,6 +1,8 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AppError};
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ParticipationUpdates {
@@ -18,8 +20,12 @@ impl ParticipationUpdates {
                 .collect::<Result<Vec<AlgorandAddress>>>()?,
         })
     }
+}
 
-    pub fn from_str(s: &str) -> Result<Self> {
+impl FromStr for ParticipationUpdates {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
         ParticipationUpdatesJson::from_str(s).and_then(|ref json| Self::from_json(json))
     }
 }
@@ -30,8 +36,10 @@ pub struct ParticipationUpdatesJson {
     pub expired_participation_accounts: Vec<String>,
 }
 
-impl ParticipationUpdatesJson {
-    pub fn from_str(s: &str) -> Result<Self> {
+impl FromStr for ParticipationUpdatesJson {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
     }
 }

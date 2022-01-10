@@ -21,6 +21,7 @@ use crate::{
     algorand_transaction::AlgorandTransaction,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
+    errors::AppError,
 };
 
 /*
@@ -139,10 +140,6 @@ impl AlgorandBlockHeader {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_with_prefix()?))
     }
 
-    pub fn from_str(s: &str) -> Result<Self> {
-        AlgorandBlockJson::from_str(s).and_then(|ref json| Self::from_json(json))
-    }
-
     fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
         Ok(Self {
             genesis_hash: AlgorandHash::from_str(&json.genesis_hash)?,
@@ -253,6 +250,14 @@ impl AlgorandBlockHeader {
     }
 }
 
+impl FromStr for AlgorandBlockHeader {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        AlgorandBlockJson::from_str(s).and_then(|ref json| Self::from_json(json))
+    }
+}
+
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct AlgorandBlockJson {
     #[serde(rename = "compact-certificates")]
@@ -292,12 +297,16 @@ pub struct AlgorandBlockJson {
 }
 
 impl AlgorandBlockJson {
-    fn from_str(s: &str) -> Result<Self> {
-        Ok(serde_json::from_str(s)?)
-    }
-
     fn to_str(&self) -> Result<String> {
         Ok(serde_json::to_string(self)?)
+    }
+}
+
+impl FromStr for AlgorandBlockJson {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
