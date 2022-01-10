@@ -6,7 +6,10 @@ use crate::{
     algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
-    algorand_transactions::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
+    algorand_transactions::{
+        transaction::AlgorandTransaction,
+        transaction_type::AlgorandTransactionType,
+    },
     algorand_types::Result,
 };
 

@@ -28,5 +28,5 @@ pub use crate::{
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
-    algorand_transactions::AlgorandTransaction,
+    algorand_transactions::transaction::AlgorandTransaction,
 };
