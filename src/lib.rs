@@ -17,7 +17,7 @@ mod algorand_micro_algos;
 mod algorand_mnemonic;
 mod algorand_signature;
 mod algorand_traits;
-mod algorand_transaction;
+mod algorand_transactions;
 mod algorand_types;
 mod crypto_utils;
 mod errors;
@@ -28,5 +28,5 @@ pub use crate::{
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
-    algorand_transaction::AlgorandTransaction,
+    algorand_transactions::AlgorandTransaction,
 };

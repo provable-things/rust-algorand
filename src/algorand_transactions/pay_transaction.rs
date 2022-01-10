@@ -2,7 +2,7 @@ use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
-    algorand_transaction::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
+    algorand_transactions::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
     algorand_types::{Bytes, Result},
 };
 
@@ -52,7 +52,7 @@ mod tests {
     use super::*;
     use crate::{
         algorand_traits::ToMsgPackBytes,
-        algorand_transaction::transaction_test_utils::get_sample_pay_tx,
+        algorand_transactions::test_utils::get_sample_pay_tx,
         errors::AppError,
         test_utils::get_sample_algorand_keys,
     };

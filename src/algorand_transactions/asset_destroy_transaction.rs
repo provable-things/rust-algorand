@@ -2,7 +2,7 @@ use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
-    algorand_transaction::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
+    algorand_transactions::{transaction_type::AlgorandTransactionType, AlgorandTransaction},
     algorand_types::Result,
 };
 

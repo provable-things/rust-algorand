@@ -1,5 +1,7 @@
 #![allow(clippy::too_many_arguments)]
 
+use std::str::FromStr;
+
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -8,7 +10,8 @@ mod asset_config_transaction;
 mod asset_destroy_transaction;
 mod asset_transfer_transaction;
 mod pay_transaction;
-mod transaction_test_utils;
+mod test_utils;
+mod transaction_json;
 mod transaction_type;
 
 use crate::{
@@ -19,12 +22,13 @@ use crate::{
     algorand_micro_algos::MICRO_ALGOS_MULTIPLIER,
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
-    algorand_transaction::{
+    algorand_transactions::{
         asset_config_transaction::AssetParameters,
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
+    errors::AppError,
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
