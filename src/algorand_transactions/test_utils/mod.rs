@@ -8,7 +8,11 @@ use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
-    algorand_transactions::transaction::AlgorandTransaction,
+    algorand_transactions::{
+        transaction::AlgorandTransaction,
+        transaction_json::AlgorandTransactionJson,
+    },
+    algorand_types::Result,
     errors::AppError,
 };
 
@@ -17,7 +21,7 @@ macro_rules! write_paths_and_getter_fxn {
         paste! {
             $(const [<SAMPLE_BLOCK_ $num>]: &str = $path;)*
 
-            fn get_path_n(n: usize) -> Result<String, AppError> {
+            fn get_path_n(n: usize) -> Result<String> {
                 match n {
                     $($num => Ok([<SAMPLE_BLOCK_ $num>].to_string()),)*
                     _ => Err(AppError::Custom(format!("Cannot find sample block num: {}", n).into())),
@@ -39,6 +43,14 @@ pub fn get_sample_txs_json_strs_n(n: usize) -> Vec<String> {
         .collect()
 }
 
+pub fn get_sample_txs_jsons(n: usize) -> Vec<AlgorandTransactionJson> {
+    get_sample_txs_json_strs_n(n)
+        .iter()
+        .map(|json_str| AlgorandTransactionJson::from_str(json_str))
+        .collect::<Result<Vec<AlgorandTransactionJson>>>()
+        .unwrap()
+}
+
 pub fn get_sample_pay_tx() -> AlgorandTransaction {
     let first_valid_round = 1000;
     let note = None;
@@ -58,11 +70,43 @@ pub fn get_sample_pay_tx() -> AlgorandTransaction {
     .unwrap()
 }
 
+pub fn get_sample_acfg_tx_json_string() -> String {
+    read_to_string("src/algorand_transactions/test_utils/acfg-tx.json").unwrap()
+}
+
+pub fn get_sample_asset_parameters_json_str() -> String {
+    use serde::Deserialize;
+    #[derive(Deserialize)]
+    struct TempStruct {
+        #[serde(rename = "asset-config-transaction")]
+        asset_config_transaction: TempStructTwo,
+    }
+    #[derive(Deserialize)]
+    struct TempStructTwo {
+        params: JsonValue,
+    }
+    serde_json::from_str::<TempStruct>(&get_sample_acfg_tx_json_string())
+        .unwrap()
+        .asset_config_transaction
+        .params
+        .to_string()
+}
+
 mod tests {
     use super::*;
 
     #[test]
     fn should_get_sample_txs_json_strs_n() {
         get_sample_txs_json_strs_n(0);
+    }
+
+    #[test]
+    fn should_get_sample_tx_jsons_n() {
+        get_sample_txs_jsons(0);
+    }
+
+    #[test]
+    fn should_get_sample_acfg_tx_json_string() {
+        get_sample_acfg_tx_json_string();
     }
 }

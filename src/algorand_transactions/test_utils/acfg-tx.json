@@ -1,0 +1,40 @@
+{
+  "asset-config-transaction": {
+    "asset-id": 0,
+    "params": {
+      "clawback": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+      "creator": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+      "decimals": 18,
+      "default-frozen": false,
+      "freeze": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+      "manager": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+      "metadata-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+      "name": "Test Token",
+      "name-b64": "VGVzdCBUb2tlbg==",
+      "reserve": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+      "total": 1000000,
+      "unit-name": "tTKN",
+      "unit-name-b64": "dFRLTg==",
+      "url": "google.com",
+      "url-b64": "Z29vZ2xlLmNvbQ=="
+    }
+  },
+  "close-rewards": 0,
+  "closing-amount": 0,
+  "confirmed-round": 17906210,
+  "created-asset-index": 460341519,
+  "fee": 1000,
+  "first-valid": 17906200,
+  "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+  "id": "ZI4KMYHVOPWGS7XKHAM6UGPCSPN5MZPPSQQ3YDKMGBQGJSZODZRQ",
+  "intra-round-offset": 14,
+  "last-valid": 17907200,
+  "receiver-rewards": 0,
+  "round-time": 1638995709,
+  "sender": "GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I",
+  "sender-rewards": 12642,
+  "signature": {
+    "sig": "eBv8HQqr+DNeETor/FXjUs8OMlwtxERwYCJ6FkZvo83LQxw4v3ynnkpaVFQVjkY0AVpj5BtdSyr1gY4tiovFAA=="
+  },
+  "tx-type": "acfg"
+}
