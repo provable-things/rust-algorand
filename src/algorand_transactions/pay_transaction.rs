@@ -42,6 +42,7 @@ impl AlgorandTransaction {
             rekey_to: None,
             genesis_id: None,
             asset_amount: None,
+            asset_sender: None,
             asset_receiver: None,
             asset_parameters: None,
             transfer_asset_id: None,

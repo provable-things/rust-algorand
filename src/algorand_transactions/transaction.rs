@@ -56,6 +56,12 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "arcv"))]
     pub asset_receiver: Option<AlgorandAddress>,
 
+    /// ## Asset Sender
+    ///
+    /// The address from which the funds will be clawed back from.
+    #[serde(rename(serialize = "asnd"))]
+    pub asset_sender: Option<AlgorandAddress>,
+
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.

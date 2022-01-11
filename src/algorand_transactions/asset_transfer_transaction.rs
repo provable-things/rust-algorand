@@ -45,6 +45,7 @@ impl AlgorandTransaction {
             rekey_to: None,
             receiver: None,
             genesis_id: None,
+            asset_sender: None,
             asset_parameters: None,
             close_remainder_to: None,
         })
@@ -67,7 +68,7 @@ impl AlgorandTransaction {
         Ok(Self {
             genesis_hash,
             first_valid_round,
-            asset_amount: None, // FIXME this?
+            asset_amount: None,
             sender: sender.clone(),
             asset_receiver: Some(sender),
             transfer_asset_id: Some(asset_id),
@@ -85,6 +86,7 @@ impl AlgorandTransaction {
             rekey_to: None,
             receiver: None,
             genesis_id: None,
+            asset_sender: None,
             asset_parameters: None,
             close_remainder_to: None,
         })
