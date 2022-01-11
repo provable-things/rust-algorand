@@ -7,105 +7,18 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_transactions::{
+        asset_parameters::{AssetParameters, AssetParametersJson},
         transaction::AlgorandTransaction,
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
 };
 
-#[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct AssetParameters {
-    #[serde(rename(serialize = "am"))]
-    metadata_hash: AlgorandHash,
-
-    #[serde(rename(serialize = "an"))]
-    asset_name: String,
-
-    #[serde(rename(serialize = "au"))]
-    asset_url: String,
-
-    /// ## Clawback Address
-    ///
-    /// The clawback address represents an account that is allowed to transfer assets from and to
-    /// any asset holder (assuming they have opted-in). Use this if you need the option to revoke
-    /// assets from an account (like if they breach certain contractual obligations tied to holding
-    /// the asset). In traditional finance, this sort of transaction is referred to as a clawback.
-    #[serde(rename(serialize = "c"))]
-    clawback_address: AlgorandAddress,
-
-    #[serde(rename(serialize = "dc"))]
-    decimals: u64,
-
-    /// ## Default Frozen
-    ///
-    /// Whether the asset is created in a froze state.
-    #[serde(rename(serialize = "df"))]
-    default_frozen: Option<bool>,
-
-    /// ## Freeze Address
-    ///
-    /// The freeze account is allowed to freeze or unfreeze the asset holdings for a specific
-    /// account. When an account is frozen it cannot send or receive the frozen asset. In
-    /// traditional finance, freezing assets may be performed to restrict liquidation of company
-    /// stock, to investigate suspected criminal activity or to deny-list certain accounts. If the
-    /// DefaultFrozen state is set to True, you can use the unfreeze action to authorize certain
-    /// accounts to trade the asset (such as after passing KYC/AML checks).
-    #[serde(rename(serialize = "f"))]
-    freeze_address: AlgorandAddress,
-
-    /// ## Manager Address
-    ///
-    /// The manager account is the only account that can authorize transactions to re-configure or
-    /// destroy an asset.
-    #[serde(rename(serialize = "m"))]
-    manager_address: AlgorandAddress,
-
-    /// ## Reserve Address
-    ///
-    /// Specifying a reserve account signifies that non-minted assets will reside in that account
-    /// instead of the default creator account. Assets transferred from this account are "minted"
-    /// units of the asset. If you specify a new reserve address, you must make sure the new
-    /// account has opted into the asset and then issue a transaction to transfer all assets to the
-    /// new reserve.
-    #[serde(rename(serialize = "r"))]
-    reserve_address: AlgorandAddress,
-
-    #[serde(rename(serialize = "t"))]
-    total_base_units: u64,
-
-    #[serde(rename(serialize = "un"))]
-    unit_name: String,
-}
-
-impl AssetParameters {
-    pub fn new(
-        metadata_hash: AlgorandHash,
-        asset_name: &str,
-        asset_url: &str,
-        clawback_address: AlgorandAddress,
-        decimals: u64,
-        default_frozen: bool,
-        freeze_address: AlgorandAddress,
-        manager_address: AlgorandAddress,
-        reserve_address: AlgorandAddress,
-        total_base_units: u64,
-        unit_name: &str,
-    ) -> Self {
-        Self {
-            metadata_hash,
-            asset_name: asset_name.to_string(),
-            asset_url: asset_url.to_string(),
-            clawback_address,
-            decimals,
-            default_frozen: if default_frozen { Some(true) } else { None },
-            freeze_address,
-            manager_address,
-            reserve_address,
-            total_base_units,
-            unit_name: unit_name.to_string(),
-        }
-    }
+pub struct AssetConfigTransactionJson {
+    #[serde(rename = "asset-id")]
+    pub asset_id: u64,
+    pub params: AssetParametersJson,
 }
 
 impl AlgorandTransaction {
@@ -147,6 +60,7 @@ impl AlgorandTransaction {
             receiver: None,
             genesis_id: None,
             asset_amount: None,
+            asset_sender: None,
             asset_receiver: None,
             transfer_asset_id: None,
             close_remainder_to: None,
@@ -170,17 +84,17 @@ mod tests {
         let genesis_hash = AlgorandHash::mainnet_genesis_hash().unwrap();
         let last_valid_round = None;
         let asset_parameters = AssetParameters::new(
-            AlgorandHash::mainnet_genesis_hash().unwrap(),
-            "Test Token",
-            "google.com",
-            sender.clone(),
+            Some(AlgorandHash::mainnet_genesis_hash().unwrap()),
+            Some("Test Token".to_string()),
+            Some("google.com".to_string()),
+            Some(sender.clone()),
             18,
             false,
-            sender.clone(),
-            sender.clone(),
-            sender.clone(),
+            Some(sender.clone()),
+            Some(sender.clone()),
+            Some(sender.clone()),
             1_000_000,
-            "tTKN",
+            Some("tTKN".to_string()),
         );
         let tx = AlgorandTransaction::new_asset_configuration_tx(
             fee,
