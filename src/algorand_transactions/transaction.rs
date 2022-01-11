@@ -2,6 +2,7 @@
 
 use std::str::FromStr;
 
+use base64::decode as base64_decode;
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -15,7 +16,8 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
-        asset_config_transaction::AssetParameters,
+        asset_parameters::AssetParameters,
+        transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
@@ -239,6 +241,58 @@ impl AlgorandTransaction {
             signature: keys.sign(&self.encode_for_signing()?),
         })
     }
+
+    pub fn from_json(json: &AlgorandTransactionJson) -> Result<Self> {
+        Ok(Self {
+            fee: json.fee,
+            amount: json.amount.clone(),
+            asset_id: json.asset_id.clone(),
+            genesis_id: json.genesis_id.clone(),
+            first_valid_round: json.first_valid,
+            asset_amount: json.asset_amount.clone(),
+            sender: AlgorandAddress::from_str(&json.sender)?,
+            transfer_asset_id: json.transfer_asset_id.clone(),
+            txn_type: AlgorandTransactionType::from_str(&json.tx_type)?,
+            asset_sender: match &json.asset_sender {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            genesis_hash: AlgorandHash::from_str(&json.genesis_hash)?,
+            group: match &json.group {
+                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                None => None,
+            },
+            last_valid_round: json.last_valid,
+            lease: match &json.lease {
+                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                None => None,
+            },
+            note: match &json.note {
+                Some(base64_str) => Some(base64_decode(&base64_str)?),
+                None => None,
+            },
+            rekey_to: match &json.rekey_to {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            asset_parameters: match &json.asset_config_transaction {
+                Some(json) => Some(AssetParameters::from_json(&json.params)?),
+                None => None,
+            },
+            asset_receiver: match &json.asset_receiver {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            receiver: match &json.receiver {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            close_remainder_to: match &json.close_remainder_to {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+        })
+    }
 }
 
 /// ## Algorand Signed Transaction
@@ -267,7 +321,7 @@ impl AlgorandSignedTransaction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AppError;
+    use crate::{algorand_transactions::test_utils::get_sample_txs_jsons, errors::AppError};
 
     #[test]
     fn amount_greater_than_minimum_should_pass_amount_check() {
@@ -288,5 +342,16 @@ mod tests {
             Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
+    }
+
+    #[test]
+    fn should_get_algorand_transactions_from_jsons() {
+        let jsons = get_sample_txs_jsons(0);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            AlgorandTransaction::from_json(json).unwrap();
+        });
     }
 }
