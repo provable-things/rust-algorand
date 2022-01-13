@@ -149,4 +149,11 @@ mod tests {
         let expected_result = "Mqfb383naV2RrEOBUvyQhhf/v525T4Q8JQJo5v4hoKD79/qa";
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_get_default_address() {
+        let result = AlgorandAddress::default().to_string();
+        let expected_result = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
+        assert_eq!(result, expected_result);
+    }
 }
