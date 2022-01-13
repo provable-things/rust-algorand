@@ -32,7 +32,7 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 ///
 /// A struct holding the various fields required in an Algorand Transaction.
 #[skip_serializing_none]
-#[derive(Debug, Clone, Eq, PartialEq, Constructor, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, Constructor, Serialize, Deserialize)]
 pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
