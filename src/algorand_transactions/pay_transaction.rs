@@ -25,17 +25,17 @@ impl AlgorandTransaction {
     ) -> Result<Self> {
         Ok(Self {
             note,
-            sender,
-            genesis_hash,
-            first_valid_round,
+            sender: Some(sender),
             receiver: Some(receiver),
-            txn_type: AlgorandTransactionType::Pay,
-            fee: fee.check_if_satisfies_minimum_fee()?.0,
+            genesis_hash: Some(genesis_hash),
+            first_valid_round: Some(first_valid_round),
+            txn_type: Some(AlgorandTransactionType::Pay),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
             amount: Some(Self::check_amount_is_above_minimum(amount)?),
-            last_valid_round: Self::calculate_last_valid_round(
+            last_valid_round: Some(Self::calculate_last_valid_round(
                 first_valid_round,
                 last_valid_round,
-            )?,
+            )?),
             group: None,
             lease: None,
             asset_id: None,

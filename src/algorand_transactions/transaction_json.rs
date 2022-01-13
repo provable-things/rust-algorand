@@ -12,15 +12,15 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct AlgorandTransactionJson {
-    pub sender: String,
+    pub sender: Option<String>,
 
-    pub fee: u64,
+    pub fee: Option<u64>,
 
     #[serde(rename = "first-valid")]
-    pub first_valid: u64,
+    pub first_valid: Option<u64>,
 
     #[serde(rename = "last-valid")]
-    pub last_valid: u64,
+    pub last_valid: Option<u64>,
 
     pub note: Option<String>,
 
@@ -28,10 +28,10 @@ pub struct AlgorandTransactionJson {
     pub genesis_id: Option<String>,
 
     #[serde(rename = "genesis-hash")]
-    pub genesis_hash: String,
+    pub genesis_hash: Option<String>,
 
     #[serde(rename = "tx-type")]
-    pub tx_type: String,
+    pub tx_type: Option<String>,
 
     /// Specifies if this tx is part of a group tx, and if so is the digest of that group.
     pub group: Option<String>,

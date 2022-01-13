@@ -26,13 +26,13 @@ impl AlgorandTransaction {
         let calculated_last_valid_round =
             Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
         Ok(Self {
-            sender,
-            genesis_hash,
-            first_valid_round,
+            sender: Some(sender),
             asset_id: Some(asset_id),
-            fee: fee.check_if_satisfies_minimum_fee()?.0,
-            last_valid_round: calculated_last_valid_round,
-            txn_type: AlgorandTransactionType::AssetConfiguration,
+            genesis_hash: Some(genesis_hash),
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            last_valid_round: Some(calculated_last_valid_round),
+            txn_type: Some(AlgorandTransactionType::AssetConfiguration),
             note: None,
             group: None,
             lease: None,

@@ -25,18 +25,18 @@ impl AlgorandTransaction {
         asset_receiver: AlgorandAddress,
     ) -> Result<AlgorandTransaction> {
         Ok(Self {
-            sender,
-            genesis_hash,
-            first_valid_round,
+            sender: Some(sender),
+            genesis_hash: Some(genesis_hash),
             asset_amount: Some(asset_amount),
             transfer_asset_id: Some(asset_id),
             asset_receiver: Some(asset_receiver),
-            fee: fee.check_if_satisfies_minimum_fee()?.0,
-            last_valid_round: Self::calculate_last_valid_round(
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            txn_type: Some(AlgorandTransactionType::AssetTransfer),
+            last_valid_round: Some(Self::calculate_last_valid_round(
                 first_valid_round,
                 last_valid_round,
-            )?,
-            txn_type: AlgorandTransactionType::AssetTransfer,
+            )?),
             note: None,
             group: None,
             lease: None,
@@ -66,18 +66,18 @@ impl AlgorandTransaction {
         last_valid_round: Option<u64>,
     ) -> Result<AlgorandTransaction> {
         Ok(Self {
-            genesis_hash,
-            first_valid_round,
             asset_amount: None,
-            sender: sender.clone(),
+            sender: Some(sender.clone()),
             asset_receiver: Some(sender),
+            genesis_hash: Some(genesis_hash),
             transfer_asset_id: Some(asset_id),
-            fee: fee.check_if_satisfies_minimum_fee()?.0,
-            last_valid_round: Self::calculate_last_valid_round(
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            txn_type: Some(AlgorandTransactionType::AssetTransfer),
+            last_valid_round: Some(Self::calculate_last_valid_round(
                 first_valid_round,
                 last_valid_round,
-            )?,
-            txn_type: AlgorandTransactionType::AssetTransfer,
+            )?),
             note: None,
             group: None,
             lease: None,

@@ -81,13 +81,13 @@ pub struct AlgorandTransaction {
     ///
     /// Paid by the sender to the `FeeSink` account to prevent denial-of-service attacks.
     /// The minimum at time of writing is 1000 MicroAlgos.
-    pub fee: u64,
+    pub fee: Option<u64>,
 
     /// ## First Valid Round
     ///
     /// The first round after which the tx is valid.
     #[serde(rename(serialize = "fv"))]
-    pub first_valid_round: u64,
+    pub first_valid_round: Option<u64>,
 
     /// ## Genesis ID
     ///
@@ -99,7 +99,7 @@ pub struct AlgorandTransaction {
     ///
     /// The hash of the genesis block of the network on which the tx is valid.
     #[serde(rename(serialize = "gh"))]
-    pub genesis_hash: AlgorandHash,
+    pub genesis_hash: Option<AlgorandHash>,
 
     /// ## Group
     ///
@@ -111,7 +111,7 @@ pub struct AlgorandTransaction {
     ///
     /// The last round after which the tx is no longer valid.
     #[serde(rename(serialize = "lv"))]
-    pub last_valid_round: u64,
+    pub last_valid_round: Option<u64>,
 
     /// ## Lease
     ///
@@ -149,13 +149,13 @@ pub struct AlgorandTransaction {
     ///
     /// The address of the account which signs the tx and pays the fee & amount.
     #[serde(rename(serialize = "snd"))]
-    pub sender: AlgorandAddress,
+    pub sender: Option<AlgorandAddress>,
 
     /// ## Txn Type
     ///
     /// Specifies the type of tx.
     #[serde(rename(serialize = "type"))]
-    pub txn_type: AlgorandTransactionType,
+    pub txn_type: Option<AlgorandTransactionType>,
 
     /// ## Asset ID
     ///
@@ -250,14 +250,23 @@ impl AlgorandTransaction {
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
             asset_amount: json.asset_amount.clone(),
-            sender: AlgorandAddress::from_str(&json.sender)?,
             transfer_asset_id: json.transfer_asset_id.clone(),
-            txn_type: AlgorandTransactionType::from_str(&json.tx_type)?,
+            txn_type: match &json.tx_type {
+                Some(tx_type_str) => Some(AlgorandTransactionType::from_str(&tx_type_str)?),
+                None => None,
+            },
+            sender: match &json.sender {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
             asset_sender: match &json.asset_sender {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
-            genesis_hash: AlgorandHash::from_str(&json.genesis_hash)?,
+            genesis_hash: match &json.genesis_hash {
+                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                None => None,
+            },
             group: match &json.group {
                 Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
                 None => None,
@@ -353,5 +362,15 @@ mod tests {
             }
             AlgorandTransaction::from_json(json).unwrap();
         });
+    }
+
+    #[test]
+    fn should_x() {
+        let default_tx = AlgorandTransaction::default();
+        //println!("{:?}", x);
+        println!(
+            "raw tx id: {}",
+            hex::encode(default_tx.to_msg_pack_bytes().unwrap())
+        );
     }
 }

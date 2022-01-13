@@ -44,13 +44,13 @@ impl AlgorandTransaction {
             .into());
         };
         Ok(Self {
-            sender,
-            genesis_hash,
-            first_valid_round,
+            sender: Some(sender),
+            genesis_hash: Some(genesis_hash),
             asset_parameters: Some(asset_parameters),
-            fee: fee.check_if_satisfies_minimum_fee()?.0,
-            last_valid_round: calculated_last_valid_round,
-            txn_type: AlgorandTransactionType::AssetConfiguration,
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            last_valid_round: Some(calculated_last_valid_round),
+            txn_type: Some(AlgorandTransactionType::AssetConfiguration),
             note: None,
             group: None,
             lease: None,
