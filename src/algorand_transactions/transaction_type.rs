@@ -1,4 +1,4 @@
-use std::{fmt, str::FromStr};
+use std::{default::Default, fmt, str::FromStr};
 
 use serde::{Deserialize, Serialize, Serializer};
 
@@ -32,6 +32,12 @@ impl Serialize for AlgorandTransactionType {
         S: Serializer,
     {
         serializer.serialize_str(&format!("{}", self))
+    }
+}
+
+impl Default for AlgorandTransactionType {
+    fn default() -> Self {
+        Self::Pay
     }
 }
 
