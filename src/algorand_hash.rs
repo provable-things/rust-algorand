@@ -64,8 +64,10 @@ impl AlgorandHash {
         hex::encode(self.0)
     }
 
-    #[cfg(test)]
-    fn from_bytes(bytes: &[Byte]) -> Result<Self> {
+    /// # From Bytes
+    ///
+    /// Convert a bytes array to an Algorand Hash. The array must contain 32 bytes.
+    pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
         let num_bytes = bytes.len();
         if num_bytes != 32 {
             return Err(format!(
