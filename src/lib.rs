@@ -24,9 +24,11 @@ mod errors;
 mod test_utils;
 
 pub use crate::{
+    algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::transaction::AlgorandTransaction,
+    errors::AppError,
 };

@@ -363,14 +363,4 @@ mod tests {
             AlgorandTransaction::from_json(json).unwrap();
         });
     }
-
-    #[test]
-    fn should_x() {
-        let default_tx = AlgorandTransaction::default();
-        //println!("{:?}", x);
-        println!(
-            "raw tx id: {}",
-            hex::encode(default_tx.to_msg_pack_bytes().unwrap())
-        );
-    }
 }
