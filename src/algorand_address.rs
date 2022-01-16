@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize, Serializer};
 
 use crate::{
     algorand_checksum::{AlgorandChecksum, CheckSummableType},
+    algorand_keys::AlgorandKeys,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
     errors::AppError,
@@ -22,7 +23,7 @@ impl AlgorandChecksum for AlgorandAddress {
     }
 
     fn to_bytes(&self) -> Result<Bytes> {
-        Ok(self.0.to_vec())
+        self.to_bytes()
     }
 
     fn get_checksum_num_bytes() -> usize {
@@ -31,6 +32,20 @@ impl AlgorandChecksum for AlgorandAddress {
 }
 
 impl AlgorandAddress {
+    /// ## Create Random
+    ///
+    /// Generate a random Algorand Address
+    pub fn create_random() -> Result<Self> {
+        AlgorandKeys::create_random().to_address()
+    }
+
+    /// ## To Bytes
+    ///
+    /// Convert the AlgorandAddress to the underlying bytes.
+    pub fn to_bytes(&self) -> Result<Bytes> {
+        Ok(self.0.to_vec())
+    }
+
     /// ## From Bytes
     ///
     /// Construct an AlgorandAddress from a slice of bytes. Errors if number of bytes are not the
@@ -155,5 +170,11 @@ mod tests {
         let result = AlgorandAddress::default().to_string();
         let expected_result = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ";
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_create_random_algorand_address() {
+        let result = AlgorandAddress::create_random();
+        assert!(result.is_ok())
     }
 }
