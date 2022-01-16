@@ -30,5 +30,5 @@ pub use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::transaction::AlgorandTransaction,
-    errors::AppError,
+    errors::AlgorandError,
 };

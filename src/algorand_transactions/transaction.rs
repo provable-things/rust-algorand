@@ -22,7 +22,7 @@ use crate::{
     },
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
@@ -330,7 +330,7 @@ impl AlgorandSignedTransaction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{algorand_transactions::test_utils::get_sample_txs_jsons, errors::AppError};
+    use crate::{algorand_transactions::test_utils::get_sample_txs_jsons, errors::AlgorandError};
 
     #[test]
     fn amount_greater_than_minimum_should_pass_amount_check() {
@@ -348,7 +348,7 @@ mod tests {
         );
         match AlgorandTransaction::check_amount_is_above_minimum(amount) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }

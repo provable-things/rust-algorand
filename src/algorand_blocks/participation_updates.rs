@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AppError};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AlgorandError};
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ParticipationUpdates {
@@ -23,7 +23,7 @@ impl ParticipationUpdates {
 }
 
 impl FromStr for ParticipationUpdates {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         ParticipationUpdatesJson::from_str(s).and_then(|json| Self::from_json(&json))
@@ -37,7 +37,7 @@ pub struct ParticipationUpdatesJson {
 }
 
 impl FromStr for ParticipationUpdatesJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

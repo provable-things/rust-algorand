@@ -13,7 +13,7 @@ use crate::{
         transaction_json::AlgorandTransactionJson,
     },
     algorand_types::Result,
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 macro_rules! write_paths_and_getter_fxn {
@@ -24,7 +24,7 @@ macro_rules! write_paths_and_getter_fxn {
             fn get_path_n(n: usize) -> Result<String> {
                 match n {
                     $($num => Ok([<SAMPLE_BLOCK_ $num>].to_string()),)*
-                    _ => Err(AppError::Custom(format!("Cannot find sample block num: {}", n).into())),
+                    _ => Err(AlgorandError::Custom(format!("Cannot find sample block num: {}", n).into())),
                 }
             }
         }

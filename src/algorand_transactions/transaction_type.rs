@@ -2,7 +2,7 @@ use std::{default::Default, fmt, str::FromStr};
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::{algorand_types::Result, errors::AppError};
+use crate::{algorand_types::Result, errors::AlgorandError};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub enum AlgorandTransactionType {
@@ -42,7 +42,7 @@ impl Default for AlgorandTransactionType {
 }
 
 impl FromStr for AlgorandTransactionType {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         match s {

@@ -98,7 +98,7 @@ impl Serialize for MicroAlgos {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AppError;
+    use crate::errors::AlgorandError;
 
     #[test]
     fn minimum_fee_should_be_correct() {
@@ -126,7 +126,7 @@ mod tests {
             .check_if_satisfies_minimum_fee()
         {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong err received!"),
         };
     }

@@ -14,7 +14,7 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 #[skip_serializing_none]
@@ -180,7 +180,7 @@ pub struct AssetParametersJson {
 }
 
 impl FromStr for AssetParametersJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

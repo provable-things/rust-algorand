@@ -3,7 +3,7 @@ use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_types::Result, errors::AppError};
+use crate::{algorand_types::Result, errors::AlgorandError};
 
 #[skip_serializing_none]
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
@@ -35,7 +35,7 @@ impl UpgradeVote {
 }
 
 impl FromStr for UpgradeVote {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         UpgradeVoteJson::from_str(s).map(|json| Self::from_json(&json))
@@ -55,7 +55,7 @@ pub struct UpgradeVoteJson {
 }
 
 impl FromStr for UpgradeVoteJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

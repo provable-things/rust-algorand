@@ -9,7 +9,7 @@ use crate::{
         ENGLISH_BIP_39_WORD_LIST,
     },
     algorand_types::{Byte, Bytes, Result},
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 type U11Array = Vec<u32>;
@@ -217,7 +217,7 @@ impl AlgorandMnemonic {
 }
 
 impl FromStr for AlgorandMnemonic {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     /// ## From Str
     ///
@@ -280,7 +280,7 @@ mod tests {
         );
         match AlgorandMnemonic::safely_get_word_from_list(index) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }
@@ -315,7 +315,7 @@ mod tests {
         );
         match AlgorandMnemonic::safely_to_words(&short_mnemonic) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }
@@ -334,7 +334,7 @@ mod tests {
         let expected_error = format!("No '{}' in english BIP39 word list!", word);
         match AlgorandMnemonic::safely_get_index_from_word(word) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }
@@ -388,7 +388,7 @@ mod tests {
         );
         match AlgorandMnemonic::check_number_of_words(incorrect_words) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }

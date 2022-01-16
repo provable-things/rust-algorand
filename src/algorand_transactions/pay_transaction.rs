@@ -57,7 +57,7 @@ mod tests {
     use crate::{
         algorand_traits::ToMsgPackBytes,
         algorand_transactions::test_utils::get_sample_pay_tx,
-        errors::AppError,
+        errors::AlgorandError,
         test_utils::get_sample_algorand_keys,
     };
 
@@ -80,7 +80,7 @@ mod tests {
             Some(last_valid_round),
         ) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received"),
         }
     }

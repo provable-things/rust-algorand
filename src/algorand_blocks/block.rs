@@ -16,7 +16,7 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 /*
@@ -246,7 +246,7 @@ impl AlgorandBlockHeader {
 }
 
 impl FromStr for AlgorandBlockHeader {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         AlgorandBlockJson::from_str(s).and_then(|json| Self::from_json(&json))
@@ -298,7 +298,7 @@ impl AlgorandBlockJson {
 }
 
 impl FromStr for AlgorandBlockJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

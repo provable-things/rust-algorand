@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AppError};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AlgorandError};
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
@@ -45,7 +45,7 @@ impl RewardsState {
 }
 
 impl FromStr for RewardsState {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         RewardsStateJson::from_str(s).and_then(|json| json.to_rewards_state())
@@ -89,7 +89,7 @@ impl RewardsStateJson {
 }
 
 impl FromStr for RewardsStateJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

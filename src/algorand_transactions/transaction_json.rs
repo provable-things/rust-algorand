@@ -6,7 +6,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_transactions::asset_config_transaction::AssetConfigTransactionJson,
     algorand_types::Result,
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 #[skip_serializing_none]
@@ -70,7 +70,7 @@ pub struct AlgorandTransactionJson {
 }
 
 impl FromStr for AlgorandTransactionJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

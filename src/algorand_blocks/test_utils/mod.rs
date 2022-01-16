@@ -3,17 +3,17 @@ use std::{fs::read_to_string, str::FromStr};
 
 use paste::paste;
 
-use crate::{algorand_blocks::block::AlgorandBlockHeader, errors::AppError};
+use crate::{algorand_blocks::block::AlgorandBlockHeader, errors::AlgorandError};
 
 macro_rules! write_paths_and_getter_fxn {
     ( $( $num:expr => $path:expr ),* ) => {
         paste! {
             $(const [<SAMPLE_BLOCK_ $num>]: &str = $path;)*
 
-            fn get_path_n(n: usize) -> Result<String, AppError> {
+            fn get_path_n(n: usize) -> Result<String, AlgorandError> {
                 match n {
                     $($num => Ok([<SAMPLE_BLOCK_ $num>].to_string()),)*
-                    _ => Err(AppError::Custom(format!("Cannot find sample block num: {}", n).into())),
+                    _ => Err(AlgorandError::Custom(format!("Cannot find sample block num: {}", n).into())),
                 }
             }
         }

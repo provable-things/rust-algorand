@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_types::{Byte, Bytes, Result},
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -101,7 +101,7 @@ impl Serialize for AlgorandHash {
 }
 
 impl FromStr for AlgorandHash {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Self::from_base_64(s)
@@ -111,7 +111,7 @@ impl FromStr for AlgorandHash {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AppError;
+    use crate::errors::AlgorandError;
 
     fn get_sample_32_bytes_of_hex() -> &'static str {
         "3832653882a0719ef4f2973a593cd5e062eb4dcd5351c4017a7fd8216327fc51"
@@ -144,7 +144,7 @@ mod tests {
         );
         match AlgorandHash::from_slice(&bytes) {
             Ok(_) => panic!("Should not have succeeded!"),
-            Err(AppError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),
         }
     }

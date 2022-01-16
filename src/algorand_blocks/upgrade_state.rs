@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_types::Result, errors::AppError};
+use crate::{algorand_types::Result, errors::AlgorandError};
 
 #[skip_serializing_none]
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
@@ -38,7 +38,7 @@ impl UpgradeState {
 }
 
 impl FromStr for UpgradeState {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         UpgradeStateJson::from_str(s).map(|json| Self::from_json(&json))
@@ -65,7 +65,7 @@ pub struct UpgradeStateJson {
 }
 
 impl FromStr for UpgradeStateJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)

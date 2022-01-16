@@ -8,7 +8,7 @@ use crate::{
     algorand_keys::AlgorandKeys,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 pub const ALGORAND_ADDRESS_NUM_BYTES: usize = 32;
@@ -106,7 +106,7 @@ impl Default for AlgorandAddress {
 }
 
 impl FromStr for AlgorandAddress {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         base32_decode(s)

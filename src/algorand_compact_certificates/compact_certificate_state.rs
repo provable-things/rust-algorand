@@ -7,7 +7,7 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_types::Result,
-    errors::AppError,
+    errors::AlgorandError,
 };
 
 /// Tracks the state of compact certificates.
@@ -46,7 +46,7 @@ pub struct CompactCertificateStateJson {
 }
 
 impl FromStr for CompactCertificateStateJson {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
@@ -54,7 +54,7 @@ impl FromStr for CompactCertificateStateJson {
 }
 
 impl FromStr for CompactCertificateState {
-    type Err = AppError;
+    type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
         CompactCertificateStateJson::from_str(s).and_then(|json| Self::from_json(&json))
