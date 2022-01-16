@@ -124,6 +124,14 @@ impl AlgorandKeys {
     }
 }
 
+impl PartialEq for AlgorandKeys {
+    fn eq(&self, other: &Self) -> bool {
+        self.to_bytes() == other.to_bytes()
+    }
+}
+
+impl Eq for AlgorandKeys {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
