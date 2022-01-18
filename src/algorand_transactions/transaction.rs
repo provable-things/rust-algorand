@@ -165,6 +165,13 @@ pub struct AlgorandTransaction {
 }
 
 impl AlgorandTransaction {
+    /// ## To Bytes
+    ///
+    /// Convert the transaction to its msgpack-ed bytes.
+    fn to_bytes(&self) -> Result<Bytes> {
+        self.to_msg_pack_bytes()
+    }
+
     fn to_msg_pack_bytes(&self) -> Result<Bytes> {
         Ok(rmp_serde::to_vec_named(&self)?)
     }
