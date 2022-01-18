@@ -13,7 +13,7 @@ use crate::{
         transaction_json::AlgorandTransactionJson,
     },
     algorand_types::Result,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 macro_rules! write_paths_and_getter_fxn {

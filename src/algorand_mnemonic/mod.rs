@@ -9,7 +9,7 @@ use crate::{
         ENGLISH_BIP_39_WORD_LIST,
     },
     algorand_types::{Byte, Bytes, Result},
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 type U11Array = Vec<u32>;

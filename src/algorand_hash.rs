@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_types::{Byte, Bytes, Result},
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -111,7 +111,7 @@ impl FromStr for AlgorandHash {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AlgorandError;
+    use crate::algorand_errors::AlgorandError;
 
     fn get_sample_32_bytes_of_hex() -> &'static str {
         "3832653882a0719ef4f2973a593cd5e062eb4dcd5351c4017a7fd8216327fc51"

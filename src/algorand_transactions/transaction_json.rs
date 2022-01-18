@@ -6,7 +6,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_transactions::asset_config_transaction::AssetConfigTransactionJson,
     algorand_types::Result,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]

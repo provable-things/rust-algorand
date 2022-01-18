@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AlgorandError};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, algorand_errors::AlgorandError};
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]

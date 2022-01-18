@@ -20,7 +20,7 @@ mod algorand_traits;
 mod algorand_transactions;
 mod algorand_types;
 mod crypto_utils;
-mod errors;
+mod algorand_errors;
 mod test_utils;
 
 pub use crate::{
@@ -31,5 +31,5 @@ pub use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::transaction::AlgorandTransaction,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };

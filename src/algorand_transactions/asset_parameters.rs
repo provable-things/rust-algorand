@@ -14,7 +14,7 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]

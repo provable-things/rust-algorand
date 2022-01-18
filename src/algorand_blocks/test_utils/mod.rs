@@ -3,7 +3,7 @@ use std::{fs::read_to_string, str::FromStr};
 
 use paste::paste;
 
-use crate::{algorand_blocks::block::AlgorandBlockHeader, errors::AlgorandError};
+use crate::{algorand_blocks::block_header::AlgorandBlockHeader, algorand_errors::AlgorandError};
 
 macro_rules! write_paths_and_getter_fxn {
     ( $( $num:expr => $path:expr ),* ) => {
@@ -30,6 +30,7 @@ pub fn get_sample_block_json_str_n(n: usize) -> String {
 }
 
 pub fn get_sample_block_header_n(n: usize) -> AlgorandBlockHeader {
+    // FIXME need to get the block!
     AlgorandBlockHeader::from_str(&get_sample_block_json_str_n(n)).unwrap()
 }
 

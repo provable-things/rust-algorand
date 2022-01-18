@@ -3,7 +3,7 @@ use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_types::Result, errors::AlgorandError};
+use crate::{algorand_types::Result, algorand_errors::AlgorandError};
 
 #[skip_serializing_none]
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]

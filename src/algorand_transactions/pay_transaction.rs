@@ -57,7 +57,7 @@ mod tests {
     use crate::{
         algorand_traits::ToMsgPackBytes,
         algorand_transactions::test_utils::get_sample_pay_tx,
-        errors::AlgorandError,
+        algorand_errors::AlgorandError,
         test_utils::get_sample_algorand_keys,
     };
 

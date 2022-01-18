@@ -1,6 +1,6 @@
 use std::result;
 
-use crate::errors::AlgorandError;
+use crate::algorand_errors::AlgorandError;
 
 pub type Byte = u8;
 pub type Bytes = Vec<Byte>;

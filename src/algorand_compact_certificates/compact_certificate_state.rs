@@ -7,7 +7,7 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_types::Result,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 /// Tracks the state of compact certificates.

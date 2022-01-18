@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result, errors::AlgorandError};
+use crate::{algorand_address::AlgorandAddress, algorand_types::Result, algorand_errors::AlgorandError};
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ParticipationUpdates {

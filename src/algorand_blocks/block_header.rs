@@ -16,7 +16,7 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
-    errors::AlgorandError,
+    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]

@@ -98,7 +98,7 @@ impl Serialize for MicroAlgos {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::errors::AlgorandError;
+    use crate::algorand_errors::AlgorandError;
 
     #[test]
     fn minimum_fee_should_be_correct() {
