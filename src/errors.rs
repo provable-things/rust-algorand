@@ -34,5 +34,9 @@ quick_error! {
             from()
             display("✘ Serde json error: {}", err)
         }
+        RmpError(err: rmp_serde::decode::Error) {
+            from()
+            display("✘ Rust message pack error:: {}", err)
+        }
     }
 }
