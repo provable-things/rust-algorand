@@ -11,6 +11,8 @@ mod algorand_blocks;
 mod algorand_checksum;
 mod algorand_compact_certificates;
 mod algorand_constants;
+mod algorand_encoding;
+mod algorand_errors;
 mod algorand_hash;
 mod algorand_keys;
 mod algorand_micro_algos;
@@ -20,16 +22,15 @@ mod algorand_traits;
 mod algorand_transactions;
 mod algorand_types;
 mod crypto_utils;
-mod algorand_errors;
 mod test_utils;
 
 pub use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::block::AlgorandBlock,
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::transaction::AlgorandTransaction,
-    algorand_errors::AlgorandError,
 };
