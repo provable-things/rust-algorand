@@ -4,7 +4,11 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_address::AlgorandAddress, algorand_types::Result, algorand_errors::AlgorandError};
+use crate::{
+    algorand_address::AlgorandAddress,
+    algorand_errors::AlgorandError,
+    algorand_types::Result,
+};
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
@@ -54,7 +58,7 @@ impl FromStr for RewardsState {
 
 /// Represents the global parameters controlling the rate at which accounts accrue rewards.
 #[skip_serializing_none]
-#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RewardsStateJson {
     #[serde(rename = "fee-sink")]
     pub fee_sink: String,

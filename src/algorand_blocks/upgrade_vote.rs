@@ -3,7 +3,7 @@ use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
-use crate::{algorand_types::Result, algorand_errors::AlgorandError};
+use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 
 #[skip_serializing_none]
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
@@ -42,7 +42,7 @@ impl FromStr for UpgradeVote {
     }
 }
 
-#[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeVoteJson {
     #[serde(rename = "upgrade-propose")]
     pub upgrade_propose: Option<String>,
