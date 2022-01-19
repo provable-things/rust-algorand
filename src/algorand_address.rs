@@ -1,20 +1,21 @@
 use std::{default::Default, str::FromStr};
 
 use base64::encode as base64_encode;
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
     algorand_checksum::{AlgorandChecksum, CheckSummableType},
+    algorand_encoding::U8_32Visitor,
+    algorand_errors::AlgorandError,
     algorand_keys::AlgorandKeys,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
-    algorand_errors::AlgorandError,
 };
 
 pub const ALGORAND_ADDRESS_NUM_BYTES: usize = 32;
 pub const ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES: usize = 4;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlgorandAddress([Byte; ALGORAND_ADDRESS_NUM_BYTES]);
 
 impl AlgorandChecksum for AlgorandAddress {
@@ -87,6 +88,17 @@ impl Serialize for AlgorandAddress {
         S: Serializer,
     {
         serializer.serialize_bytes(&self.to_pub_key_bytes())
+    }
+}
+
+impl<'de> Deserialize<'de> for AlgorandAddress {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(AlgorandAddress(
+            deserializer.deserialize_bytes(U8_32Visitor)?,
+        ))
     }
 }
 

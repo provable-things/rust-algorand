@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 use crate::{
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_types::Result,
-    algorand_errors::AlgorandError,
 };
 
 /// Tracks the state of compact certificates.

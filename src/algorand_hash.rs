@@ -2,12 +2,13 @@ use std::{fmt, str::FromStr};
 
 use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
-    algorand_types::{Byte, Bytes, Result},
+    algorand_encoding::U8_32Visitor,
     algorand_errors::AlgorandError,
+    algorand_types::{Byte, Bytes, Result},
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -16,7 +17,7 @@ const ALGORAND_HASH_NUM_BYTES: usize = 32;
 ///
 /// Stuct to hold the Algorand Hash type, and have the correct serialization and display formats
 /// implemented upon it.
-#[derive(Debug, Clone, PartialEq, Eq, Default, Constructor, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Constructor)]
 pub struct AlgorandHash([Byte; ALGORAND_HASH_NUM_BYTES]);
 
 impl AlgorandHash {
@@ -97,6 +98,12 @@ impl Serialize for AlgorandHash {
         S: Serializer,
     {
         serializer.serialize_bytes(&self.0)
+    }
+}
+
+impl<'de> Deserialize<'de> for AlgorandHash {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        Ok(AlgorandHash(deserializer.deserialize_bytes(U8_32Visitor)?))
     }
 }
 

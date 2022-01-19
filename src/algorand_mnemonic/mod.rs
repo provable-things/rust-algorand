@@ -4,12 +4,12 @@ mod english_bip39_wordlist;
 
 use crate::{
     algorand_checksum::{AlgorandChecksum, CheckSummableType},
+    algorand_errors::AlgorandError,
     algorand_mnemonic::english_bip39_wordlist::{
         ENGLISH_BIP_39_WORDS_HASH_MAP,
         ENGLISH_BIP_39_WORD_LIST,
     },
     algorand_types::{Byte, Bytes, Result},
-    algorand_errors::AlgorandError,
 };
 
 type U11Array = Vec<u32>;
