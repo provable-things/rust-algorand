@@ -12,15 +12,15 @@ use crate::{
         upgrade_vote::UpgradeVoteJson,
     },
     algorand_compact_certificates::compact_certificate_state::CompactCertificateStateJson,
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
-    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlockHeader {
     #[serde(rename = "earn", default)]
     rewards_level: Option<u64>,
@@ -35,7 +35,7 @@ pub struct AlgorandBlockHeader {
     rewards_residue: Option<u64>,
 
     #[serde(rename = "gen")]
-    genesis_id: String,
+    genesis_id: Option<String>,
 
     #[serde(rename = "gh")]
     genesis_hash: AlgorandHash,
@@ -101,6 +101,10 @@ pub struct AlgorandBlockHeader {
 }
 
 impl AlgorandBlockHeader {
+    pub fn round(&self) -> u64 {
+        self.round
+    }
+
     fn to_msg_pack_bytes(&self) -> Result<Bytes> {
         Ok(rmp_serde::to_vec_named(&self)?)
     }
@@ -122,6 +126,7 @@ impl AlgorandBlockHeader {
     ///
     /// Convert the block header to a msgpack-ed bytes.
     pub fn to_bytes(&self) -> Result<Bytes> {
+        // TODO Test!
         self.to_msg_pack_bytes()
     }
 
@@ -129,7 +134,7 @@ impl AlgorandBlockHeader {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_with_prefix()?))
     }
 
-    fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
+    pub fn from_json(json: &AlgorandBlockHeaderJson) -> Result<Self> {
         Ok(Self {
             genesis_hash: AlgorandHash::from_str(&json.genesis_hash)?,
             genesis_id: json.genesis_id.clone(),
@@ -243,12 +248,12 @@ impl FromStr for AlgorandBlockHeader {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
-        AlgorandBlockJson::from_str(s).and_then(|json| Self::from_json(&json))
+        AlgorandBlockHeaderJson::from_str(s).and_then(|json| Self::from_json(&json))
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct AlgorandBlockJson {
+#[derive(Debug, Clone, Default, Eq, PartialEq, Serialize, Deserialize)]
+pub struct AlgorandBlockHeaderJson {
     #[serde(rename = "compact-certificates")]
     compact_certificates: Option<CompactCertificateStateJson>,
 
@@ -256,7 +261,7 @@ pub struct AlgorandBlockJson {
     genesis_hash: String,
 
     #[serde(rename = "genesis-id")]
-    genesis_id: String,
+    genesis_id: Option<String>,
 
     #[serde(rename = "previous-block-hash")]
     previous_block_hash: String,
@@ -285,13 +290,13 @@ pub struct AlgorandBlockJson {
     participation_updates: Option<ParticipationUpdatesJson>,
 }
 
-impl AlgorandBlockJson {
+impl AlgorandBlockHeaderJson {
     fn to_str(&self) -> Result<String> {
         Ok(serde_json::to_string(self)?)
     }
 }
 
-impl FromStr for AlgorandBlockJson {
+impl FromStr for AlgorandBlockHeaderJson {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
