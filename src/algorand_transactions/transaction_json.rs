@@ -1,6 +1,7 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -10,7 +11,7 @@ use crate::{
 };
 
 #[skip_serializing_none]
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct AlgorandTransactionJson {
     pub sender: Option<String>,
 
@@ -77,10 +78,19 @@ impl FromStr for AlgorandTransactionJson {
     }
 }
 
+impl Display for AlgorandTransactionJson {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", json!(self))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::algorand_transactions::test_utils::get_sample_txs_json_strs_n;
+    use crate::algorand_transactions::test_utils::{
+        get_sample_txs_json_strs_n,
+        get_sample_txs_jsons,
+    };
 
     #[test]
     fn should_get_txs_from_strs() {
@@ -90,6 +100,23 @@ mod tests {
             if result.is_err() {
                 println!("{}", tx_json_str);
                 result.unwrap();
+            }
+        });
+    }
+
+    #[test]
+    fn should_serde_transaction_jsons_to_str() {
+        let txs = get_sample_txs_jsons(0);
+        let strs = txs.iter().map(|tx| tx.to_string()).collect::<Vec<String>>();
+        let results = strs
+            .iter()
+            .map(|tx_str| AlgorandTransactionJson::from_str(&tx_str))
+            .collect::<Result<Vec<AlgorandTransactionJson>>>()
+            .unwrap();
+        results.iter().enumerate().for_each(|(i, tx)| {
+            if *tx != txs[i] {
+                println!("{}", tx);
+                assert!(false, "Tx does not match original tx!");
             }
         });
     }
