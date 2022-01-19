@@ -5,5 +5,5 @@ mod asset_transfer_transaction;
 mod pay_transaction;
 mod test_utils;
 pub(crate) mod transaction;
-mod transaction_json;
+pub(crate) mod transaction_json;
 mod transaction_type;

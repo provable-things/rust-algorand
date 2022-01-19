@@ -2,7 +2,7 @@ use std::{default::Default, fmt, str::FromStr};
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::{algorand_types::Result, algorand_errors::AlgorandError};
+use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub enum AlgorandTransactionType {

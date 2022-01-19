@@ -10,6 +10,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MICRO_ALGOS_MULTIPLIER,
@@ -22,7 +23,6 @@ use crate::{
     },
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
-    algorand_errors::AlgorandError,
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
@@ -337,7 +337,10 @@ impl AlgorandSignedTransaction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{algorand_transactions::test_utils::get_sample_txs_jsons, algorand_errors::AlgorandError};
+    use crate::{
+        algorand_errors::AlgorandError,
+        algorand_transactions::test_utils::get_sample_txs_jsons,
+    };
 
     #[test]
     fn amount_greater_than_minimum_should_pass_amount_check() {

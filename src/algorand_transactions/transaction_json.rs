@@ -4,9 +4,9 @@ use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 use crate::{
+    algorand_errors::AlgorandError,
     algorand_transactions::asset_config_transaction::AssetConfigTransactionJson,
     algorand_types::Result,
-    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]

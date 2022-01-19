@@ -6,6 +6,7 @@ use serde_json::Value as JsonValue;
 
 use crate::{
     algorand_address::AlgorandAddress,
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_transactions::{
@@ -13,7 +14,6 @@ use crate::{
         transaction_json::AlgorandTransactionJson,
     },
     algorand_types::Result,
-    algorand_errors::AlgorandError,
 };
 
 macro_rules! write_paths_and_getter_fxn {

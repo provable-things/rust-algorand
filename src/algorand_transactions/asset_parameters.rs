@@ -7,6 +7,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
+    algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_transactions::{
@@ -14,7 +15,6 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
-    algorand_errors::AlgorandError,
 };
 
 #[skip_serializing_none]

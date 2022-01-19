@@ -55,9 +55,9 @@ impl AlgorandTransaction {
 mod tests {
     use super::*;
     use crate::{
+        algorand_errors::AlgorandError,
         algorand_traits::ToMsgPackBytes,
         algorand_transactions::test_utils::get_sample_pay_tx,
-        algorand_errors::AlgorandError,
         test_utils::get_sample_algorand_keys,
     };
 
