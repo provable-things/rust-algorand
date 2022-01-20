@@ -2,7 +2,7 @@
 
 use std::str::FromStr;
 
-use base64::decode as base64_decode;
+use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -17,6 +17,7 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
+        asset_config_transaction::AssetConfigTransactionJson,
         asset_parameters::AssetParameters,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
@@ -309,6 +310,43 @@ impl AlgorandTransaction {
             },
         })
     }
+
+    pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
+        Ok(AlgorandTransactionJson {
+            fee: self.fee.clone(),
+            amount: self.amount.clone(),
+            asset_id: self.asset_id.clone(),
+            genesis_id: self.genesis_id.clone(),
+            asset_amount: self.asset_amount.clone(),
+            last_valid: self.last_valid_round.clone(),
+            first_valid: self.first_valid_round.clone(),
+            transfer_asset_id: self.transfer_asset_id.clone(),
+            group: self.group.as_ref().map(|x| x.to_string()),
+            lease: self.lease.as_ref().map(|x| x.to_string()),
+            sender: self.sender.as_ref().map(|x| x.to_string()),
+            tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
+            receiver: self.receiver.as_ref().map(|x| x.to_string()),
+            rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
+            note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
+            asset_sender: self.asset_sender.as_ref().map(|x| x.to_string()),
+            genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
+            asset_receiver: self.asset_receiver.as_ref().map(|x| x.to_string()),
+            close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
+            asset_config_transaction: match &self.asset_parameters {
+                None => None,
+                Some(params) => Some(AssetConfigTransactionJson::new(
+                    match &self.asset_id {
+                        Some(id) => Result::Ok(*id),
+                        // FIXME
+                        //None => Result::Err("Tx with asset config params but no asset
+                        // ID!".into())
+                        None => Result::Ok(0),
+                    }?,
+                    params.to_json()?,
+                )),
+            },
+        })
+    }
 }
 
 /// ## Algorand Signed Transaction
@@ -372,5 +410,45 @@ mod tests {
             }
             AlgorandTransaction::from_json(json).unwrap();
         });
+    }
+
+    #[test]
+    fn should_serde_algorand_transactions_to_and_from_json() {
+        let jsons = get_sample_txs_jsons(0);
+        let txs = jsons
+            .iter()
+            .map(|json| AlgorandTransaction::from_json(&json))
+            .collect::<Result<Vec<AlgorandTransaction>>>()
+            .unwrap();
+        let results = txs
+            .iter()
+            .map(|tx| tx.to_json())
+            .collect::<Result<Vec<AlgorandTransactionJson>>>()
+            .unwrap();
+        results.iter().enumerate().for_each(|(i, json)| {
+            assert_eq!(json.fee, jsons[i].fee);
+            assert_eq!(json.note, jsons[i].note);
+            assert_eq!(json.group, jsons[i].group);
+            assert_eq!(json.lease, jsons[i].lease);
+            assert_eq!(json.amount, jsons[i].amount);
+            assert_eq!(json.sender, jsons[i].sender);
+            assert_eq!(json.tx_type, jsons[i].tx_type);
+            assert_eq!(json.receiver, jsons[i].receiver);
+            assert_eq!(json.rekey_to, jsons[i].rekey_to);
+            assert_eq!(json.asset_id, jsons[i].asset_id);
+            assert_eq!(json.genesis_id, jsons[i].genesis_id);
+            assert_eq!(json.last_valid, jsons[i].last_valid);
+            assert_eq!(json.first_valid, jsons[i].first_valid);
+            assert_eq!(json.asset_amount, jsons[i].asset_amount);
+            assert_eq!(json.asset_sender, jsons[i].asset_sender);
+            assert_eq!(json.genesis_hash, jsons[i].genesis_hash);
+            assert_eq!(json.asset_receiver, jsons[i].asset_receiver);
+            assert_eq!(json.transfer_asset_id, jsons[i].transfer_asset_id);
+            assert_eq!(json.close_remainder_to, jsons[i].close_remainder_to);
+            assert_eq!(
+                json.asset_config_transaction,
+                jsons[i].asset_config_transaction
+            );
+        })
     }
 }
