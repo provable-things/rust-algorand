@@ -9,13 +9,13 @@ use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeVote {
     #[serde(rename = "upgradeprop")]
-    upgrade_propose: Option<String>,
+    pub upgrade_propose: Option<String>,
 
     #[serde(rename = "upgradedelay")]
-    upgrade_delay: Option<u64>,
+    pub upgrade_delay: Option<u64>,
 
     #[serde(rename = "upgradeyes")]
-    upgrade_approve: Option<bool>,
+    pub upgrade_approve: Option<bool>,
 }
 
 impl UpgradeVote {
@@ -30,6 +30,14 @@ impl UpgradeVote {
                 Some(thing) => Some(thing),
             },
             upgrade_propose: json.upgrade_propose.clone(),
+        }
+    }
+
+    pub fn to_json(&self) -> UpgradeVoteJson {
+        UpgradeVoteJson {
+            upgrade_delay: self.upgrade_delay,
+            upgrade_approve: self.upgrade_approve,
+            upgrade_propose: self.upgrade_propose.clone(),
         }
     }
 }
@@ -52,6 +60,14 @@ pub struct UpgradeVoteJson {
 
     #[serde(rename = "upgrade-approve")]
     pub upgrade_approve: Option<bool>,
+}
+
+impl UpgradeVoteJson {
+    pub fn is_empty(&self) -> bool {
+        self.upgrade_delay.is_none()
+            && self.upgrade_propose.is_none()
+            && self.upgrade_approve.is_none()
+    }
 }
 
 impl FromStr for UpgradeVoteJson {

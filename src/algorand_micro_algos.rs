@@ -21,7 +21,7 @@ impl MicroAlgos {
         Ok(Self(algos / MICRO_ALGOS_MULTIPLIER))
     }
 
-    fn to_algos(&self) -> u64 {
+    pub fn to_algos(&self) -> u64 {
         self.0 * MICRO_ALGOS_MULTIPLIER
     }
 

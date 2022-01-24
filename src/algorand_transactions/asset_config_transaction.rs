@@ -1,3 +1,4 @@
+use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
@@ -14,7 +15,7 @@ use crate::{
     algorand_types::Result,
 };
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Constructor)]
 pub struct AssetConfigTransactionJson {
     #[serde(rename = "asset-id")]
     pub asset_id: u64,

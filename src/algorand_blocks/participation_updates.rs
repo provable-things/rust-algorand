@@ -11,18 +11,33 @@ use crate::{
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ParticipationUpdates {
     #[serde(rename = "partupdrmv")]
-    expired_participation_accounts: Vec<AlgorandAddress>,
+    pub expired_participation_accounts: Option<Vec<AlgorandAddress>>,
 }
 
 impl ParticipationUpdates {
     pub fn from_json(json: &ParticipationUpdatesJson) -> Result<Self> {
         Ok(Self {
-            expired_participation_accounts: json
-                .expired_participation_accounts
-                .iter()
-                .map(|address_str| AlgorandAddress::from_str(address_str))
-                .collect::<Result<Vec<AlgorandAddress>>>()?,
+            expired_participation_accounts: match &json.expired_participation_accounts {
+                Some(address_strs) => Some(
+                    address_strs
+                        .iter()
+                        .map(|address_str| AlgorandAddress::from_str(address_str))
+                        .collect::<Result<Vec<AlgorandAddress>>>()?,
+                ),
+                None => None,
+            },
         })
+    }
+
+    pub fn to_json(&self) -> ParticipationUpdatesJson {
+        ParticipationUpdatesJson {
+            expired_participation_accounts: match &self.expired_participation_accounts {
+                None => None,
+                Some(expired_accounts) => {
+                    Some(expired_accounts.iter().map(|x| x.to_string()).collect())
+                },
+            },
+        }
     }
 }
 
@@ -34,10 +49,16 @@ impl FromStr for ParticipationUpdates {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct ParticipationUpdatesJson {
     #[serde(rename = "expired-participation-accounts")]
-    pub expired_participation_accounts: Vec<String>,
+    pub expired_participation_accounts: Option<Vec<String>>,
+}
+
+impl ParticipationUpdatesJson {
+    pub fn is_empty(&self) -> bool {
+        self.expired_participation_accounts.is_none()
+    }
 }
 
 impl FromStr for ParticipationUpdatesJson {

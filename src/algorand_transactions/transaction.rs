@@ -131,7 +131,7 @@ pub struct AlgorandTransaction {
     /// # Note
     /// #
     /// Any data up to 1000 bytes.
-    #[serde(rename = "note", with = "serde_bytes")]
+    #[serde(with = "serde_bytes")]
     pub note: Option<Bytes>,
 
     /// ## Receiver

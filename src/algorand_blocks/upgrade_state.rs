@@ -10,19 +10,19 @@ use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 #[derive(Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeState {
     #[serde(rename = "proto")]
-    current_protocol: String,
+    pub current_protocol: Option<String>,
 
     #[serde(rename = "nextproto")]
-    next_protocol: Option<String>,
+    pub next_protocol: Option<String>,
 
     #[serde(rename = "nextyes")]
-    next_protocol_approvals: Option<u64>,
+    pub next_protocol_approvals: Option<u64>,
 
     #[serde(rename = "nextbefore")]
-    next_protocol_vote_before: Option<u64>,
+    pub next_protocol_vote_before: Option<u64>,
 
     #[serde(rename = "nextswitch")]
-    next_protocol_switch_on: Option<u64>,
+    pub next_protocol_switch_on: Option<u64>,
 }
 
 impl UpgradeState {
@@ -33,6 +33,16 @@ impl UpgradeState {
             next_protocol_approvals: json.next_protocol_approvals,
             next_protocol_switch_on: json.next_protocol_switch_on,
             next_protocol_vote_before: json.next_protocol_vote_before,
+        }
+    }
+
+    pub fn to_json(&self) -> UpgradeStateJson {
+        UpgradeStateJson {
+            next_protocol: self.next_protocol.clone(),
+            current_protocol: self.current_protocol.clone(),
+            next_protocol_approvals: self.next_protocol_approvals,
+            next_protocol_switch_on: self.next_protocol_switch_on,
+            next_protocol_vote_before: self.next_protocol_vote_before,
         }
     }
 }
@@ -49,7 +59,7 @@ impl FromStr for UpgradeState {
 #[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct UpgradeStateJson {
     #[serde(rename = "current-protocol")]
-    pub current_protocol: String,
+    pub current_protocol: Option<String>,
 
     #[serde(rename = "next-protocol")]
     pub next_protocol: Option<String>,
@@ -62,6 +72,16 @@ pub struct UpgradeStateJson {
 
     #[serde(rename = "next-protocol-switch-on")]
     pub next_protocol_switch_on: Option<u64>,
+}
+
+impl UpgradeStateJson {
+    pub fn is_empty(&self) -> bool {
+        self.next_protocol.is_none()
+            && self.current_protocol.is_none()
+            && self.next_protocol_switch_on.is_none()
+            && self.next_protocol_approvals.is_none()
+            && self.next_protocol_vote_before.is_none()
+    }
 }
 
 impl FromStr for UpgradeStateJson {

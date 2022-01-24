@@ -20,29 +20,67 @@ pub struct CompactCertificateState {
     /// For blocks that are not a multiple of ConsensusParams.CompactCertRounds, this value is
     /// zero.
     #[serde(rename = "v")]
-    compact_cert_voters: AlgorandHash,
+    pub compact_cert_voters: Option<AlgorandHash>,
 
     /// The total number of MicroAlgos held by the accounts in `compact_cert_voters`
     /// (or zero, if the merkle root is zero). This is intended for computing the threshold
     /// of votes to expect from `compact_cert_voters`.
     #[serde(rename = "t")]
-    compact_cert_voters_total: MicroAlgos,
+    pub compact_cert_voters_total: Option<MicroAlgos>,
 
     /// The next round for which we will accept a CompactCert transaction.
     #[serde(rename = "n")]
-    compact_cert_next_round: u64,
+    pub compact_cert_next_round: Option<u64>,
+}
+
+impl CompactCertificateState {
+    pub fn from_json(json: &CompactCertificateStateJson) -> Result<Self> {
+        Ok(Self {
+            compact_cert_next_round: json.compact_cert_next_round.clone(),
+            compact_cert_voters_total: match json.compact_cert_voters_total {
+                Some(algos) => Some(MicroAlgos(algos)),
+                None => None,
+            },
+            compact_cert_voters: match &json.compact_cert_voters {
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
+                None => None,
+            },
+        })
+    }
+
+    pub fn to_json(&self) -> CompactCertificateStateJson {
+        CompactCertificateStateJson {
+            compact_cert_next_round: self.compact_cert_next_round.clone(),
+            compact_cert_voters_total: match &self.compact_cert_voters_total {
+                Some(micro_algos) => Some(micro_algos.to_algos()),
+                None => None,
+            },
+            compact_cert_voters: match &self.compact_cert_voters {
+                Some(address) => Some(address.to_string()),
+                None => None,
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CompactCertificateStateJson {
     #[serde(rename = "compact-cert-voters")]
-    pub compact_cert_voters: String,
+    pub compact_cert_voters: Option<String>,
 
     #[serde(rename = "compact-cert-next-round")]
-    pub compact_cert_next_round: u64,
+    pub compact_cert_next_round: Option<u64>,
 
     #[serde(rename = "compact-cert-voters-total")]
-    pub compact_cert_voters_total: u64,
+    pub compact_cert_voters_total: Option<u64>,
+}
+
+impl CompactCertificateStateJson {
+    pub fn is_empty(&self) -> bool {
+        self.compact_cert_voters.is_none()
+            && self.compact_cert_next_round.is_none()
+            && self.compact_cert_voters_total.is_none()
+    }
 }
 
 impl FromStr for CompactCertificateStateJson {
@@ -58,23 +96,5 @@ impl FromStr for CompactCertificateState {
 
     fn from_str(s: &str) -> Result<Self> {
         CompactCertificateStateJson::from_str(s).and_then(|json| Self::from_json(&json))
-    }
-}
-
-impl CompactCertificateState {
-    pub fn from_json(json: &CompactCertificateStateJson) -> Result<Self> {
-        Ok(Self {
-            compact_cert_next_round: json.compact_cert_next_round,
-            compact_cert_voters_total: MicroAlgos(json.compact_cert_voters_total),
-            compact_cert_voters: AlgorandHash::from_str(&json.compact_cert_voters)?,
-        })
-    }
-
-    fn to_json(&self) -> CompactCertificateStateJson {
-        CompactCertificateStateJson {
-            compact_cert_next_round: self.compact_cert_next_round,
-            compact_cert_voters: self.compact_cert_voters.to_string(),
-            compact_cert_voters_total: self.compact_cert_voters_total.0,
-        }
     }
 }

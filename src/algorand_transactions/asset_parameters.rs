@@ -141,6 +141,22 @@ impl AssetParameters {
             },
         })
     }
+
+    pub fn to_json(&self) -> Result<AssetParametersJson> {
+        Ok(AssetParametersJson {
+            decimals: self.decimals,
+            unit_name: self.unit_name.clone(),
+            asset_url: self.asset_url.clone(),
+            asset_name: self.asset_name.clone(),
+            total_base_units: self.total_base_units,
+            default_frozen: self.default_frozen.clone(),
+            metadata_hash: self.metadata_hash.as_ref().map(|x| x.to_string()),
+            freeze_address: self.freeze_address.as_ref().map(|x| x.to_string()),
+            reserve_address: self.reserve_address.as_ref().map(|x| x.to_string()),
+            manager_address: self.manager_address.as_ref().map(|x| x.to_string()),
+            clawback_address: self.clawback_address.as_ref().map(|x| x.to_string()),
+        })
+    }
 }
 
 #[skip_serializing_none]
