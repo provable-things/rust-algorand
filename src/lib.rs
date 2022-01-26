@@ -13,6 +13,7 @@ mod algorand_compact_certificates;
 mod algorand_constants;
 mod algorand_encoding;
 mod algorand_errors;
+mod algorand_genesis_id;
 mod algorand_hash;
 mod algorand_keys;
 mod algorand_micro_algos;

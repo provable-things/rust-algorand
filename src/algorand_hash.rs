@@ -8,6 +8,7 @@ use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
     algorand_encoding::U8_32Visitor,
     algorand_errors::AlgorandError,
+    algorand_genesis_id::AlgorandGenesisId,
     algorand_types::{Byte, Bytes, Result},
 };
 
@@ -21,6 +22,10 @@ const ALGORAND_HASH_NUM_BYTES: usize = 32;
 pub struct AlgorandHash([Byte; ALGORAND_HASH_NUM_BYTES]);
 
 impl AlgorandHash {
+    pub fn from_genesis_id(genesis_id: &str) -> Result<Self> {
+        AlgorandGenesisId::from_str(genesis_id)?.hash()
+    }
+
     /// ## From Slice
     ///
     /// Construct an AlgorandHash type from a slice of bytes. Errors if number of bytes are not the
