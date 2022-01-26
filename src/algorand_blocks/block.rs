@@ -24,8 +24,8 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlock {
-    block_header: AlgorandBlockHeader,
-    transactions: Option<Vec<AlgorandTransaction>>,
+    pub block_header: AlgorandBlockHeader,
+    pub transactions: Option<Vec<AlgorandTransaction>>,
 }
 
 impl Default for AlgorandBlock {
