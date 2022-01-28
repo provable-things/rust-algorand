@@ -6,13 +6,19 @@ use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_errors::AlgorandError,
-    algorand_transactions::asset_config_transaction::AssetConfigTransactionJson,
+    algorand_transactions::{
+        asset_config_transaction::AssetConfigTransactionJson,
+        asset_freeze_transaction::AssetFreezeTransactionJson,
+    },
     algorand_types::Result,
 };
 
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct AlgorandTransactionJson {
+    #[serde(rename = "asset-freeze-transaction")]
+    pub asset_freeze_transaction: Option<AssetFreezeTransactionJson>,
+
     pub sender: Option<String>,
 
     pub fee: Option<u64>,

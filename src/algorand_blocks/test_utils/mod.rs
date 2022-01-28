@@ -36,7 +36,8 @@ macro_rules! write_paths_and_getter_fxn {
 
 write_paths_and_getter_fxn!(
     0 => "src/algorand_blocks/test_utils/block-17962555.json",
-    1 => "src/algorand_blocks/test_utils/block-17962556.json"
+    1 => "src/algorand_blocks/test_utils/block-17962556.json",
+    2 => "src/algorand_blocks/test_utils/block-17962572.json"
 );
 
 pub fn get_sample_block_json_str_n(n: usize) -> String {

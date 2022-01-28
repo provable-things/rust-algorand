@@ -46,8 +46,11 @@ impl AlgorandTransaction {
             receiver: None,
             genesis_id: None,
             asset_sender: None,
+            asset_freeze_id: None,
             asset_parameters: None,
             close_remainder_to: None,
+            asset_freeze_status: None,
+            asset_freeze_address: None,
         })
     }
 
@@ -87,8 +90,11 @@ impl AlgorandTransaction {
             receiver: None,
             genesis_id: None,
             asset_sender: None,
+            asset_freeze_id: None,
             asset_parameters: None,
             close_remainder_to: None,
+            asset_freeze_status: None,
+            asset_freeze_address: None,
         })
     }
 }

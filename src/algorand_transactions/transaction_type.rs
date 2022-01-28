@@ -7,6 +7,7 @@ use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub enum AlgorandTransactionType {
     Pay,
+    AssetFreeze,
     AssetTransfer,
     ApplicationCall,
     AssetConfiguration,
@@ -16,6 +17,7 @@ impl fmt::Display for AlgorandTransactionType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Pay => write!(f, "pay"),
+            Self::AssetFreeze => write!(f, "afrz"),
             Self::AssetTransfer => write!(f, "axfer"),
             Self::ApplicationCall => write!(f, "appl"),
             Self::AssetConfiguration => write!(f, "acfg"),
@@ -47,6 +49,7 @@ impl FromStr for AlgorandTransactionType {
     fn from_str(s: &str) -> Result<Self> {
         match s {
             "pay" => Ok(Self::Pay),
+            "afrz" => Ok(Self::AssetFreeze),
             "axfer" => Ok(Self::AssetTransfer),
             "appl" => Ok(Self::ApplicationCall),
             "acfg" => Ok(Self::AssetConfiguration),

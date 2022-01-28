@@ -18,6 +18,7 @@ use crate::{
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
         asset_config_transaction::AssetConfigTransactionJson,
+        asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
@@ -40,6 +41,12 @@ pub struct AlgorandTransaction {
     /// The amount of an asset to transfer.
     #[serde(rename(serialize = "aamt"))]
     pub asset_amount: Option<u64>,
+
+    /// ## Asset Freeze Status
+    ///
+    /// The new freeze status of the asset.
+    #[serde(rename(serialize = "afrz"))]
+    pub asset_freeze_status: Option<bool>,
 
     /// ## Amount
     ///
@@ -77,6 +84,18 @@ pub struct AlgorandTransaction {
     /// All remaining funds after the tx fee & amount are paid are be transferred to this address.
     #[serde(rename(serialize = "close"))]
     pub close_remainder_to: Option<AlgorandAddress>,
+
+    /// ## Asset Freeze Address
+    ///
+    /// Address of the account whose asset is being frozen or thawed.
+    #[serde(rename(serialize = "fadd"))]
+    pub asset_freeze_address: Option<AlgorandAddress>,
+
+    /// ## Asset Freeze ID
+    ///
+    /// ID of the asset being frozen or thawed.
+    #[serde(rename(serialize = "faid"))]
+    pub asset_freeze_id: Option<u64>,
 
     /// ## Fee
     ///
@@ -308,6 +327,21 @@ impl AlgorandTransaction {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
+            asset_freeze_id: match &json.asset_freeze_transaction {
+                Some(freeze_tx) => freeze_tx.asset_id,
+                None => None,
+            },
+            asset_freeze_address: match &json.asset_freeze_transaction {
+                Some(freeze_tx) => match &freeze_tx.address {
+                    Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                    None => None,
+                },
+                None => None,
+            },
+            asset_freeze_status: match &json.asset_freeze_transaction {
+                Some(freeze_tx) => freeze_tx.new_freeze_status,
+                None => None,
+            },
         })
     }
 
@@ -330,6 +364,7 @@ impl AlgorandTransaction {
             note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
             asset_sender: self.asset_sender.as_ref().map(|x| x.to_string()),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
+            asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
             asset_receiver: self.asset_receiver.as_ref().map(|x| x.to_string()),
             close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
             asset_config_transaction: match &self.asset_parameters {
@@ -346,6 +381,19 @@ impl AlgorandTransaction {
                 )),
             },
         })
+    }
+
+    fn to_asset_freeze_transaction_json(&self) -> Option<AssetFreezeTransactionJson> {
+        let json = AssetFreezeTransactionJson {
+            asset_id: self.asset_freeze_id,
+            new_freeze_status: self.asset_freeze_status,
+            address: self.asset_freeze_address.as_ref().map(|x| x.to_string()),
+        };
+        if json.is_empty() {
+            None
+        } else {
+            Some(json)
+        }
     }
 }
 
@@ -448,6 +496,10 @@ mod tests {
             assert_eq!(
                 json.asset_config_transaction,
                 jsons[i].asset_config_transaction
+            );
+            assert_eq!(
+                json.asset_freeze_transaction,
+                jsons[i].asset_freeze_transaction,
             );
         })
     }

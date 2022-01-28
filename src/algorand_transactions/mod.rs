@@ -1,5 +1,6 @@
 mod asset_config_transaction;
 mod asset_destroy_transaction;
+mod asset_freeze_transaction;
 mod asset_parameters;
 mod asset_transfer_transaction;
 mod pay_transaction;

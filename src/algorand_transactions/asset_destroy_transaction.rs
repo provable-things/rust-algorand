@@ -43,9 +43,12 @@ impl AlgorandTransaction {
             asset_sender: None,
             asset_amount: None,
             asset_receiver: None,
+            asset_freeze_id: None,
             asset_parameters: None,
             transfer_asset_id: None,
             close_remainder_to: None,
+            asset_freeze_status: None,
+            asset_freeze_address: None,
         })
     }
 }
