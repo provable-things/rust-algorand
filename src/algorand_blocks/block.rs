@@ -17,6 +17,7 @@ use crate::{
     algorand_transactions::{
         transaction::AlgorandTransaction,
         transaction_json::AlgorandTransactionJson,
+        transactions::AlgorandTransactions,
     },
     algorand_types::{Byte, Bytes, Result},
 };
@@ -25,7 +26,7 @@ use crate::{
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlock {
     pub block_header: AlgorandBlockHeader,
-    pub transactions: Option<Vec<AlgorandTransaction>>,
+    pub transactions: Option<AlgorandTransactions>,
 }
 
 impl Default for AlgorandBlock {
@@ -84,7 +85,11 @@ impl AlgorandBlock {
             .collect::<Result<Vec<AlgorandTransaction>>>()?;
         Ok(Self {
             block_header: AlgorandBlockHeader::from_json(&json.block_header)?,
-            transactions: if txs.is_empty() { None } else { Some(txs) },
+            transactions: if json.transactions.is_empty() {
+                None
+            } else {
+                Some(AlgorandTransactions::from_jsons(&json.transactions)?)
+            },
         })
     }
 
