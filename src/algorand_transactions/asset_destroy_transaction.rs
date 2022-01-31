@@ -42,6 +42,7 @@ impl AlgorandTransaction {
             genesis_id: None,
             asset_sender: None,
             asset_amount: None,
+            asset_close_to: None,
             asset_receiver: None,
             asset_freeze_id: None,
             asset_parameters: None,

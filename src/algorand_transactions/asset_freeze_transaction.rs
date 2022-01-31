@@ -30,6 +30,10 @@ impl AssetFreezeTransactionJson {
     pub fn is_empty(&self) -> bool {
         self.address.is_none() && self.asset_id.is_none() && self.new_freeze_status.is_none()
     }
+
+    pub fn maybe_get_asset_id(&self) -> Option<u64> {
+        self.asset_id.clone()
+    }
 }
 
 /*

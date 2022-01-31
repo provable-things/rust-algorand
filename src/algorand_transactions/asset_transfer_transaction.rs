@@ -1,3 +1,7 @@
+use derive_more::Constructor;
+use serde::{Deserialize, Serialize};
+use serde_with::skip_serializing_none;
+
 use crate::{
     algorand_address::AlgorandAddress,
     algorand_hash::AlgorandHash,
@@ -8,6 +12,56 @@ use crate::{
     },
     algorand_types::Result,
 };
+
+#[skip_serializing_none]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Constructor)]
+pub struct AssetTransferTransactionJson {
+    pub amount: Option<u64>,
+
+    #[serde(rename = "asset-id")]
+    pub asset_id: Option<u64>,
+
+    pub receiver: Option<String>,
+
+    #[serde(rename = "close-amount")]
+    pub close_amount: Option<u64>,
+
+    pub sender: Option<String>,
+
+    #[serde(rename = "close-to")]
+    pub close_to: Option<String>,
+}
+
+impl AssetTransferTransactionJson {
+    pub fn is_empty(&self) -> bool {
+        self.amount.is_none()
+            && self.asset_id.is_none()
+            && self.receiver.is_none()
+            && self.close_amount.is_none()
+            && self.sender.is_none()
+            && self.close_to.is_none()
+    }
+
+    pub fn maybe_get_asset_id(&self) -> Option<u64> {
+        self.asset_id.clone()
+    }
+
+    pub fn maybe_get_asset_amount(&self) -> Option<u64> {
+        self.amount.clone()
+    }
+
+    pub fn maybe_get_asset_sender(&self) -> Option<String> {
+        self.sender.clone()
+    }
+
+    pub fn maybe_get_asset_close_to(&self) -> Option<String> {
+        self.close_to.clone()
+    }
+
+    pub fn maybe_get_asset_receiver(&self) -> Option<String> {
+        self.receiver.clone()
+    }
+}
 
 impl AlgorandTransaction {
     /// ## Asset Transfer
@@ -46,6 +100,7 @@ impl AlgorandTransaction {
             receiver: None,
             genesis_id: None,
             asset_sender: None,
+            asset_close_to: None,
             asset_freeze_id: None,
             asset_parameters: None,
             close_remainder_to: None,
@@ -90,6 +145,7 @@ impl AlgorandTransaction {
             receiver: None,
             genesis_id: None,
             asset_sender: None,
+            asset_close_to: None,
             asset_freeze_id: None,
             asset_parameters: None,
             close_remainder_to: None,

@@ -15,11 +15,18 @@ use crate::{
     algorand_types::Result,
 };
 
+#[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Constructor)]
 pub struct AssetConfigTransactionJson {
     #[serde(rename = "asset-id")]
     pub asset_id: u64,
     pub params: AssetParametersJson,
+}
+
+impl AssetConfigTransactionJson {
+    pub fn maybe_get_asset_id(&self) -> Option<u64> {
+        Some(self.asset_id)
+    }
 }
 
 impl AlgorandTransaction {
@@ -63,6 +70,7 @@ impl AlgorandTransaction {
             asset_amount: None,
             asset_sender: None,
             asset_receiver: None,
+            asset_close_to: None,
             asset_freeze_id: None,
             transfer_asset_id: None,
             close_remainder_to: None,
