@@ -1,9 +1,13 @@
-use std::fmt;
+use std::{fmt, str::FromStr};
 
-use base64::encode as base64_encode;
-use serde::{Serialize, Serializer};
+use base64::{decode as base64_decode, encode as base64_encode};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::algorand_types::Byte;
+use crate::{
+    algorand_encoding::U8_64Visitor,
+    algorand_errors::AlgorandError,
+    algorand_types::{Byte, Result},
+};
 
 const ALGORAND_SIGNATURE_NUM_BYTES: usize = 64;
 
@@ -35,11 +39,36 @@ impl AlgorandSignature {
     pub fn to_hex(&self) -> String {
         hex::encode(self.to_byte_array())
     }
+
+    pub fn from_slice(bytes: &[Byte]) -> Result<Self> {
+        let number_of_bytes = bytes.len();
+        if number_of_bytes != ALGORAND_SIGNATURE_NUM_BYTES {
+            Err(format!(
+                "Not enough bytes to create hash from slice! Got {}, expected {}.",
+                number_of_bytes, ALGORAND_SIGNATURE_NUM_BYTES
+            )
+            .into())
+        } else {
+            Ok(Self(bytes.try_into()?))
+        }
+    }
+
+    fn from_base_64(s: &str) -> Result<Self> {
+        Self::from_slice(&base64_decode(s)?)
+    }
 }
 
 impl fmt::Display for AlgorandSignature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", base64_encode(&self.0))
+    }
+}
+
+impl FromStr for AlgorandSignature {
+    type Err = AlgorandError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Self::from_base_64(s)
     }
 }
 
@@ -52,6 +81,14 @@ impl Serialize for AlgorandSignature {
         S: Serializer,
     {
         serializer.serialize_bytes(&self.0)
+    }
+}
+
+impl<'de> Deserialize<'de> for AlgorandSignature {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        Ok(AlgorandSignature(
+            deserializer.deserialize_bytes(U8_64Visitor)?,
+        ))
     }
 }
 
