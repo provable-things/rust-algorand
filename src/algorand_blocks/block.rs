@@ -51,7 +51,7 @@ impl AlgorandBlock {
 
     /// ## To Bytes
     ///
-    /// Convert the block to msgpack-ed bytes representation
+    /// Convert the block to bytes.
     pub fn to_bytes(&self) -> Result<Bytes> {
         Ok(serde_json::to_vec(&self.to_json()?)?)
     }
@@ -241,10 +241,15 @@ mod test {
 
     #[test]
     fn should_serde_block_to_and_from_bytes() {
-        get_all_sample_blocks().iter().for_each(|block| {
-            let bytes = block.to_bytes().unwrap();
-            let result = AlgorandBlock::from_bytes(&bytes).unwrap();
-            assert_eq!(result, *block);
-        })
+        get_all_sample_blocks()
+            .iter()
+            .enumerate()
+            .for_each(|(i, block)| {
+                let bytes = block.to_bytes().unwrap();
+                let result = AlgorandBlock::from_bytes(&bytes).unwrap();
+                if result != *block {
+                    assert!(false, "Block {i} failed equality test assertion!");
+                }
+            })
     }
 }

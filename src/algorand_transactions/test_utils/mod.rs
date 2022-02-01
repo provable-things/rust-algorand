@@ -12,6 +12,7 @@ use crate::{
     algorand_transactions::{
         transaction::AlgorandTransaction,
         transaction_json::AlgorandTransactionJson,
+        transactions::AlgorandTransactions,
     },
     algorand_types::Result,
 };
@@ -51,12 +52,14 @@ pub fn get_sample_txs_jsons(n: usize) -> Vec<AlgorandTransactionJson> {
         .unwrap()
 }
 
-pub fn get_sample_txs_n(n: usize) -> Vec<AlgorandTransaction> {
-    get_sample_txs_jsons(n)
-        .iter()
-        .map(|tx_json| AlgorandTransaction::from_json(&tx_json))
-        .collect::<Result<Vec<AlgorandTransaction>>>()
-        .unwrap()
+pub fn get_sample_txs_n(n: usize) -> AlgorandTransactions {
+    AlgorandTransactions::new(
+        get_sample_txs_jsons(n)
+            .iter()
+            .map(|tx_json| AlgorandTransaction::from_json(&tx_json))
+            .collect::<Result<Vec<AlgorandTransaction>>>()
+            .unwrap(),
+    )
 }
 
 pub fn get_sample_pay_tx() -> AlgorandTransaction {

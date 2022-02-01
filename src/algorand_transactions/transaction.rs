@@ -20,6 +20,8 @@ use crate::{
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
+        asset_transfer_transaction::AssetTransferTransactionJson,
+        signature_json::AlgorandSignatureJson,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
     },
@@ -41,6 +43,12 @@ pub struct AlgorandTransaction {
     /// The amount of an asset to transfer.
     #[serde(rename(serialize = "aamt"))]
     pub asset_amount: Option<u64>,
+
+    /// ## Asset Close To
+    ///
+    /// The address to send all remaining amount of asset to.
+    #[serde(rename(serialize = "aclose"))]
+    pub asset_close_to: Option<AlgorandAddress>,
 
     /// ## Asset Freeze Status
     ///
@@ -76,6 +84,7 @@ pub struct AlgorandTransaction {
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
     #[serde(rename(serialize = "caid"))]
+    // FIXME This is the config tx asset id! Add a prefix for clarity?
     pub asset_id: Option<u64>,
 
     /// ## Close Remainder To
@@ -182,6 +191,19 @@ pub struct AlgorandTransaction {
     /// The unique ID of the asset to be transferred.
     #[serde(rename(serialize = "xaid"))]
     pub transfer_asset_id: Option<u64>,
+
+    // FIXME Do we even need these here? They're in the jsons but never encoded in when signing a
+    // tx.
+    pub signature: Option<AlgorandSignature>,
+    pub asset_close_amount: Option<u64>,
+}
+
+impl FromStr for AlgorandTransaction {
+    type Err = AlgorandError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Ok(Self::from_json(&serde_json::from_str(s)?)?)
+    }
 }
 
 impl AlgorandTransaction {
@@ -273,20 +295,28 @@ impl AlgorandTransaction {
         Ok(Self {
             fee: json.fee,
             amount: json.amount.clone(),
-            asset_id: json.asset_id.clone(),
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
-            asset_amount: json.asset_amount.clone(),
-            transfer_asset_id: json.transfer_asset_id.clone(),
+            asset_id: json.maybe_get_config_asset_id(),
+            asset_amount: json.maybe_get_asset_amount(),
+            asset_close_to: match json.maybe_get_asset_close_to() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            asset_receiver: match json.maybe_get_asset_receiver() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
+            transfer_asset_id: json.maybe_get_transfer_asset_id(),
+            asset_sender: match json.maybe_get_asset_sender() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                None => None,
+            },
             txn_type: match &json.tx_type {
                 Some(tx_type_str) => Some(AlgorandTransactionType::from_str(&tx_type_str)?),
                 None => None,
             },
             sender: match &json.sender {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
-                None => None,
-            },
-            asset_sender: match &json.asset_sender {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
@@ -315,10 +345,6 @@ impl AlgorandTransaction {
                 Some(json) => Some(AssetParameters::from_json(&json.params)?),
                 None => None,
             },
-            asset_receiver: match &json.asset_receiver {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
-                None => None,
-            },
             receiver: match &json.receiver {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
@@ -342,6 +368,17 @@ impl AlgorandTransaction {
                 Some(freeze_tx) => freeze_tx.new_freeze_status,
                 None => None,
             },
+            asset_close_amount: match json.asset_transfer_transaction.as_ref() {
+                Some(asset_transfer_json) => asset_transfer_json.close_amount.clone(),
+                None => None,
+            },
+            signature: match json.signature.as_ref() {
+                None => None,
+                Some(sig_json) => match sig_json.sig.as_ref() {
+                    Some(sig_str) => Some(AlgorandSignature::from_str(&sig_str)?),
+                    None => None,
+                },
+            },
         })
     }
 
@@ -349,12 +386,10 @@ impl AlgorandTransaction {
         Ok(AlgorandTransactionJson {
             fee: self.fee.clone(),
             amount: self.amount.clone(),
-            asset_id: self.asset_id.clone(),
             genesis_id: self.genesis_id.clone(),
-            asset_amount: self.asset_amount.clone(),
+            signature: self.to_signature_json(),
             last_valid: self.last_valid_round.clone(),
             first_valid: self.first_valid_round.clone(),
-            transfer_asset_id: self.transfer_asset_id.clone(),
             group: self.group.as_ref().map(|x| x.to_string()),
             lease: self.lease.as_ref().map(|x| x.to_string()),
             sender: self.sender.as_ref().map(|x| x.to_string()),
@@ -362,25 +397,45 @@ impl AlgorandTransaction {
             receiver: self.receiver.as_ref().map(|x| x.to_string()),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
-            asset_sender: self.asset_sender.as_ref().map(|x| x.to_string()),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
-            asset_receiver: self.asset_receiver.as_ref().map(|x| x.to_string()),
             close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
             asset_config_transaction: match &self.asset_parameters {
                 None => None,
                 Some(params) => Some(AssetConfigTransactionJson::new(
                     match &self.asset_id {
                         Some(id) => Result::Ok(*id),
-                        // FIXME
-                        //None => Result::Err("Tx with asset config params but no asset
-                        // ID!".into())
                         None => Result::Ok(0),
                     }?,
                     params.to_json()?,
                 )),
             },
+            asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
         })
+    }
+
+    fn to_signature_json(&self) -> Option<AlgorandSignatureJson> {
+        let json = AlgorandSignatureJson {
+            sig: self.signature.as_ref().map(|x| x.to_string()),
+        };
+        // FIXME: Do we need to check if empty?
+        Some(json)
+    }
+
+    fn to_asset_transfer_transaction_json(&self) -> Option<AssetTransferTransactionJson> {
+        let json = AssetTransferTransactionJson {
+            amount: self.asset_amount,
+            asset_id: self.transfer_asset_id,
+            close_amount: self.asset_close_amount,
+            sender: self.asset_sender.as_ref().map(|x| x.to_string()),
+            receiver: self.asset_receiver.as_ref().map(|x| x.to_string()),
+            close_to: self.asset_close_to.as_ref().map(|x| x.to_string()),
+        };
+        if json.is_empty() {
+            None
+        } else {
+            Some(json)
+        }
     }
 
     fn to_asset_freeze_transaction_json(&self) -> Option<AssetFreezeTransactionJson> {
@@ -417,6 +472,50 @@ pub struct AlgorandSignedTransaction {
 impl AlgorandSignedTransaction {
     pub fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
+    }
+}
+
+#[cfg(test)]
+impl AlgorandTransaction {
+    pub fn find_difference(&self, other: &AlgorandTransaction) {
+        use paste::paste;
+        let mut err: String;
+        macro_rules! assert_equality {
+            ($($field:expr),*) => {
+                paste! {
+                    $(
+                        err = format!("'{}' field  does not match!", $field);
+                        assert_eq!(self.[< $field >], other.[< $field >], "{}", err);
+                    )*
+                }
+            }
+        }
+        assert_equality!(
+            "asset_amount",
+            "asset_close_to",
+            "asset_freeze_status",
+            "amount",
+            "asset_parameters",
+            "asset_receiver",
+            "asset_sender",
+            "asset_id",
+            "close_remainder_to",
+            "asset_freeze_address",
+            "asset_freeze_id",
+            "fee",
+            "first_valid_round",
+            "genesis_id",
+            "genesis_hash",
+            "group",
+            "last_valid_round",
+            "lease",
+            "note",
+            "receiver",
+            "rekey_to",
+            "sender",
+            "txn_type",
+            "transfer_asset_id"
+        );
     }
 }
 
@@ -473,34 +572,9 @@ mod tests {
             .map(|tx| tx.to_json())
             .collect::<Result<Vec<AlgorandTransactionJson>>>()
             .unwrap();
-        results.iter().enumerate().for_each(|(i, json)| {
-            assert_eq!(json.fee, jsons[i].fee);
-            assert_eq!(json.note, jsons[i].note);
-            assert_eq!(json.group, jsons[i].group);
-            assert_eq!(json.lease, jsons[i].lease);
-            assert_eq!(json.amount, jsons[i].amount);
-            assert_eq!(json.sender, jsons[i].sender);
-            assert_eq!(json.tx_type, jsons[i].tx_type);
-            assert_eq!(json.receiver, jsons[i].receiver);
-            assert_eq!(json.rekey_to, jsons[i].rekey_to);
-            assert_eq!(json.asset_id, jsons[i].asset_id);
-            assert_eq!(json.genesis_id, jsons[i].genesis_id);
-            assert_eq!(json.last_valid, jsons[i].last_valid);
-            assert_eq!(json.first_valid, jsons[i].first_valid);
-            assert_eq!(json.asset_amount, jsons[i].asset_amount);
-            assert_eq!(json.asset_sender, jsons[i].asset_sender);
-            assert_eq!(json.genesis_hash, jsons[i].genesis_hash);
-            assert_eq!(json.asset_receiver, jsons[i].asset_receiver);
-            assert_eq!(json.transfer_asset_id, jsons[i].transfer_asset_id);
-            assert_eq!(json.close_remainder_to, jsons[i].close_remainder_to);
-            assert_eq!(
-                json.asset_config_transaction,
-                jsons[i].asset_config_transaction
-            );
-            assert_eq!(
-                json.asset_freeze_transaction,
-                jsons[i].asset_freeze_transaction,
-            );
-        })
+        jsons
+            .iter()
+            .zip(results.iter())
+            .for_each(|(json_before, json_after)| json_before.assert_equality(json_after))
     }
 }

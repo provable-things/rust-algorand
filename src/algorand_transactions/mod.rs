@@ -4,6 +4,7 @@ mod asset_freeze_transaction;
 mod asset_parameters;
 mod asset_transfer_transaction;
 mod pay_transaction;
+mod signature_json;
 mod test_utils;
 pub(crate) mod transaction;
 pub(crate) mod transaction_json;

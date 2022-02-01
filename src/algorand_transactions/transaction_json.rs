@@ -5,10 +5,14 @@ use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
+    algorand_address::AlgorandAddress,
     algorand_errors::AlgorandError,
     algorand_transactions::{
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
+        asset_transfer_transaction::AssetTransferTransactionJson,
+        signature_json::AlgorandSignatureJson,
+        transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
 };
@@ -18,6 +22,9 @@ use crate::{
 pub struct AlgorandTransactionJson {
     #[serde(rename = "asset-freeze-transaction")]
     pub asset_freeze_transaction: Option<AssetFreezeTransactionJson>,
+
+    #[serde(rename = "asset-transfer-transaction")]
+    pub asset_transfer_transaction: Option<AssetTransferTransactionJson>,
 
     pub sender: Option<String>,
 
@@ -50,30 +57,95 @@ pub struct AlgorandTransactionJson {
     #[serde(rename = "rekey-to")]
     pub rekey_to: Option<String>,
 
+    pub receiver: Option<String>,
+
+    pub amount: Option<u64>,
+
+    pub signature: Option<AlgorandSignatureJson>,
+
     #[serde(rename = "asset-config-transaction")]
     pub asset_config_transaction: Option<AssetConfigTransactionJson>,
 
-    #[serde(rename = "asset-sender")]
-    pub asset_sender: Option<String>,
-
-    #[serde(rename = "asset-receiver")]
-    pub asset_receiver: Option<String>,
-
-    pub receiver: Option<String>,
-
     #[serde(rename = "close-remainder-to")]
     pub close_remainder_to: Option<String>,
+}
 
-    #[serde(rename = "asset-amount")]
-    pub asset_amount: Option<u64>,
+impl AlgorandTransactionJson {
+    pub fn get_tx_type(&self) -> AlgorandTransactionType {
+        // FIXME Finish this!
+        // FIXME Test this!
+        if self.asset_freeze_transaction.is_some() {
+            AlgorandTransactionType::AssetFreeze
+        } else if self.asset_transfer_transaction.is_some() {
+            AlgorandTransactionType::AssetTransfer
+        } else {
+            AlgorandTransactionType::Pay
+        }
+    }
 
-    #[serde(rename = "transfer-asset-id")]
-    pub transfer_asset_id: Option<u64>,
+    pub fn maybe_get_config_asset_id(&self) -> Option<u64> {
+        // FIXME Test!
+        match &self.asset_config_transaction {
+            Some(x) => x.maybe_get_asset_id(),
+            None => None,
+        }
+    }
 
-    #[serde(rename = "asset-id")]
-    pub asset_id: Option<u64>,
+    pub fn maybe_get_asset_sender(&self) -> Option<String> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            // FIXME Other types of tx!
+            AlgorandTransactionType::AssetTransfer => match &self.asset_transfer_transaction {
+                Some(x) => x.maybe_get_asset_sender(),
+                None => None,
+            },
+            _ => None,
+        }
+    }
 
-    pub amount: Option<u64>,
+    pub fn maybe_get_asset_receiver(&self) -> Option<String> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            // FIXME Other types of tx!
+            AlgorandTransactionType::AssetTransfer => match &self.asset_transfer_transaction {
+                Some(x) => x.maybe_get_asset_receiver(),
+                None => None,
+            },
+            _ => None,
+        }
+    }
+
+    pub fn maybe_get_asset_amount(&self) -> Option<u64> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            AlgorandTransactionType::AssetTransfer => match &self.asset_transfer_transaction {
+                Some(x) => x.maybe_get_asset_amount(),
+                None => None,
+            },
+            // FIXME Other types of tx!
+            _ => None,
+        }
+    }
+
+    pub fn maybe_get_asset_close_to(&self) -> Option<String> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            AlgorandTransactionType::AssetTransfer => match &self.asset_transfer_transaction {
+                Some(x) => x.maybe_get_asset_close_to(),
+                None => None,
+            },
+            // FIXME Other types of tx!
+            _ => None,
+        }
+    }
+
+    pub fn maybe_get_transfer_asset_id(&self) -> Option<u64> {
+        // FIXME Test!
+        match &self.asset_transfer_transaction {
+            Some(x) => x.maybe_get_asset_id(),
+            None => None,
+        }
+    }
 }
 
 impl FromStr for AlgorandTransactionJson {
@@ -91,6 +163,45 @@ impl Display for AlgorandTransactionJson {
 }
 
 #[cfg(test)]
+impl AlgorandTransactionJson {
+    // TODO Macro to get all fields in struct, then I can quickly impl this!
+    pub fn assert_equality(&self, other: &AlgorandTransactionJson) {
+        use paste::paste;
+        let mut err: String;
+        macro_rules! assert_equality {
+            ($($field:expr),*) => {
+                paste! {
+                    $(
+                        err = format!("'{}' field  does not match!", $field);
+                        assert_eq!(self.[< $field >], other.[< $field >], "{}", err);
+                    )*
+                }
+            }
+        }
+        assert_equality!(
+            "asset_freeze_transaction",
+            "asset_transfer_transaction",
+            "sender",
+            "fee",
+            "first_valid",
+            "last_valid",
+            "note",
+            "genesis_id",
+            "genesis_hash",
+            "tx_type",
+            "group",
+            "lease",
+            "rekey_to",
+            "receiver",
+            "amount",
+            "signature",
+            "asset_config_transaction",
+            "close_remainder_to"
+        );
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::algorand_transactions::test_utils::{
@@ -104,8 +215,7 @@ mod tests {
         txs.iter().for_each(|tx_json_str| {
             let result = AlgorandTransactionJson::from_str(tx_json_str);
             if result.is_err() {
-                println!("{}", tx_json_str);
-                result.unwrap();
+                assert!(false)
             }
         });
     }
@@ -121,7 +231,6 @@ mod tests {
             .unwrap();
         results.iter().enumerate().for_each(|(i, tx)| {
             if *tx != txs[i] {
-                println!("{}", tx);
                 assert!(false, "Tx does not match original tx!");
             }
         });
