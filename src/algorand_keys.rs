@@ -124,6 +124,12 @@ impl AlgorandKeys {
     }
 }
 
+impl std::fmt::Display for AlgorandKeys {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", hex::encode(self.to_bytes()))
+    }
+}
+
 impl PartialEq for AlgorandKeys {
     fn eq(&self, other: &Self) -> bool {
         self.to_bytes() == other.to_bytes()
