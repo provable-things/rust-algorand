@@ -32,6 +32,15 @@ impl AlgorandTransactions {
                 .collect::<Vec<AlgorandTransaction>>(),
         )
     }
+
+    pub fn filter_by_transfer_asset_id(&self, asset_id: u64) -> Self {
+        Self(
+            self.iter()
+                .filter(|tx| tx.transfer_asset_id == Some(asset_id))
+                .cloned()
+                .collect::<Vec<AlgorandTransaction>>(),
+        )
+    }
 }
 
 #[cfg(test)]
@@ -71,5 +80,15 @@ mod tests {
         let expected_result = AlgorandTransaction::from_str(tx_str).unwrap();
         let result = results[0].clone();
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_filter_by_transfer_asset_id() {
+        let asset_id = 27165954;
+        let txs = get_sample_txs_n(0);
+        let result = txs.filter_by_transfer_asset_id(asset_id);
+        let expected_num_results = 25;
+        assert_ne!(txs.len(), expected_num_results);
+        assert_eq!(result.len(), expected_num_results);
     }
 }
