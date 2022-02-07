@@ -10,8 +10,8 @@ use crate::{
     algorand_types::Result,
 };
 
-#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Deref, Constructor)]
-pub struct AlgorandTransactions(Vec<AlgorandTransaction>);
+#[derive(Clone, Debug, Eq, Default, PartialEq, Serialize, Deserialize, Deref, Constructor)]
+pub struct AlgorandTransactions(pub Vec<AlgorandTransaction>);
 
 impl AlgorandTransactions {
     pub fn from_jsons(jsons: &[AlgorandTransactionJson]) -> Result<Self> {

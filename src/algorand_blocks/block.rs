@@ -84,6 +84,13 @@ impl AlgorandBlock {
             },
         })
     }
+
+    pub fn get_transactions(&self) -> Result<AlgorandTransactions> {
+        match &self.transactions {
+            Some(txs) => Ok(txs.clone()),
+            None => Ok(AlgorandTransactions::default()),
+        }
+    }
 }
 
 impl std::str::FromStr for AlgorandBlock {
