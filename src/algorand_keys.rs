@@ -4,10 +4,10 @@ use base64::decode as base64_decode;
 #[cfg(test)]
 use ed25519_dalek::PUBLIC_KEY_LENGTH;
 use ed25519_dalek::{
+    ed25519::signature::Signature,
     Keypair,
     PublicKey,
     SecretKey,
-    Signature as DalekSignature,
     Signer,
     SECRET_KEY_LENGTH,
 };
@@ -121,7 +121,7 @@ impl AlgorandKeys {
     pub fn verify(&self, message: &[Byte], signature: &AlgorandSignature) -> Result<()> {
         Ok(self
             .0
-            .verify(message, &DalekSignature::new(signature.to_byte_array()))?)
+            .verify(message, &Signature::from_bytes(&signature.to_byte_array())?)?)
     }
 }
 
