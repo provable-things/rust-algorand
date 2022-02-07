@@ -43,11 +43,11 @@ impl AssetTransferTransactionJson {
     }
 
     pub fn maybe_get_asset_id(&self) -> Option<u64> {
-        self.asset_id.clone()
+        self.asset_id
     }
 
     pub fn maybe_get_asset_amount(&self) -> Option<u64> {
-        self.amount.clone()
+        self.amount
     }
 
     pub fn maybe_get_asset_sender(&self) -> Option<String> {

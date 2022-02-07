@@ -1,21 +1,14 @@
-use std::{fmt::Display, str::FromStr};
+use std::fmt::Display;
 
-use rmp_serde::{decode::from_slice as rmp_from_slice, Deserializer, Serializer};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
-    algorand_address::AlgorandAddress,
-    algorand_blocks::{
-        block_header::AlgorandBlockHeader,
-        block_header_json::AlgorandBlockHeaderJson,
-        block_json::AlgorandBlockJson,
-    },
+    algorand_blocks::{block_header::AlgorandBlockHeader, block_json::AlgorandBlockJson},
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_transactions::{
-        transaction::AlgorandTransaction,
         transaction_json::AlgorandTransactionJson,
         transactions::AlgorandTransactions,
     },
@@ -23,19 +16,10 @@ use crate::{
 };
 
 #[skip_serializing_none]
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlock {
     pub block_header: AlgorandBlockHeader,
     pub transactions: Option<AlgorandTransactions>,
-}
-
-impl Default for AlgorandBlock {
-    fn default() -> Self {
-        Self {
-            block_header: AlgorandBlockHeader::default(),
-            transactions: None,
-        }
-    }
 }
 
 impl AlgorandBlock {
@@ -60,7 +44,7 @@ impl AlgorandBlock {
     ///
     /// Convert a slice of bytes to an AlgorandBlock.
     pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
-        Self::from_json(&serde_json::from_slice::<AlgorandBlockJson>(&bytes)?)
+        Self::from_json(&serde_json::from_slice::<AlgorandBlockJson>(bytes)?)
     }
 
     /// ## Hash
@@ -78,11 +62,6 @@ impl AlgorandBlock {
     }
 
     fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
-        let txs = json
-            .transactions
-            .iter()
-            .map(|transaction_json| AlgorandTransaction::from_json(&transaction_json))
-            .collect::<Result<Vec<AlgorandTransaction>>>()?;
         Ok(Self {
             block_header: AlgorandBlockHeader::from_json(&json.block_header)?,
             transactions: if json.transactions.is_empty() {
@@ -126,6 +105,8 @@ impl Display for AlgorandBlock {
 
 #[cfg(test)]
 mod test {
+    use std::str::FromStr;
+
     use super::*;
     use crate::algorand_blocks::test_utils::{
         get_all_sample_blocks,

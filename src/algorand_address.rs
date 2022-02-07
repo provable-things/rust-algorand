@@ -44,6 +44,7 @@ impl AlgorandAddress {
     ///
     /// Convert the AlgorandAddress to the underlying bytes.
     pub fn to_bytes(&self) -> Result<Bytes> {
+        // FIXME Why a result?
         Ok(self.0.to_vec())
     }
 

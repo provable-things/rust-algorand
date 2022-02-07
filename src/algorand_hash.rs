@@ -2,7 +2,7 @@ use std::{fmt, str::FromStr};
 
 use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
     algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,

@@ -36,11 +36,8 @@ pub struct CompactCertificateState {
 impl CompactCertificateState {
     pub fn from_json(json: &CompactCertificateStateJson) -> Result<Self> {
         Ok(Self {
-            compact_cert_next_round: json.compact_cert_next_round.clone(),
-            compact_cert_voters_total: match json.compact_cert_voters_total {
-                Some(algos) => Some(MicroAlgos(algos)),
-                None => None,
-            },
+            compact_cert_next_round: json.compact_cert_next_round,
+            compact_cert_voters_total: json.compact_cert_voters_total.map(MicroAlgos),
             compact_cert_voters: match &json.compact_cert_voters {
                 Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
@@ -50,15 +47,15 @@ impl CompactCertificateState {
 
     pub fn to_json(&self) -> CompactCertificateStateJson {
         CompactCertificateStateJson {
-            compact_cert_next_round: self.compact_cert_next_round.clone(),
-            compact_cert_voters_total: match &self.compact_cert_voters_total {
-                Some(micro_algos) => Some(micro_algos.to_algos()),
-                None => None,
-            },
-            compact_cert_voters: match &self.compact_cert_voters {
-                Some(address) => Some(address.to_string()),
-                None => None,
-            },
+            compact_cert_next_round: self.compact_cert_next_round,
+            compact_cert_voters_total: self
+                .compact_cert_voters_total
+                .as_ref()
+                .map(|micro_algos| micro_algos.to_algos()),
+            compact_cert_voters: self
+                .compact_cert_voters
+                .as_ref()
+                .map(|address| address.to_string()),
         }
     }
 }

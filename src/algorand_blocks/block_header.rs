@@ -7,15 +7,12 @@ use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::{
         block_header_json::AlgorandBlockHeaderJson,
-        participation_updates::{ParticipationUpdates, ParticipationUpdatesJson},
-        rewards_state::{RewardsState, RewardsStateJson},
-        upgrade_state::{UpgradeState, UpgradeStateJson},
-        upgrade_vote::{UpgradeVote, UpgradeVoteJson},
+        participation_updates::ParticipationUpdates,
+        rewards_state::RewardsState,
+        upgrade_state::UpgradeState,
+        upgrade_vote::UpgradeVote,
     },
-    algorand_compact_certificates::compact_certificate_state::{
-        CompactCertificateState,
-        CompactCertificateStateJson,
-    },
+    algorand_compact_certificates::compact_certificate_state::CompactCertificateState,
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
@@ -142,17 +139,17 @@ impl AlgorandBlockHeader {
         Ok(Self {
             // FIXME rm repeat code in this (especially converting the hashes from strs etc)
             genesis_hash: match &json.genesis_hash {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
             genesis_id: json.genesis_id.clone(),
             previous_block_hash: match &json.previous_block_hash {
-                Some(hash) => Some(AlgorandHash::from_str(&hash)?),
+                Some(hash) => Some(AlgorandHash::from_str(hash)?),
                 None => None,
             },
             round: json.round,
             seed: match &json.seed {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
             timestamp: json.timestamp,
@@ -164,7 +161,7 @@ impl AlgorandBlockHeader {
             compact_cert_voters: match &json.compact_certificates {
                 None => None,
                 Some(cert) => match &cert.compact_cert_voters {
-                    Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                    Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                     None => None,
                 },
             },
@@ -176,7 +173,7 @@ impl AlgorandBlockHeader {
                 },
             },
             compact_cert_next_round: match &json.compact_certificates {
-                Some(certs) => certs.compact_cert_next_round.clone(),
+                Some(certs) => certs.compact_cert_next_round,
                 None => None,
             },
             rewards_rate: match &json.rewards {
@@ -194,19 +191,19 @@ impl AlgorandBlockHeader {
             fee_sink: match &json.rewards {
                 None => None,
                 Some(rewards) => match &rewards.fee_sink {
-                    Some(address_string) => Some(AlgorandAddress::from_str(&address_string)?),
+                    Some(address_string) => Some(AlgorandAddress::from_str(address_string)?),
                     None => None,
                 },
             },
             rewards_pool: match &json.rewards {
                 Some(rewards) => match &rewards.rewards_pool {
-                    Some(address_string) => Some(AlgorandAddress::from_str(&address_string)?),
+                    Some(address_string) => Some(AlgorandAddress::from_str(address_string)?),
                     None => None,
                 },
                 None => None,
             },
             rewards_calculation_round: match &json.rewards {
-                Some(rewards) => rewards.rewards_calculation_round.clone(),
+                Some(rewards) => rewards.rewards_calculation_round,
                 None => None,
             },
             next_protocol: match &json.upgrade_state {
@@ -267,11 +264,11 @@ impl AlgorandBlockHeader {
         // TODO Mv this impl to the it's mod to keep this clean!
         RewardsState {
             fee_sink: self.fee_sink.clone(),
-            rewards_rate: self.rewards_rate.clone(),
+            rewards_rate: self.rewards_rate,
+            rewards_level: self.rewards_level,
+            rewards_residue: self.rewards_residue,
             rewards_pool: self.rewards_pool.clone(),
-            rewards_level: self.rewards_level.clone(),
-            rewards_residue: self.rewards_residue.clone(),
-            rewards_calculation_round: self.rewards_calculation_round.clone(),
+            rewards_calculation_round: self.rewards_calculation_round,
         }
     }
 
@@ -302,8 +299,8 @@ impl AlgorandBlockHeader {
     fn to_compact_certificate_state(&self) -> CompactCertificateState {
         CompactCertificateState {
             compact_cert_voters: self.compact_cert_voters.clone(),
-            compact_cert_next_round: self.compact_cert_next_round.clone(),
-            compact_cert_voters_total: self.compact_cert_voters_total.clone(),
+            compact_cert_next_round: self.compact_cert_next_round,
+            compact_cert_voters_total: self.compact_cert_voters_total,
         }
     }
 

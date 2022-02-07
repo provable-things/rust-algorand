@@ -43,7 +43,7 @@ impl MicroAlgos {
     /// Algorand protocol.
     pub fn check_if_satisfies_minimum_fee(&self) -> Result<Self> {
         if self.satisfies_minimum_fee() {
-            Ok(self.clone())
+            Ok(*self)
         } else {
             Err(format!(
                 "Fee is below the minimum algorand fee of {} MicroAlgos!",

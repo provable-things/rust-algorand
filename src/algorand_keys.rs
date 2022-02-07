@@ -56,6 +56,7 @@ impl AlgorandKeys {
     /// Create the algorand key pair from the 32 bytes of a private key.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let secret_key = SecretKey::from_bytes(bytes)?;
+        #[allow(clippy::needless_borrow)]
         let public_key: PublicKey = (&secret_key).into();
         Ok(Self(Keypair {
             secret: secret_key,

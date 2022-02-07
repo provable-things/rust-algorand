@@ -1,5 +1,5 @@
 use paste::paste;
-use serde::{de::Visitor, Deserialize};
+use serde::de::Visitor;
 
 macro_rules! make_byte_array_visitors {
     ($($num:expr),*) => {

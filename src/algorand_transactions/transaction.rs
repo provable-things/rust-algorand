@@ -202,7 +202,7 @@ impl FromStr for AlgorandTransaction {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
-        Ok(Self::from_json(&serde_json::from_str(s)?)?)
+        Self::from_json(&serde_json::from_str(s)?)
     }
 }
 
@@ -294,7 +294,7 @@ impl AlgorandTransaction {
     pub fn from_json(json: &AlgorandTransactionJson) -> Result<Self> {
         Ok(Self {
             fee: json.fee,
-            amount: json.amount.clone(),
+            amount: json.amount,
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
             asset_id: json.maybe_get_config_asset_id(),
@@ -313,24 +313,24 @@ impl AlgorandTransaction {
                 None => None,
             },
             txn_type: match &json.tx_type {
-                Some(tx_type_str) => Some(AlgorandTransactionType::from_str(&tx_type_str)?),
+                Some(tx_type_str) => Some(AlgorandTransactionType::from_str(tx_type_str)?),
                 None => None,
             },
             sender: match &json.sender {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             genesis_hash: match &json.genesis_hash {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
             group: match &json.group {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
             last_valid_round: json.last_valid,
             lease: match &json.lease {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
             note: match &json.note {
@@ -338,7 +338,7 @@ impl AlgorandTransaction {
                 None => None,
             },
             rekey_to: match &json.rekey_to {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             asset_parameters: match &json.asset_config_transaction {
@@ -346,11 +346,11 @@ impl AlgorandTransaction {
                 None => None,
             },
             receiver: match &json.receiver {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             close_remainder_to: match &json.close_remainder_to {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             asset_freeze_id: match &json.asset_freeze_transaction {
@@ -359,7 +359,7 @@ impl AlgorandTransaction {
             },
             asset_freeze_address: match &json.asset_freeze_transaction {
                 Some(freeze_tx) => match &freeze_tx.address {
-                    Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                    Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                     None => None,
                 },
                 None => None,
@@ -369,13 +369,13 @@ impl AlgorandTransaction {
                 None => None,
             },
             asset_close_amount: match json.asset_transfer_transaction.as_ref() {
-                Some(asset_transfer_json) => asset_transfer_json.close_amount.clone(),
+                Some(asset_transfer_json) => asset_transfer_json.close_amount,
                 None => None,
             },
             signature: match json.signature.as_ref() {
                 None => None,
                 Some(sig_json) => match sig_json.sig.as_ref() {
-                    Some(sig_str) => Some(AlgorandSignature::from_str(&sig_str)?),
+                    Some(sig_str) => Some(AlgorandSignature::from_str(sig_str)?),
                     None => None,
                 },
             },
@@ -384,12 +384,12 @@ impl AlgorandTransaction {
 
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
         Ok(AlgorandTransactionJson {
-            fee: self.fee.clone(),
-            amount: self.amount.clone(),
+            fee: self.fee,
+            amount: self.amount,
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
-            last_valid: self.last_valid_round.clone(),
-            first_valid: self.first_valid_round.clone(),
+            last_valid: self.last_valid_round,
+            first_valid: self.first_valid_round,
             group: self.group.as_ref().map(|x| x.to_string()),
             lease: self.lease.as_ref().map(|x| x.to_string()),
             sender: self.sender.as_ref().map(|x| x.to_string()),

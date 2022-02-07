@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -49,12 +48,12 @@ impl RewardsState {
 
     pub fn to_json(&self) -> Result<RewardsStateJson> {
         Ok(RewardsStateJson {
-            rewards_rate: self.rewards_rate.clone(),
-            rewards_level: self.rewards_level.clone(),
-            rewards_residue: self.rewards_residue.clone(),
+            rewards_rate: self.rewards_rate,
+            rewards_level: self.rewards_level,
+            rewards_residue: self.rewards_residue,
             fee_sink: self.fee_sink.as_ref().map(|x| x.to_string()),
             rewards_pool: self.rewards_pool.as_ref().map(|x| x.to_string()),
-            rewards_calculation_round: self.rewards_calculation_round.clone(),
+            rewards_calculation_round: self.rewards_calculation_round,
         })
     }
 }
@@ -94,16 +93,16 @@ pub struct RewardsStateJson {
 impl RewardsStateJson {
     fn to_rewards_state(&self) -> Result<RewardsState> {
         Ok(RewardsState {
-            rewards_rate: self.rewards_rate.clone(),
-            rewards_level: self.rewards_level.clone(),
-            rewards_residue: self.rewards_residue.clone(),
-            rewards_calculation_round: self.rewards_calculation_round.clone(),
+            rewards_rate: self.rewards_rate,
+            rewards_level: self.rewards_level,
+            rewards_residue: self.rewards_residue,
+            rewards_calculation_round: self.rewards_calculation_round,
             fee_sink: match &self.fee_sink {
-                Some(address_string) => Some(AlgorandAddress::from_str(&address_string)?),
+                Some(address_string) => Some(AlgorandAddress::from_str(address_string)?),
                 None => None,
             },
             rewards_pool: match &self.rewards_pool {
-                Some(address_string) => Some(AlgorandAddress::from_str(&address_string)?),
+                Some(address_string) => Some(AlgorandAddress::from_str(address_string)?),
                 None => None,
             },
         })

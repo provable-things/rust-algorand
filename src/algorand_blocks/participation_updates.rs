@@ -31,12 +31,10 @@ impl ParticipationUpdates {
 
     pub fn to_json(&self) -> ParticipationUpdatesJson {
         ParticipationUpdatesJson {
-            expired_participation_accounts: match &self.expired_participation_accounts {
-                None => None,
-                Some(expired_accounts) => {
-                    Some(expired_accounts.iter().map(|x| x.to_string()).collect())
-                },
-            },
+            expired_participation_accounts: self
+                .expired_participation_accounts
+                .as_ref()
+                .map(|expired_accounts| expired_accounts.iter().map(|x| x.to_string()).collect()),
         }
     }
 }

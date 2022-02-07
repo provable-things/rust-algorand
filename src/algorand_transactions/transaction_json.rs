@@ -5,7 +5,6 @@ use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
-    algorand_address::AlgorandAddress,
     algorand_errors::AlgorandError,
     algorand_transactions::{
         asset_config_transaction::AssetConfigTransactionJson,

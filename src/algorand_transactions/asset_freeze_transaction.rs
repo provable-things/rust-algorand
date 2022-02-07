@@ -1,19 +1,5 @@
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
-use serde_with::skip_serializing_none;
-
-use crate::{
-    algorand_address::AlgorandAddress,
-    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
-    algorand_hash::AlgorandHash,
-    algorand_micro_algos::MicroAlgos,
-    algorand_transactions::{
-        asset_parameters::{AssetParameters, AssetParametersJson},
-        transaction::AlgorandTransaction,
-        transaction_type::AlgorandTransactionType,
-    },
-    algorand_types::Result,
-};
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Constructor)]
 pub struct AssetFreezeTransactionJson {
@@ -32,11 +18,11 @@ impl AssetFreezeTransactionJson {
     }
 
     pub fn maybe_get_asset_id(&self) -> Option<u64> {
-        self.asset_id.clone()
+        self.asset_id
     }
 }
 
-/*
+/* FIXME
 impl AlgorandTransaction {
     /// ## New Asset Freeze Transaction
     ///

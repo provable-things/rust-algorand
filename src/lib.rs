@@ -1,3 +1,6 @@
+#![allow(dead_code)] // FIXME rm!
+#![allow(clippy::too_many_arguments)]
+
 //! # Rust-Algorand
 //!
 //! A rust library for building on the Algorand blockchain.

@@ -5,7 +5,6 @@ use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
-    algorand_address::AlgorandAddress,
     algorand_blocks::{
         participation_updates::ParticipationUpdatesJson,
         rewards_state::RewardsStateJson,
@@ -14,10 +13,7 @@ use crate::{
     },
     algorand_compact_certificates::compact_certificate_state::CompactCertificateStateJson,
     algorand_errors::AlgorandError,
-    algorand_hash::AlgorandHash,
-    algorand_micro_algos::MicroAlgos,
-    algorand_types::{Byte, Bytes, Result},
-    crypto_utils::sha512_256_hash_bytes,
+    algorand_types::Result,
 };
 
 #[skip_serializing_none]

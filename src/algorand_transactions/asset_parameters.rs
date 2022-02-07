@@ -1,19 +1,12 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_address::AlgorandAddress,
-    algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
-    algorand_micro_algos::MicroAlgos,
-    algorand_transactions::{
-        transaction::AlgorandTransaction,
-        transaction_type::AlgorandTransactionType,
-    },
     algorand_types::Result,
 };
 
@@ -120,23 +113,23 @@ impl AssetParameters {
             default_frozen: json.default_frozen,
             total_base_units: json.total_base_units,
             freeze_address: match &json.freeze_address {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             manager_address: match &json.manager_address {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             reserve_address: match &json.reserve_address {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             clawback_address: match &json.clawback_address {
-                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
+                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
             },
             metadata_hash: match &json.metadata_hash {
-                Some(hash_str) => Some(AlgorandHash::from_str(&hash_str)?),
+                Some(hash_str) => Some(AlgorandHash::from_str(hash_str)?),
                 None => None,
             },
         })
@@ -149,7 +142,7 @@ impl AssetParameters {
             asset_url: self.asset_url.clone(),
             asset_name: self.asset_name.clone(),
             total_base_units: self.total_base_units,
-            default_frozen: self.default_frozen.clone(),
+            default_frozen: self.default_frozen,
             metadata_hash: self.metadata_hash.as_ref().map(|x| x.to_string()),
             freeze_address: self.freeze_address.as_ref().map(|x| x.to_string()),
             reserve_address: self.reserve_address.as_ref().map(|x| x.to_string()),
