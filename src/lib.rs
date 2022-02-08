@@ -32,6 +32,7 @@ pub use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::block::AlgorandBlock,
     algorand_errors::AlgorandError,
+    algorand_genesis_id::AlgorandGenesisId,
     algorand_hash::AlgorandHash,
     algorand_keys::AlgorandKeys,
     algorand_micro_algos::MicroAlgos,
