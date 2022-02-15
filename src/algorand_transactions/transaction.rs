@@ -21,6 +21,7 @@ use crate::{
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
         asset_transfer_transaction::AssetTransferTransactionJson,
+        key_reg_transaction::KeyRegTransactionJson,
         signature_json::AlgorandSignatureJson,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
@@ -395,6 +396,7 @@ impl AlgorandTransaction {
             sender: self.sender.as_ref().map(|x| x.to_string()),
             tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
             receiver: self.receiver.as_ref().map(|x| x.to_string()),
+            key_reg_transaction: self.to_key_ref_transaction_json(),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
@@ -420,6 +422,11 @@ impl AlgorandTransaction {
         };
         // FIXME: Do we need to check if empty?
         Some(json)
+    }
+
+    fn to_key_ref_transaction_json(&self) -> Option<KeyRegTransactionJson> {
+        // FIXME Impl this! Check if empty too!
+        None
     }
 
     fn to_asset_transfer_transaction_json(&self) -> Option<AssetTransferTransactionJson> {

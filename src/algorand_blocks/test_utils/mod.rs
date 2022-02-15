@@ -38,7 +38,8 @@ write_paths_and_getter_fxn!(
     0 => "src/algorand_blocks/test_utils/block-17962555.json",
     1 => "src/algorand_blocks/test_utils/block-17962556.json",
     2 => "src/algorand_blocks/test_utils/block-17962572.json",
-    3 => "src/algorand_blocks/test_utils/block-17963100.json"
+    3 => "src/algorand_blocks/test_utils/block-17963100.json",
+    4 => "src/algorand_blocks/test_utils/block-17964858.json"
 );
 
 pub fn get_sample_block_json_str_n(n: usize) -> String {
@@ -87,5 +88,10 @@ mod tests {
                 .total_base_units,
             u64::MAX
         )
+    }
+
+    #[test]
+    fn should_get_block_sample_with_key_reg_tx_successfully() {
+        get_sample_block_n(4);
     }
 }

@@ -10,6 +10,7 @@ use crate::{
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_transfer_transaction::AssetTransferTransactionJson,
+        key_reg_transaction::KeyRegTransactionJson,
         signature_json::AlgorandSignatureJson,
         transaction_type::AlgorandTransactionType,
     },
@@ -67,6 +68,9 @@ pub struct AlgorandTransactionJson {
 
     #[serde(rename = "close-remainder-to")]
     pub close_remainder_to: Option<String>,
+
+    #[serde(rename = "key-reg-transaction")]
+    pub key_reg_transaction: Option<KeyRegTransactionJson>,
 }
 
 impl AlgorandTransactionJson {

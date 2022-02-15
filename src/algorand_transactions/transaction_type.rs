@@ -10,6 +10,7 @@ pub enum AlgorandTransactionType {
     AssetFreeze,
     AssetTransfer,
     ApplicationCall,
+    KeyRegistration,
     AssetConfiguration,
 }
 
@@ -20,6 +21,7 @@ impl fmt::Display for AlgorandTransactionType {
             Self::AssetFreeze => write!(f, "afrz"),
             Self::AssetTransfer => write!(f, "axfer"),
             Self::ApplicationCall => write!(f, "appl"),
+            Self::KeyRegistration => write!(f, "keyreg"),
             Self::AssetConfiguration => write!(f, "acfg"),
         }
     }
@@ -52,6 +54,7 @@ impl FromStr for AlgorandTransactionType {
             "afrz" => Ok(Self::AssetFreeze),
             "axfer" => Ok(Self::AssetTransfer),
             "appl" => Ok(Self::ApplicationCall),
+            "keyreg" => Ok(Self::KeyRegistration),
             "acfg" => Ok(Self::AssetConfiguration),
             _ => Err(format!("Unrecognized Algorand tx type: '{}'!", s).into()),
         }
