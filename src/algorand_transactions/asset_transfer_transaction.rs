@@ -10,7 +10,7 @@ use crate::{
         transaction::AlgorandTransaction,
         transaction_type::AlgorandTransactionType,
     },
-    algorand_types::Result,
+    algorand_types::{Bytes, Result},
 };
 
 #[skip_serializing_none]
@@ -72,6 +72,7 @@ impl AlgorandTransaction {
         asset_id: u64,
         fee: MicroAlgos,
         asset_amount: u64,
+        note: Option<Bytes>,
         first_valid_round: u64,
         sender: AlgorandAddress,
         genesis_hash: AlgorandHash,
@@ -79,6 +80,7 @@ impl AlgorandTransaction {
         asset_receiver: AlgorandAddress,
     ) -> Result<AlgorandTransaction> {
         Ok(Self {
+            note,
             sender: Some(sender),
             genesis_hash: Some(genesis_hash),
             asset_amount: Some(asset_amount),
@@ -91,7 +93,6 @@ impl AlgorandTransaction {
                 first_valid_round,
                 last_valid_round,
             )?),
-            note: None,
             group: None,
             lease: None,
             amount: None,
@@ -195,6 +196,7 @@ mod tests {
             463265200,
             MicroAlgos(1000),
             100001337,
+            None,
             17_962_505,
             AlgorandAddress::from_str("GSKWPLI7YL7OF23F5ET5L7HSFLLJL3F5DUO7AH2HQLOSO4DRRHR76TDQ2I")
                 .unwrap(),

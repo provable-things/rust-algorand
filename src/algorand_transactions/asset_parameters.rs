@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value as JsonValue};
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -14,13 +15,13 @@ use crate::{
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct AssetParameters {
     #[serde(rename(serialize = "am"))]
-    metadata_hash: Option<AlgorandHash>,
+    pub metadata_hash: Option<AlgorandHash>,
 
     #[serde(rename(serialize = "an"))]
-    asset_name: Option<String>,
+    pub asset_name: Option<String>,
 
     #[serde(rename(serialize = "au"))]
-    asset_url: Option<String>,
+    pub asset_url: Option<String>,
 
     /// ## Clawback Address
     ///
@@ -29,16 +30,16 @@ pub struct AssetParameters {
     /// assets from an account (like if they breach certain contractual obligations tied to holding
     /// the asset). In traditional finance, this sort of transaction is referred to as a clawback.
     #[serde(rename(serialize = "c"))]
-    clawback_address: Option<AlgorandAddress>,
+    pub clawback_address: Option<AlgorandAddress>,
 
     #[serde(rename(serialize = "dc"))]
-    decimals: u64,
+    pub decimals: u64,
 
     /// ## Default Frozen
     ///
     /// Whether the asset is created in a froze state.
     #[serde(rename(serialize = "df"))]
-    default_frozen: Option<bool>,
+    pub default_frozen: Option<bool>,
 
     /// ## Freeze Address
     ///
@@ -49,14 +50,14 @@ pub struct AssetParameters {
     /// DefaultFrozen state is set to True, you can use the unfreeze action to authorize certain
     /// accounts to trade the asset (such as after passing KYC/AML checks).
     #[serde(rename(serialize = "f"))]
-    freeze_address: Option<AlgorandAddress>,
+    pub freeze_address: Option<AlgorandAddress>,
 
     /// ## Manager Address
     ///
     /// The manager account is the only account that can authorize transactions to re-configure or
     /// destroy an asset.
     #[serde(rename(serialize = "m"))]
-    manager_address: Option<AlgorandAddress>,
+    pub manager_address: Option<AlgorandAddress>,
 
     /// ## Reserve Address
     ///
@@ -66,13 +67,13 @@ pub struct AssetParameters {
     /// account has opted into the asset and then issue a transaction to transfer all assets to the
     /// new reserve.
     #[serde(rename(serialize = "r"))]
-    reserve_address: Option<AlgorandAddress>,
+    pub reserve_address: Option<AlgorandAddress>,
 
     #[serde(rename(serialize = "t"))]
-    total_base_units: u64,
+    pub total_base_units: u64,
 
     #[serde(rename(serialize = "un"))]
-    unit_name: Option<String>,
+    pub unit_name: Option<String>,
 }
 
 impl AssetParameters {
@@ -111,7 +112,11 @@ impl AssetParameters {
             asset_url: json.asset_url.clone(),
             asset_name: json.asset_name.clone(),
             default_frozen: json.default_frozen,
-            total_base_units: json.total_base_units,
+            total_base_units: if json.total_base_units.is_u64() {
+                json.total_base_units.as_u64().expect("Should never fail")
+            } else {
+                u64::MAX
+            },
             freeze_address: match &json.freeze_address {
                 Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
                 None => None,
@@ -141,8 +146,8 @@ impl AssetParameters {
             unit_name: self.unit_name.clone(),
             asset_url: self.asset_url.clone(),
             asset_name: self.asset_name.clone(),
-            total_base_units: self.total_base_units,
             default_frozen: self.default_frozen,
+            total_base_units: json!(self.total_base_units),
             metadata_hash: self.metadata_hash.as_ref().map(|x| x.to_string()),
             freeze_address: self.freeze_address.as_ref().map(|x| x.to_string()),
             reserve_address: self.reserve_address.as_ref().map(|x| x.to_string()),
@@ -184,8 +189,10 @@ pub struct AssetParametersJson {
     #[serde(rename = "reserve")]
     pub reserve_address: Option<String>,
 
+    // NOTE: Some blocks exist with > u64::MAX as this field, but the node reports the
+    // actual value as u64::MAX. Interesting!
     #[serde(rename = "total")]
-    pub total_base_units: u64,
+    pub total_base_units: JsonValue,
 }
 
 impl FromStr for AssetParametersJson {

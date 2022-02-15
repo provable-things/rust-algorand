@@ -37,7 +37,8 @@ macro_rules! write_paths_and_getter_fxn {
 write_paths_and_getter_fxn!(
     0 => "src/algorand_blocks/test_utils/block-17962555.json",
     1 => "src/algorand_blocks/test_utils/block-17962556.json",
-    2 => "src/algorand_blocks/test_utils/block-17962572.json"
+    2 => "src/algorand_blocks/test_utils/block-17962572.json",
+    3 => "src/algorand_blocks/test_utils/block-17963100.json"
 );
 
 pub fn get_sample_block_json_str_n(n: usize) -> String {
@@ -71,5 +72,20 @@ mod tests {
     #[test]
     fn should_get_sample_block_n() {
         get_sample_block_header_n(0);
+    }
+
+    #[test]
+    fn should_get_block_sample_number_3_successfully() {
+        // NOTE: Block has an edge case where the assert parameter from the indexer is > u64::MAX,
+        // but the explorer etc shows it as u64::MAX.
+        let block = get_sample_block_n(3);
+        assert_eq!(
+            block.transactions.unwrap()[11]
+                .asset_parameters
+                .clone()
+                .unwrap()
+                .total_base_units,
+            u64::MAX
+        )
     }
 }

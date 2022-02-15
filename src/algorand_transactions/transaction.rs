@@ -473,6 +473,13 @@ impl AlgorandSignedTransaction {
     pub fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
     }
+
+    pub fn to_tx_id(&self) -> Result<String> {
+        match &self.transaction_id {
+            Some(hash) => Ok(hash.clone()),
+            None => Err("No transaction ID in `AlgorandSignedTransaction`!".into()),
+        }
+    }
 }
 
 #[cfg(test)]
