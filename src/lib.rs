@@ -38,6 +38,7 @@ pub use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::{
+        asset_parameters::AssetParameters,
         transaction::{AlgorandSignedTransaction, AlgorandTransaction},
         transactions::AlgorandTransactions,
     },
