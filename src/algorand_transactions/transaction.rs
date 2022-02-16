@@ -131,6 +131,12 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "gh"))]
     pub genesis_hash: Option<AlgorandHash>,
 
+    /// ## ID
+    ///
+    /// The ID of the transaction.
+    #[serde(skip_serializing)]
+    pub id: Option<String>,
+
     /// ## Group
     ///
     /// The hash of the tx group this tx belongs to, if any.
@@ -295,6 +301,7 @@ impl AlgorandTransaction {
     pub fn from_json(json: &AlgorandTransactionJson) -> Result<Self> {
         Ok(Self {
             fee: json.fee,
+            id: json.id.clone(),
             amount: json.amount,
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
@@ -387,10 +394,11 @@ impl AlgorandTransaction {
         Ok(AlgorandTransactionJson {
             fee: self.fee,
             amount: self.amount,
+            last_valid: self.last_valid_round,
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
-            last_valid: self.last_valid_round,
             first_valid: self.first_valid_round,
+            id: self.id.as_ref().map(|x| x.to_string()),
             group: self.group.as_ref().map(|x| x.to_string()),
             lease: self.lease.as_ref().map(|x| x.to_string()),
             sender: self.sender.as_ref().map(|x| x.to_string()),

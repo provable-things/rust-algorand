@@ -71,6 +71,8 @@ pub struct AlgorandTransactionJson {
 
     #[serde(rename = "key-reg-transaction")]
     pub key_reg_transaction: Option<KeyRegTransactionJson>,
+
+    pub id: Option<String>,
 }
 
 impl AlgorandTransactionJson {

@@ -59,6 +59,7 @@ impl AlgorandTransaction {
             fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
             last_valid_round: Some(calculated_last_valid_round),
             txn_type: Some(AlgorandTransactionType::AssetConfiguration),
+            id: None,
             note: None,
             group: None,
             lease: None,

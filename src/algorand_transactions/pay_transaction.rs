@@ -36,6 +36,7 @@ impl AlgorandTransaction {
                 first_valid_round,
                 last_valid_round,
             )?),
+            id: None,
             group: None,
             lease: None,
             asset_id: None,
