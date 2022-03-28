@@ -1,5 +1,6 @@
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -16,7 +17,7 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Constructor)]
 pub struct AssetTransferTransactionJson {
-    pub amount: Option<u64>,
+    pub amount: Option<JsonValue>,
 
     #[serde(rename = "asset-id")]
     pub asset_id: Option<u64>,
@@ -47,7 +48,20 @@ impl AssetTransferTransactionJson {
     }
 
     pub fn maybe_get_asset_amount(&self) -> Option<u64> {
-        self.amount
+        match &self.amount {
+            Some(json_value) => {
+                // NOTE: For some reason the indexer returns a number > `u64::MAX` when the
+                // explorer shows a `u64::MAX` with some decimals.
+                // To catch this error, we see if `serde_json` thinks the value is a float, and if
+                // so, use `u64::MAX` instead.
+                if json_value.is_f64() {
+                    Some(u64::MAX)
+                } else {
+                    json_value.as_u64()
+                }
+            },
+            None => None,
+        }
     }
 
     pub fn maybe_get_asset_sender(&self) -> Option<String> {

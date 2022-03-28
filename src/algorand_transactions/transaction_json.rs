@@ -1,7 +1,7 @@
 use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use serde_json::{json, Value as JsonValue};
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -59,7 +59,7 @@ pub struct AlgorandTransactionJson {
 
     pub receiver: Option<String>,
 
-    pub amount: Option<u64>,
+    pub amount: Option<JsonValue>,
 
     pub signature: Option<AlgorandSignatureJson>,
 

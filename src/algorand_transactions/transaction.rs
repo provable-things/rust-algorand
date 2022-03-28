@@ -5,6 +5,7 @@ use std::str::FromStr;
 use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
@@ -302,7 +303,16 @@ impl AlgorandTransaction {
         Ok(Self {
             fee: json.fee,
             id: json.id.clone(),
-            amount: json.amount,
+            amount: match &json.amount {
+                Some(json_value) => {
+                    if json_value.is_f64() {
+                        Some(u64::MAX)
+                    } else {
+                        Some(json_value.as_u64().unwrap_or_default())
+                    }
+                },
+                None => None,
+            },
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
             asset_id: json.maybe_get_config_asset_id(),
@@ -393,7 +403,10 @@ impl AlgorandTransaction {
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
         Ok(AlgorandTransactionJson {
             fee: self.fee,
-            amount: self.amount,
+            amount: match self.amount {
+                Some(u64_amount) => Some(json!(u64_amount)),
+                None => None,
+            },
             last_valid: self.last_valid_round,
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
@@ -439,7 +452,10 @@ impl AlgorandTransaction {
 
     fn to_asset_transfer_transaction_json(&self) -> Option<AssetTransferTransactionJson> {
         let json = AssetTransferTransactionJson {
-            amount: self.asset_amount,
+            amount: match &self.asset_amount {
+                None => None,
+                Some(u_64) => Some(json!(u_64)),
+            },
             asset_id: self.transfer_asset_id,
             close_amount: self.asset_close_amount,
             sender: self.asset_sender.as_ref().map(|x| x.to_string()),
