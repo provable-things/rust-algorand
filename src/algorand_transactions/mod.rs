@@ -1,3 +1,4 @@
+mod application_transaction_json;
 mod asset_config_transaction;
 mod asset_destroy_transaction;
 mod asset_freeze_transaction;
