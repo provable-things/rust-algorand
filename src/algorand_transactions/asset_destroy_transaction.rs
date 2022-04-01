@@ -25,35 +25,15 @@ impl AlgorandTransaction {
     ) -> Result<Self> {
         let calculated_last_valid_round =
             Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
-        Ok(Self {
-            sender: Some(sender),
-            asset_id: Some(asset_id),
-            genesis_hash: Some(genesis_hash),
-            first_valid_round: Some(first_valid_round),
-            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
-            last_valid_round: Some(calculated_last_valid_round),
-            txn_type: Some(AlgorandTransactionType::AssetConfiguration),
-            id: None,
-            note: None,
-            group: None,
-            lease: None,
-            amount: None,
-            rekey_to: None,
-            receiver: None,
-            signature: None,
-            genesis_id: None,
-            asset_sender: None,
-            asset_amount: None,
-            asset_close_to: None,
-            asset_receiver: None,
-            asset_freeze_id: None,
-            asset_parameters: None,
-            transfer_asset_id: None,
-            asset_close_amount: None,
-            close_remainder_to: None,
-            asset_freeze_status: None,
-            asset_freeze_address: None,
-        })
+        let mut tx = Self::default();
+        tx.sender = Some(sender);
+        tx.asset_id = Some(asset_id);
+        tx.genesis_hash = Some(genesis_hash);
+        tx.first_valid_round = Some(first_valid_round);
+        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
+        tx.last_valid_round = Some(calculated_last_valid_round);
+        tx.txn_type = Some(AlgorandTransactionType::AssetConfiguration);
+        Ok(tx)
     }
 }
 

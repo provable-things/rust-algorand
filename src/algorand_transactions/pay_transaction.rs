@@ -23,38 +23,20 @@ impl AlgorandTransaction {
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<Self> {
-        Ok(Self {
-            note,
-            sender: Some(sender),
-            receiver: Some(receiver),
-            genesis_hash: Some(genesis_hash),
-            first_valid_round: Some(first_valid_round),
-            txn_type: Some(AlgorandTransactionType::Pay),
-            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
-            amount: Some(Self::check_amount_is_above_minimum(amount)?),
-            last_valid_round: Some(Self::calculate_last_valid_round(
-                first_valid_round,
-                last_valid_round,
-            )?),
-            id: None,
-            group: None,
-            lease: None,
-            asset_id: None,
-            rekey_to: None,
-            signature: None,
-            genesis_id: None,
-            asset_amount: None,
-            asset_sender: None,
-            asset_receiver: None,
-            asset_close_to: None,
-            asset_freeze_id: None,
-            asset_parameters: None,
-            transfer_asset_id: None,
-            asset_close_amount: None,
-            close_remainder_to: None,
-            asset_freeze_status: None,
-            asset_freeze_address: None,
-        })
+        let mut tx = Self::default();
+        tx.note = note;
+        tx.sender = Some(sender);
+        tx.receiver = Some(receiver);
+        tx.genesis_hash = Some(genesis_hash);
+        tx.first_valid_round = Some(first_valid_round);
+        tx.txn_type = Some(AlgorandTransactionType::Pay);
+        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
+        tx.amount = Some(Self::check_amount_is_above_minimum(amount)?);
+        tx.last_valid_round = Some(Self::calculate_last_valid_round(
+            first_valid_round,
+            last_valid_round,
+        )?);
+        Ok(tx)
     }
 }
 
