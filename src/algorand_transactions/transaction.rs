@@ -71,6 +71,12 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "apar"))]
     pub asset_parameters: Option<AssetParameters>,
 
+    /// ## Application ID
+    ///
+    /// The ID of an application to be called.
+    #[serde(rename(serialize = "apid"))]
+    pub application_id: Option<u64>,
+
     /// ## Asset Receiver
     ///
     /// The asset receiver in an asset transfer transaction.
@@ -314,6 +320,10 @@ impl AlgorandTransaction {
                 },
                 None => None,
             },
+            application_id: match &json.application_transaction {
+                Some(app) => app.application_id.clone(),
+                None => None,
+            },
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
             asset_id: json.maybe_get_config_asset_id(),
@@ -402,7 +412,20 @@ impl AlgorandTransaction {
     }
 
     fn to_application_transaction_json(&self) -> Option<ApplicationTransactionJson> {
-        // FIXME: Do this plus check if empty!
+        /* FIXME
+        ApplicationTransactionJson {
+            accounts: self.accounts.clone(),
+            foreign_apps: self.foreign_apps.clone(),
+            on_completion self.on_completion.clone(),
+            foreign_assets: self.foreign_assets.clone(),
+            application_id: self.application_id.clone(),
+            approval_program: self.approval_program.clone(),
+            application_args: self.application_args.clone(),
+            local_state_schema: self.local_state_schema.clone(),
+            global_state_schema: self.global_state_schema.clone(),
+            clear_state_program: self.clear_state_program.clone(),
+        }
+        */
         None
     }
 
