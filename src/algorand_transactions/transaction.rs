@@ -18,6 +18,7 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
+        application_transaction_json::ApplicationTransactionJson,
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
@@ -400,6 +401,11 @@ impl AlgorandTransaction {
         })
     }
 
+    fn to_application_transaction_json(&self) -> Option<ApplicationTransactionJson> {
+        // FIXME: Do this plus check if empty!
+        None
+    }
+
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
         Ok(AlgorandTransactionJson {
             fee: self.fee,
@@ -434,6 +440,7 @@ impl AlgorandTransaction {
                 )),
             },
             asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
+            application_transaction: self.to_application_transaction_json(),
         })
     }
 

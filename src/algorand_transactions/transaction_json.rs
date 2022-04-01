@@ -7,6 +7,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_errors::AlgorandError,
     algorand_transactions::{
+        application_transaction_json::ApplicationTransactionJson,
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_transfer_transaction::AssetTransferTransactionJson,
@@ -20,6 +21,9 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct AlgorandTransactionJson {
+    #[serde(rename = "asset-freeze-transaction")]
+    pub application_transaction: Option<ApplicationTransactionJson>,
+
     #[serde(rename = "asset-freeze-transaction")]
     pub asset_freeze_transaction: Option<AssetFreezeTransactionJson>,
 
