@@ -59,7 +59,7 @@ impl FromStr for OnCompletion {
 /// Represents a `apls` local-state or `apgs` global-state schema. These schemas determine how
 /// much storage may be used in a local-state or global-state for an application. The more space
 /// used, the larger minimum balance must be maintained in the account holding the data.
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Eq, Serialize, Deserialize)]
 pub struct StateSchema {
     /// Maximum number of TEAL byte slices that may be stored in the key/value store.
     #[serde(rename = "num-byte-slice")]
@@ -70,7 +70,7 @@ pub struct StateSchema {
     pub num_uint: Option<u64>,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ApplicationTransactionJson {
     /// `apat` List of accounts in addition to the sender that may be accessed from the
     /// application's
@@ -85,7 +85,7 @@ pub struct ApplicationTransactionJson {
 
     /// `apid` ID of the application being configured or empty if creating.
     #[serde(rename = "application-id")]
-    pub application_id: u64,
+    pub application_id: Option<u64>,
 
     /// `apap` Logic executed for every application transaction, except when on-completion is set
     /// to "clear". It can read and write global state for the application, as well as
@@ -124,7 +124,7 @@ pub struct ApplicationTransactionJson {
 
     /// On completion.
     #[serde(rename = "on-completion")]
-    pub on_completion: OnCompletion,
+    pub on_completion: Option<OnCompletion>,
 }
 
 impl FromStr for ApplicationTransactionJson {
@@ -132,5 +132,20 @@ impl FromStr for ApplicationTransactionJson {
 
     fn from_str(s: &str) -> Result<Self> {
         Ok(serde_json::from_str(s)?)
+    }
+}
+
+impl ApplicationTransactionJson {
+    pub fn is_empty(&self) -> bool {
+        self.accounts.is_none()
+            && self.application_args.is_none()
+            && self.application_id.is_none()
+            && self.approval_program.is_none()
+            && self.clear_state_program.is_none()
+            && self.foreign_apps.is_none()
+            && self.foreign_assets.is_none()
+            && self.global_state_schema.is_none()
+            && self.local_state_schema.is_none()
+            && self.on_completion.is_none()
     }
 }
