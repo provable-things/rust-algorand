@@ -65,6 +65,15 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "amt"))]
     pub amount: Option<u64>,
 
+    /// ## On Completion
+    ///
+    /// OnCompletion specifies an optional side-effect that this transaction
+    /// will have on the balance record of the sender or the application's
+    /// creator. See the documentation for the OnCompletion type for more
+    /// information on each possible value.
+    #[serde(rename(serialize = "apan"))]
+    pub on_completion: Option<u64>,
+
     /// ## Asset Parameters
     ///
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
@@ -323,6 +332,13 @@ impl AlgorandTransaction {
             application_id: match &json.application_transaction {
                 Some(app) => app.application_id.clone(),
                 None => None,
+            },
+            on_completion: match &json.application_transaction {
+                None => None,
+                Some(app) => match &app.on_completion {
+                    Some(thing) => Some(thing.to_u64()),
+                    None => None,
+                }
             },
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
