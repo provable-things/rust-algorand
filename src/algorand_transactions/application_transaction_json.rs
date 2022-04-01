@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, fmt::Display};
 
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -28,15 +28,41 @@ impl Default for OnCompletion {
 }
 
 impl OnCompletion {
-    pub fn to_str(&self) -> &str {
+    pub fn to_u64(&self) -> u64 {
         match self {
+            Self::Noop => 0,
+            Self::Optin => 1,
+            Self::Closeout => 2,
+            Self::Clear => 3,
+            Self::Update => 4,
+            Self::Delete => 5,
+        }
+    }
+
+    pub fn from_u64(num: u64) -> Result<Self> {
+        match num {
+            0 => Ok(Self::Noop),
+            1 => Ok(Self::Optin),
+            2 => Ok(Self::Closeout),
+            3 => Ok(Self::Clear),
+            4 => Ok(Self::Update),
+            5 => Ok(Self::Delete),
+            _ => Err(format!("Unrecognized u64 '{}' for `OnCompletion`!", num).into())
+        }
+    }
+}
+
+impl Display for OnCompletion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
             Self::Noop => "noop",
             Self::Optin => "optin",
             Self::Closeout => "closeout",
             Self::Clear => "clear",
             Self::Update => "update",
             Self::Delete => "delete",
-        }
+        };
+        write!(f, "{}", s)
     }
 }
 
