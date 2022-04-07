@@ -338,7 +338,7 @@ impl AlgorandTransaction {
                 Some(app) => match &app.on_completion {
                     Some(thing) => Some(thing.to_u64()),
                     None => None,
-                }
+                },
             },
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,

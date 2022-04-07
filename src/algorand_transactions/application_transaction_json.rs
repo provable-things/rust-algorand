@@ -1,4 +1,4 @@
-use std::{str::FromStr, fmt::Display};
+use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -47,7 +47,7 @@ impl OnCompletion {
             3 => Ok(Self::Clear),
             4 => Ok(Self::Update),
             5 => Ok(Self::Delete),
-            _ => Err(format!("Unrecognized u64 '{}' for `OnCompletion`!", num).into())
+            _ => Err(format!("Unrecognized u64 '{}' for `OnCompletion`!", num).into()),
         }
     }
 }
