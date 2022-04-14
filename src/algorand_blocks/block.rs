@@ -61,7 +61,7 @@ impl AlgorandBlock {
         self.block_header.round()
     }
 
-    fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
+    pub fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
         Ok(Self {
             block_header: AlgorandBlockHeader::from_json(&json.block_header)?,
             transactions: if json.transactions.is_empty() {

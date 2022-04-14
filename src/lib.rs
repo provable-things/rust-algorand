@@ -30,7 +30,10 @@ mod test_utils;
 
 pub use crate::{
     algorand_address::AlgorandAddress,
-    algorand_blocks::block::AlgorandBlock,
+    algorand_blocks::{
+        block::AlgorandBlock,
+        block_json::AlgorandBlockJson,
+    },
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
     algorand_hash::AlgorandHash,
@@ -38,6 +41,7 @@ pub use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_mnemonic::AlgorandMnemonic,
     algorand_transactions::{
+        algorand_transaction_proof::{AlgorandTransactionProof, AlgorandTransactionProofJson},
         asset_parameters::AssetParameters,
         transaction::{AlgorandSignedTransaction, AlgorandTransaction},
         transactions::AlgorandTransactions,

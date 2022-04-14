@@ -18,7 +18,7 @@ const MERKLE_ARRAY_ELEMTENT_PREFIX: [u8; 2] = *b"MA";
 const TRANSACTION_MERKLE_LEAF_PREFIX: [u8; 2] = *b"TL";
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
-struct AlgorandProofJson {
+pub struct AlgorandTransactionProofJson {
     proof: String,
 
     #[serde(rename = "idx")]
@@ -34,13 +34,13 @@ struct AlgorandProofJson {
     tree_depth: u64,
 }
 
-impl Display for AlgorandProofJson {
+impl Display for AlgorandTransactionProofJson {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", json!(self))
     }
 }
 
-impl FromStr for AlgorandProofJson {
+impl FromStr for AlgorandTransactionProofJson {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
@@ -49,7 +49,7 @@ impl FromStr for AlgorandProofJson {
 }
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-struct AlgorandProof {
+pub struct AlgorandTransactionProof {
     index: u64,
     tree_depth: u64,
     stib_hash: Bytes,
@@ -57,21 +57,21 @@ struct AlgorandProof {
     proof: Vec<Bytes>,
 }
 
-impl FromStr for AlgorandProof {
+impl FromStr for AlgorandTransactionProof {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
-        Self::from_json(&AlgorandProofJson::from_str(s)?)
+        Self::from_json(&AlgorandTransactionProofJson::from_str(s)?)
     }
 }
 
-impl Display for AlgorandProof {
+impl Display for AlgorandTransactionProof {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.to_json())
     }
 }
 
-impl AlgorandProof {
+impl AlgorandTransactionProof {
     fn decode_proof_str(s: &str) -> Result<Vec<Bytes>> {
         let bytes = base64_decode(s)?;
         let result = bytes
@@ -91,7 +91,7 @@ impl AlgorandProof {
         Ok(result)
     }
 
-    pub fn from_json(json: &AlgorandProofJson) -> Result<Self> {
+    pub fn from_json(json: &AlgorandTransactionProofJson) -> Result<Self> {
         Ok(Self {
             hash_type: json.hash_type.clone(),
             index: json.index,
@@ -101,8 +101,8 @@ impl AlgorandProof {
         })
     }
 
-    pub fn to_json(&self) -> AlgorandProofJson {
-        AlgorandProofJson {
+    pub fn to_json(&self) -> AlgorandTransactionProofJson {
+        AlgorandTransactionProofJson {
             index: self.index,
             tree_depth: self.tree_depth,
             hash_type: self.hash_type.clone(),
@@ -183,19 +183,19 @@ mod tests {
         }).to_string()
     }
 
-    fn get_sample_proof_json() -> AlgorandProofJson {
-        AlgorandProofJson::from_str(&get_sample_proof_string()).unwrap()
+    fn get_sample_proof_json() -> AlgorandTransactionProofJson {
+        AlgorandTransactionProofJson::from_str(&get_sample_proof_string()).unwrap()
     }
 
-    fn get_sample_proof() -> AlgorandProof {
-        AlgorandProof::from_str(&get_sample_proof_string()).unwrap()
+    fn get_sample_proof() -> AlgorandTransactionProof {
+        AlgorandTransactionProof::from_str(&get_sample_proof_string()).unwrap()
     }
 
     #[test]
     fn should_serde_proof_to_and_from_str() {
         let proof = get_sample_proof();
         let s = proof.to_string();
-        let result = AlgorandProof::from_str(&s).unwrap();
+        let result = AlgorandTransactionProof::from_str(&s).unwrap();
         assert_eq!(result, proof);
     }
 
@@ -218,7 +218,7 @@ mod tests {
     #[test]
     fn should_verify_proof_2() {
         // NOTE: Via: curl -s "https://testnet-api.algonode.cloud/v2/blocks/20827984/transactions/WFISCMEVNJQ44IGK5OSH767DGJW5E5JQK3HRJROIX3RVMXEDONOA/proof" | jq
-        let proof = AlgorandProof::from_str(&json!(
+        let proof = AlgorandTransactionProof::from_str(&json!(
             {
               "hashtype": "sha512_256",
               "idx": 2,
@@ -243,7 +243,7 @@ mod tests {
     #[test]
     fn should_verify_proof_3() {
         // NOTE: curl "https://testnet-api.algonode.cloud/v2/blocks/20827986/transactions/6JIBTA4NGUSGQONJRBJNU722S5PFZ3AGVU4VRY2ZIKR27AXBN6QQ/proof" | jq
-        let proof = AlgorandProof::from_str(
+        let proof = AlgorandTransactionProof::from_str(
             &json!({
               "hashtype": "sha512_256",
               "idx": 1,
@@ -270,7 +270,7 @@ mod tests {
     #[test]
     fn should_verify_proof_4() {
         // NOTE curl "https://testnet-api.algonode.cloud/v2/blocks/20827988/transactions/S5UEAAO54HYPR3EPKWZRX3OE2GRKFOKCO2BUUICLQ2JEQBS4H5EQ/proof" | jq
-        let proof = AlgorandProof::from_str(
+        let proof = AlgorandTransactionProof::from_str(
             &json!({
               "hashtype": "sha512_256",
               "idx": 0,

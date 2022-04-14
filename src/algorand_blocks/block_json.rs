@@ -12,11 +12,10 @@ use crate::{
 };
 
 #[skip_serializing_none]
-#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, Default, PartialEq, Serialize, Deserialize)]
 pub struct AlgorandBlockJson {
     #[serde(flatten)]
     pub block_header: AlgorandBlockHeaderJson,
-
     pub transactions: Vec<AlgorandTransactionJson>,
 }
 

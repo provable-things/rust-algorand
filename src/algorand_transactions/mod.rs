@@ -1,4 +1,4 @@
-mod algorand_transaction_proof;
+pub(crate) mod algorand_transaction_proof;
 mod application_transaction_json;
 mod asset_config_transaction;
 mod asset_destroy_transaction;
