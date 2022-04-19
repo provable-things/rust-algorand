@@ -72,7 +72,7 @@ impl AlgorandBlock {
         })
     }
 
-    fn to_json(&self) -> Result<AlgorandBlockJson> {
+    pub fn to_json(&self) -> Result<AlgorandBlockJson> {
         Ok(AlgorandBlockJson {
             block_header: self.block_header.to_json()?,
             transactions: match &self.transactions {

@@ -30,10 +30,7 @@ mod test_utils;
 
 pub use crate::{
     algorand_address::AlgorandAddress,
-    algorand_blocks::{
-        block::AlgorandBlock,
-        block_json::AlgorandBlockJson,
-    },
+    algorand_blocks::{block::AlgorandBlock, block_json::AlgorandBlockJson},
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
     algorand_hash::AlgorandHash,

@@ -48,7 +48,7 @@ impl FromStr for AlgorandTransactionProofJson {
     }
 }
 
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct AlgorandTransactionProof {
     index: u64,
     tree_depth: u64,
