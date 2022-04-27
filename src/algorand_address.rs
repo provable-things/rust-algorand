@@ -15,7 +15,7 @@ use crate::{
 pub const ALGORAND_ADDRESS_NUM_BYTES: usize = 32;
 pub const ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES: usize = 4;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AlgorandAddress([Byte; ALGORAND_ADDRESS_NUM_BYTES]);
 
 impl AlgorandChecksum for AlgorandAddress {
