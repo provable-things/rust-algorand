@@ -9,6 +9,7 @@ use crate::{
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_transactions::{
+        transaction::AlgorandTransaction,
         transaction_json::AlgorandTransactionJson,
         transactions::AlgorandTransactions,
     },
@@ -61,6 +62,9 @@ impl AlgorandBlock {
         self.block_header.round()
     }
 
+    /// ## To Json
+    ///
+    /// Convert this block to json.
     pub fn from_json(json: &AlgorandBlockJson) -> Result<Self> {
         Ok(Self {
             block_header: AlgorandBlockHeader::from_json(&json.block_header)?,
@@ -72,6 +76,9 @@ impl AlgorandBlock {
         })
     }
 
+    /// ## From Json
+    ///
+    /// Get block from a json representation of it.
     pub fn to_json(&self) -> Result<AlgorandBlockJson> {
         Ok(AlgorandBlockJson {
             block_header: self.block_header.to_json()?,
@@ -85,10 +92,39 @@ impl AlgorandBlock {
         })
     }
 
+    /// ## Get Transactions
+    ///
+    /// Get all the transactions in this block.
     pub fn get_transactions(&self) -> Result<AlgorandTransactions> {
         match &self.transactions {
             Some(txs) => Ok(txs.clone()),
             None => Ok(AlgorandTransactions::default()),
+        }
+    }
+
+    /// ## Get Transaction At Index
+    ///
+    /// Get the transaction at the given index from this block. Errors if the index is greater
+    /// than the amount of transactions in the block.
+    pub fn get_transaction_at_index(&self, index: usize) -> Result<AlgorandTransaction> {
+        // TODO test!
+        self.get_transactions().and_then(|txs| {
+            if index >= txs.len() {
+                Err("Cannot get tx @ index {index} - not enough txs in block!".into())
+            } else {
+                Ok(txs[index].clone())
+            }
+        })
+    }
+
+    /// ## Get Transactions Root
+    ///
+    /// Get the merkle root hash of the transactions in this block.
+    pub fn get_transactions_root(&self) -> Result<AlgorandHash> {
+        // TODO test!
+        match &self.block_header.transactions_root {
+            Some(root) => Ok(root.clone()),
+            None => Err("No tx root in block header!".into()),
         }
     }
 }
