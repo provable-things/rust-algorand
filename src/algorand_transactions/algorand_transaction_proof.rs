@@ -10,7 +10,7 @@ use crate::{
     algorand_hash::AlgorandHash,
     algorand_transactions::transaction::AlgorandTransaction,
     algorand_types::{Bytes, Result},
-    crypto_utils::sha512_256_hash_bytes,
+    crypto_utils::{base32_decode, sha512_256_hash_bytes},
 };
 
 // NOTE: These prefixes are used to domain-separate the various hashes used in the protocol.
@@ -50,11 +50,11 @@ impl FromStr for AlgorandTransactionProofJson {
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
 pub struct AlgorandTransactionProof {
-    index: u64,
-    tree_depth: u64,
-    stib_hash: Bytes,
-    hash_type: String,
-    proof: Vec<Bytes>,
+    pub index: u64,
+    pub tree_depth: u64,
+    pub stib_hash: Bytes,
+    pub hash_type: String,
+    pub proof: Vec<Bytes>,
 }
 
 impl FromStr for AlgorandTransactionProof {
@@ -154,10 +154,17 @@ impl AlgorandTransactionProof {
             .map(|ref root_hash| root_hash == txn_root)
     }
 
-    fn validate(self, block: &AlgorandBlock, txn: &AlgorandTransaction) -> Result<()> {
-        // TODO: Get the root from the block and calculate the ID from the tx
-        // then check if valid!
-        unimplemented!()
+    pub fn validate(&self, block: &AlgorandBlock) -> Result<()> {
+        // TODO test
+        let tx = block.get_transaction_at_index(self.index as usize)?;
+        let raw_tx_id = tx.to_raw_tx_id()?;
+        let tx_id = tx.to_id()?;
+        let tx_id_decoded = AlgorandHash::from_slice(&base32_decode(&tx.id.clone().unwrap())?)?;
+        if self.is_valid(&tx.get_id()?, &block.get_transactions_root()?)? == true {
+            Ok(())
+        } else {
+            Err("Invalid proof!".into())
+        }
     }
 }
 
@@ -169,7 +176,7 @@ mod tests {
     use crate::{
         algorand_hash::AlgorandHash,
         algorand_types::Bytes,
-        crypto_utils::{base32_decode, sha512_256_hash_bytes},
+        crypto_utils::sha512_256_hash_bytes,
     };
 
     fn get_sample_proof_string() -> String {
@@ -286,6 +293,39 @@ mod tests {
             &base64_decode("NNYUpJYQu30QVin14lFrri5tZjhDO+NLPWtXiWhgqqs=").unwrap(),
         )
         .unwrap();
-        let tx_id = base32_decode("S5UEAAO54HYPR3EPKWZRX3OE2GRKFOKCO2BUUICLQ2JEQBS4H5EQ").unwrap();
+        let tx_id = AlgorandHash::from_slice(
+            &base32_decode("S5UEAAO54HYPR3EPKWZRX3OE2GRKFOKCO2BUUICLQ2JEQBS4H5EQ").unwrap(),
+        )
+        .unwrap();
+        let result = proof.is_valid(&tx_id, &txn_root).unwrap();
+        assert!(result);
     }
+
+    #[test]
+    fn should_verify_proof_5() {
+        let proof = AlgorandTransactionProof::from_str(
+            &json!({
+              "hashtype": "sha512_256",
+              "idx": 11,
+              "treedepth": 5,
+              "proof": "ab2/G0q7HayramFeLOdelgDgaVkLwY1XPZmilYNcTSsZJkbcCYgQSzBPF+sxCJYhsjXAORt0Cxx/+uYSO+Fo70kEcaNlD5kX4K18vOahWHKEg23bo0vPg4Hika8hUgldoIkff6mnXH9rbiDlBweVWY90VfPg7aq4ios5KR8TGgQhDMDraYncY0CL0gYA1gaTwp0J58Cdxz3GgJK+3ppGJg==",
+              "stibhash": "jTXscHe2Wxyca8a2iwQZkxlDgCGC9ZRTJdGVTF1CLy4=",
+            })
+            .to_string(),
+        )
+        .unwrap();
+        let txn_root = AlgorandHash::from_slice(
+            &base64_decode("J/uRLt7jmzdA8o8Ju126ffKkhn5MFCQTbUsEQ3aZuSY=").unwrap(),
+        )
+        .unwrap();
+        let tx_id = AlgorandHash::from_slice(
+            &base32_decode("A3TATJKWNH4ZEYKDUZE4S5SO7TYIBQN5VSSWJB7HTFL4MJEAUOWQ").unwrap(),
+        )
+        .unwrap();
+        let result = proof.is_valid(&tx_id, &txn_root).unwrap();
+        assert!(result);
+    }
+
+    #[test]
+    fn should_validate_proof_1() {}
 }
