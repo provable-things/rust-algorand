@@ -29,7 +29,7 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
+    crypto_utils::{base32_decode, base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
@@ -238,6 +238,13 @@ impl AlgorandTransaction {
         self.to_msg_pack_bytes()
     }
 
+    pub fn get_id(&self) -> Result<AlgorandHash> {
+        match &self.id {
+            Some(id) => AlgorandHash::from_slice(&base32_decode(&id)?),
+            None => Err("No `id` field in tx!".into()),
+        }
+    }
+
     fn to_msg_pack_bytes(&self) -> Result<Bytes> {
         Ok(rmp_serde::to_vec_named(&self)?)
     }
@@ -254,7 +261,7 @@ impl AlgorandTransaction {
             .map(|ref msg_pack_bytes| Self::prefix_tx_byte(msg_pack_bytes))
     }
 
-    fn to_raw_tx_id(&self) -> Result<AlgorandHash> {
+    pub fn to_raw_tx_id(&self) -> Result<AlgorandHash> {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_for_signing()?))
     }
 
