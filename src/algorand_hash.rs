@@ -5,7 +5,7 @@ use derive_more::Constructor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
-    algorand_constants::ALGORAND_MAINNET_GENESIS_HASH,
+    algorand_constants::{ALGORAND_MAINNET_GENESIS_HASH, ALGORAND_TESTNET_GENESIS_HASH},
     algorand_encoding::U8_32Visitor,
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
@@ -48,6 +48,13 @@ impl AlgorandHash {
     /// Get the mainnet genesis hash.
     pub fn mainnet_genesis_hash() -> Result<Self> {
         Self::from_base_64(ALGORAND_MAINNET_GENESIS_HASH)
+    }
+
+    /// ## Testnet Genesis Hash
+    ///
+    /// Get the testnet genesis hash.
+    pub fn testnet_genesis_hash() -> Result<Self> {
+        Self::from_base_64(ALGORAND_TESTNET_GENESIS_HASH)
     }
 
     /// # To Bytes
