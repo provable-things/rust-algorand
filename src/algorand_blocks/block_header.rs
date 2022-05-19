@@ -177,7 +177,13 @@ impl AlgorandBlockHeader {
                 None => None,
             },
             rewards_rate: match &json.rewards {
-                Some(rewards) => rewards.rewards_rate,
+                Some(rewards) => {
+                    if rewards.rewards_rate == Some(0) {
+                        None
+                    } else {
+                        rewards.rewards_rate
+                    }
+                },
                 None => None,
             },
             rewards_level: match &json.rewards {
