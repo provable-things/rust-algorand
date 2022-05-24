@@ -22,7 +22,7 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct AlgorandTransactionJson {
-    #[serde(rename = "asset-freeze-transaction")]
+    #[serde(rename = "application-transaction")]
     pub application_transaction: Option<ApplicationTransactionJson>,
 
     #[serde(rename = "asset-freeze-transaction")]

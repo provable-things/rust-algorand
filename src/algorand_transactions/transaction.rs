@@ -18,7 +18,7 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
-        application_transaction::ApplicationTransactionJson,
+        application_transaction::{ApplicationTransactionJson, OnCompletion},
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
@@ -47,6 +47,15 @@ fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
     match vec {
         Some(vec) => vec.is_empty(),
         None => true,
+    }
+}
+
+#[derive(Default, Debug, Eq, PartialEq, Clone, Serialize, Deserialize)]
+pub struct ApplicationArg(#[serde(with = "serde_bytes")] pub Vec<u8>);
+
+impl AsRef<[u8]> for ApplicationArg {
+    fn as_ref(&self) -> &[u8] {
+        &self.0
     }
 }
 
@@ -80,13 +89,19 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero")]
     pub amount: Option<u64>,
 
+    /// ## App Arguments
+    ///
+    /// Application arguments to be passed to the application being called
+    #[serde(rename(serialize = "apaa"), skip_serializing_if = "is_empty_vec")]
+    pub application_args: Option<Vec<ApplicationArg>>,
+
     /// ## On Completion
     ///
     /// OnCompletion specifies an optional side-effect that this transaction
     /// will have on the balance record of the sender or the application's
     /// creator. See the documentation for the OnCompletion type for more
     /// information on each possible value.
-    #[serde(rename(serialize = "apan"))]
+    #[serde(rename(serialize = "apan"), skip_serializing_if = "is_zero")]
     pub on_completion: Option<u64>,
 
     /// ## Asset Parameters
@@ -94,6 +109,24 @@ pub struct AlgorandTransaction {
     /// Asset paramets to include if the transaction is intended to create a new Algorand asset.
     #[serde(rename(serialize = "apar"))]
     pub asset_parameters: Option<AssetParameters>,
+
+    /// ## Foreign assets
+    ///
+    /// Asset IDs of assets that may be used by the application being called.
+    #[serde(rename(serialize = "apas"), skip_serializing_if = "is_empty_vec")]
+    pub foreign_assets: Option<Vec<u64>>,
+
+    /// ## Accounts
+    ///
+    /// Account addresses of accounts that may be accessed by the application being called.
+    #[serde(rename(serialize = "apat"), skip_serializing_if = "is_empty_vec")]
+    pub accounts: Option<Vec<AlgorandAddress>>,
+
+    /// ## Foreign applications
+    ///
+    /// Application IDs of applications that may be accessed by the application being called.
+    #[serde(rename(serialize = "apfa"), skip_serializing_if = "is_empty_vec")]
+    pub foreign_apps: Option<Vec<u64>>,
 
     /// ## Application ID
     ///
@@ -434,25 +467,23 @@ impl AlgorandTransaction {
                 Some(payment_json) => payment_json.close_amount,
                 None => None,
             },
+            application_args: match &json.application_transaction {
+                Some(app) => Some(app.maybe_get_application_args()?),
+                None => None,
+            },
+            foreign_apps: match &json.application_transaction {
+                Some(app) => app.foreign_apps.clone(),
+                None => None,
+            },
+            accounts: match &json.application_transaction {
+                Some(app) => Some(app.maybe_get_accounts()?),
+                None => None,
+            },
+            foreign_assets: match &json.application_transaction {
+                Some(app) => app.foreign_assets.clone(),
+                None => None,
+            },
         })
-    }
-
-    fn to_application_transaction_json(&self) -> Option<ApplicationTransactionJson> {
-        /* FIXME
-        ApplicationTransactionJson {
-            accounts: self.accounts.clone(),
-            foreign_apps: self.foreign_apps.clone(),
-            on_completion self.on_completion.clone(),
-            foreign_assets: self.foreign_assets.clone(),
-            application_id: self.application_id.clone(),
-            approval_program: self.approval_program.clone(),
-            application_args: self.application_args.clone(),
-            local_state_schema: self.local_state_schema.clone(),
-            global_state_schema: self.global_state_schema.clone(),
-            clear_state_program: self.clear_state_program.clone(),
-        }
-        */
-        None
     }
 
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
@@ -485,7 +516,7 @@ impl AlgorandTransaction {
             },
             asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
             payment_transaction: self.to_payment_transaction_json(),
-            application_transaction: self.to_application_transaction_json(),
+            application_transaction: self.to_application_transaction_json()?,
         })
     }
 
@@ -500,6 +531,40 @@ impl AlgorandTransaction {
     fn to_key_ref_transaction_json(&self) -> Option<KeyRegTransactionJson> {
         // FIXME Impl this! Check if empty too!
         None
+    }
+
+    fn to_application_transaction_json(&self) -> Result<Option<ApplicationTransactionJson>> {
+        let json = ApplicationTransactionJson {
+            accounts: match &self.accounts {
+                Some(accounts) if !accounts.is_empty() => Some(
+                    accounts
+                        .iter()
+                        .map(|account| account.to_base32())
+                        .collect::<Result<Vec<String>>>()?,
+                ),
+                _ => None,
+            },
+            foreign_apps: self.foreign_apps.clone(),
+            on_completion: match self.on_completion {
+                Some(val) => OnCompletion::from_u64(val).ok(),
+                None => None,
+            },
+            foreign_assets: self.foreign_assets.clone(),
+            application_id: self.application_id,
+            application_args: match &self.application_args {
+                Some(args) if !args.is_empty() => Some(args.iter().map(base64_encode).collect()),
+                _ => None,
+            },
+            approval_program: None,
+            clear_state_program: None,
+            global_state_schema: None,
+            local_state_schema: None,
+        };
+        if json.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(json))
+        }
     }
 
     fn to_asset_transfer_transaction_json(&self) -> Option<AssetTransferTransactionJson> {
