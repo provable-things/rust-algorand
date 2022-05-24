@@ -8,9 +8,8 @@ use crate::{
     algorand_blocks::block::AlgorandBlock,
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
-    algorand_transactions::transaction::AlgorandTransaction,
     algorand_types::{Bytes, Result},
-    crypto_utils::{base32_decode, sha512_256_hash_bytes},
+    crypto_utils::sha512_256_hash_bytes,
 };
 
 // NOTE: These prefixes are used to domain-separate the various hashes used in the protocol.
@@ -156,11 +155,7 @@ impl AlgorandTransactionProof {
 
     pub fn validate(&self, block: &AlgorandBlock) -> Result<()> {
         // TODO test
-        let tx = block.get_transaction_at_index(self.index as usize)?;
-        let raw_tx_id = tx.to_raw_tx_id()?;
-        let tx_id = tx.to_id()?;
-        let tx_id_decoded = AlgorandHash::from_slice(&base32_decode(&tx.id.clone().unwrap())?)?;
-        if self.is_valid(&tx.get_id()?, &block.get_transactions_root()?)? == true {
+        if self.is_valid(&block.get_transaction_at_index(self.index as usize)?.get_id()?, &block.get_transactions_root()?)? == true {
             Ok(())
         } else {
             Err("Invalid proof!".into())
@@ -176,6 +171,7 @@ mod tests {
     use crate::{
         algorand_hash::AlgorandHash,
         algorand_types::Bytes,
+        crypto_utils::base32_decode,
         crypto_utils::sha512_256_hash_bytes,
     };
 
