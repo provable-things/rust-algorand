@@ -24,7 +24,7 @@ impl AlgorandTransactions {
     }
 
     pub fn get_asset_to_txs(&self, address: &AlgorandAddress) -> Self {
-        let needle = Some(address.clone());
+        let needle = Some(*address);
         Self(
             self.iter()
                 .filter(|tx| tx.asset_receiver == needle)

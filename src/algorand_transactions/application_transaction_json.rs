@@ -1,7 +1,6 @@
 use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 use crate::{algorand_errors::AlgorandError, algorand_types::Result};
 

@@ -51,15 +51,16 @@ impl AlgorandTransaction {
             )
             .into());
         };
-        let mut tx = Self::default();
-        tx.sender = Some(sender);
-        tx.genesis_hash = Some(genesis_hash);
-        tx.asset_parameters = Some(asset_parameters);
-        tx.first_valid_round = Some(first_valid_round);
-        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
-        tx.last_valid_round = Some(calculated_last_valid_round);
-        tx.txn_type = Some(AlgorandTransactionType::AssetConfiguration);
-        Ok(tx)
+        Ok(Self {
+            sender: Some(sender),
+            genesis_hash: Some(genesis_hash),
+            asset_parameters: Some(asset_parameters),
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            last_valid_round: Some(calculated_last_valid_round),
+            txn_type: Some(AlgorandTransactionType::AssetConfiguration),
+            ..Default::default()
+        })
     }
 }
 

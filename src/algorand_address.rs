@@ -75,7 +75,7 @@ impl AlgorandAddress {
         ))
     }
 
-    fn to_pub_key_bytes(&self) -> Bytes {
+    fn to_pub_key_bytes(self) -> Bytes {
         self.0[..ALGORAND_ADDRESS_NUM_BYTES].to_vec()
     }
 }

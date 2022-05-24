@@ -269,11 +269,11 @@ impl AlgorandBlockHeader {
     fn get_rewards_state(&self) -> RewardsState {
         // TODO Mv this impl to the it's mod to keep this clean!
         RewardsState {
-            fee_sink: self.fee_sink.clone(),
+            fee_sink: self.fee_sink,
+            rewards_pool: self.rewards_pool,
             rewards_rate: self.rewards_rate,
             rewards_level: self.rewards_level,
             rewards_residue: self.rewards_residue,
-            rewards_pool: self.rewards_pool.clone(),
             rewards_calculation_round: self.rewards_calculation_round,
         }
     }

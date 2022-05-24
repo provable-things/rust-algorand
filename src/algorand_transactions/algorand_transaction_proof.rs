@@ -155,7 +155,12 @@ impl AlgorandTransactionProof {
 
     pub fn validate(&self, block: &AlgorandBlock) -> Result<()> {
         // TODO test
-        if self.is_valid(&block.get_transaction_at_index(self.index as usize)?.get_id()?, &block.get_transactions_root()?)? == true {
+        if self.is_valid(
+            &block
+                .get_transaction_at_index(self.index as usize)?
+                .get_id()?,
+            &block.get_transactions_root()?,
+        )? {
             Ok(())
         } else {
             Err("Invalid proof!".into())
@@ -165,15 +170,10 @@ impl AlgorandTransactionProof {
 
 #[cfg(test)]
 mod tests {
-    use base64::{decode as base64_decode, encode as base64_encode};
+    use base64::decode as base64_decode;
 
     use super::*;
-    use crate::{
-        algorand_hash::AlgorandHash,
-        algorand_types::Bytes,
-        crypto_utils::base32_decode,
-        crypto_utils::sha512_256_hash_bytes,
-    };
+    use crate::{algorand_hash::AlgorandHash, crypto_utils::base32_decode};
 
     fn get_sample_proof_string() -> String {
         // NOTE: Gotten via: curl -s "https://algoexplorerapi.io/v2/blocks/20261491/transactions/UFZTMQWJ3N6LWGMMSF7EJENOQKYYUDC7A2346TR3L7AYTBRCAPZQ/proof" | jq

@@ -240,7 +240,7 @@ impl AlgorandTransaction {
 
     pub fn get_id(&self) -> Result<AlgorandHash> {
         match &self.id {
-            Some(id) => AlgorandHash::from_slice(&base32_decode(&id)?),
+            Some(id) => AlgorandHash::from_slice(&base32_decode(id)?),
             None => Err("No `id` field in tx!".into()),
         }
     }
@@ -337,15 +337,12 @@ impl AlgorandTransaction {
                 None => None,
             },
             application_id: match &json.application_transaction {
-                Some(app) => app.application_id.clone(),
+                Some(app) => app.application_id,
                 None => None,
             },
             on_completion: match &json.application_transaction {
                 None => None,
-                Some(app) => match &app.on_completion {
-                    Some(thing) => Some(thing.to_u64()),
-                    None => None,
-                },
+                Some(app) => app.on_completion.as_ref().map(|thing| thing.to_u64()),
             },
             genesis_id: json.genesis_id.clone(),
             first_valid_round: json.first_valid,
@@ -455,10 +452,6 @@ impl AlgorandTransaction {
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
         Ok(AlgorandTransactionJson {
             fee: self.fee,
-            amount: match self.amount {
-                Some(u64_amount) => Some(json!(u64_amount)),
-                None => None,
-            },
             last_valid: self.last_valid_round,
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
@@ -470,6 +463,7 @@ impl AlgorandTransaction {
             tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
             receiver: self.receiver.as_ref().map(|x| x.to_string()),
             key_reg_transaction: self.to_key_ref_transaction_json(),
+            amount: self.amount.map(|u64_amount| json!(u64_amount)),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
@@ -505,13 +499,10 @@ impl AlgorandTransaction {
 
     fn to_asset_transfer_transaction_json(&self) -> Option<AssetTransferTransactionJson> {
         let json = AssetTransferTransactionJson {
-            amount: match &self.asset_amount {
-                None => None,
-                Some(u_64) => Some(json!(u_64)),
-            },
             asset_id: self.transfer_asset_id,
             close_amount: self.asset_close_amount,
             sender: self.asset_sender.as_ref().map(|x| x.to_string()),
+            amount: self.asset_amount.as_ref().map(|u_64| json!(u_64)),
             receiver: self.asset_receiver.as_ref().map(|x| x.to_string()),
             close_to: self.asset_close_to.as_ref().map(|x| x.to_string()),
         };

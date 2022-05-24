@@ -93,21 +93,22 @@ impl AlgorandTransaction {
         last_valid_round: Option<u64>,
         asset_receiver: AlgorandAddress,
     ) -> Result<AlgorandTransaction> {
-        let mut tx = Self::default();
-        tx.note = note;
-        tx.sender = Some(sender);
-        tx.genesis_hash = Some(genesis_hash);
-        tx.asset_amount = Some(asset_amount);
-        tx.transfer_asset_id = Some(asset_id);
-        tx.asset_receiver = Some(asset_receiver);
-        tx.first_valid_round = Some(first_valid_round);
-        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
-        tx.txn_type = Some(AlgorandTransactionType::AssetTransfer);
-        tx.last_valid_round = Some(Self::calculate_last_valid_round(
-            first_valid_round,
-            last_valid_round,
-        )?);
-        Ok(tx)
+        Ok(Self {
+            note,
+            sender: Some(sender),
+            genesis_hash: Some(genesis_hash),
+            asset_amount: Some(asset_amount),
+            transfer_asset_id: Some(asset_id),
+            asset_receiver: Some(asset_receiver),
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            txn_type: Some(AlgorandTransactionType::AssetTransfer),
+            last_valid_round: Some(Self::calculate_last_valid_round(
+                first_valid_round,
+                last_valid_round,
+            )?),
+            ..Default::default()
+        })
     }
 
     /// Asset Opt In
@@ -124,20 +125,21 @@ impl AlgorandTransaction {
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<AlgorandTransaction> {
-        let mut tx = Self::default();
-        tx.asset_amount = None;
-        tx.sender = Some(sender.clone());
-        tx.asset_receiver = Some(sender);
-        tx.genesis_hash = Some(genesis_hash);
-        tx.transfer_asset_id = Some(asset_id);
-        tx.first_valid_round = Some(first_valid_round);
-        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
-        tx.txn_type = Some(AlgorandTransactionType::AssetTransfer);
-        tx.last_valid_round = Some(Self::calculate_last_valid_round(
-            first_valid_round,
-            last_valid_round,
-        )?);
-        Ok(tx)
+        Ok(Self {
+            asset_amount: None,
+            sender: Some(sender),
+            asset_receiver: Some(sender),
+            genesis_hash: Some(genesis_hash),
+            transfer_asset_id: Some(asset_id),
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            txn_type: Some(AlgorandTransactionType::AssetTransfer),
+            last_valid_round: Some(Self::calculate_last_valid_round(
+                first_valid_round,
+                last_valid_round,
+            )?),
+            ..Default::default()
+        })
     }
 }
 

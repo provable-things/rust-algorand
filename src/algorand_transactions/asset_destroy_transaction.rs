@@ -25,15 +25,16 @@ impl AlgorandTransaction {
     ) -> Result<Self> {
         let calculated_last_valid_round =
             Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
-        let mut tx = Self::default();
-        tx.sender = Some(sender);
-        tx.asset_id = Some(asset_id);
-        tx.genesis_hash = Some(genesis_hash);
-        tx.first_valid_round = Some(first_valid_round);
-        tx.fee = Some(fee.check_if_satisfies_minimum_fee()?.0);
-        tx.last_valid_round = Some(calculated_last_valid_round);
-        tx.txn_type = Some(AlgorandTransactionType::AssetConfiguration);
-        Ok(tx)
+        Ok(Self {
+            sender: Some(sender),
+            asset_id: Some(asset_id),
+            genesis_hash: Some(genesis_hash),
+            first_valid_round: Some(first_valid_round),
+            fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
+            last_valid_round: Some(calculated_last_valid_round),
+            txn_type: Some(AlgorandTransactionType::AssetConfiguration),
+            ..Default::default()
+        })
     }
 }
 
