@@ -1,0 +1,23 @@
+[package]
+name = "rust-algorand"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+hex = "0.4.3"
+rand = "0.7.3"
+sha2 = "0.9.8"
+paste = "1.0.6"
+strum = "0.22.0"
+base32 = "0.4.0"
+base64 = "0.13.0"
+rmp-serde = "0.15.5"
+serde_json = "1.0.74"
+lazy_static = "1.4.0"
+serde_with = "1.11.0"
+quick-error = "2.0.1"
+serde_bytes = "0.11.5"
+strum_macros = "0.22.0"
+derive_more = "0.99.16"
+ed25519-dalek = "1.0.1"
+serde = { version = "1.0.130", features = [ "derive" ] }
