@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 hex = "0.4.3"
 rand = "0.7.3"
-sha2 = "0.9.8"
+sha2 = "0.10.1"
 paste = "1.0.6"
 strum = "0.22.0"
 base32 = "0.4.0"
