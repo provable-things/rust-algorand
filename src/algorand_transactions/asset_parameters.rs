@@ -16,10 +16,10 @@ fn is_zero(num: &u64) -> bool {
 }
 
 fn is_false(val: &Option<bool>) -> bool {
-    return match val {
+    match val {
         Some(val) => !val,
         None => true,
-    };
+    }
 }
 
 #[skip_serializing_none]

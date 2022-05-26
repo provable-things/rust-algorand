@@ -30,22 +30,22 @@ use crate::{
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::{base32_decode, base32_encode_with_no_padding, sha512_256_hash_bytes},
+    crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
 impl ToMsgPackBytes for AlgorandSignedTransaction {}
 
 fn is_zero(num: &Option<u64>) -> bool {
-    return match num {
+    match num {
         Some(val) => val == &0,
         None => true,
-    };
+    }
 }
 
 fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
     if vec.is_some() {
-        vec.as_ref().unwrap().len() > 0
+        vec.as_ref().unwrap().is_empty()
     } else {
         true
     }
