@@ -158,7 +158,7 @@ impl AlgorandTransactionProof {
         if self.is_valid(
             &block
                 .get_transaction_at_index(self.index as usize)?
-                .get_id()?,
+                .to_raw_tx_id()?,
             &block.get_transactions_root()?,
         )? {
             Ok(())

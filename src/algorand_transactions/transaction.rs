@@ -24,16 +24,31 @@ use crate::{
         asset_parameters::AssetParameters,
         asset_transfer_transaction::AssetTransferTransactionJson,
         key_reg_transaction::KeyRegTransactionJson,
+        pay_transaction::PaymentTransactionJson,
         signature_json::AlgorandSignatureJson,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::{base32_decode, base32_encode_with_no_padding, sha512_256_hash_bytes},
+    crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
 impl ToMsgPackBytes for AlgorandSignedTransaction {}
+
+fn is_zero(num: &Option<u64>) -> bool {
+    match num {
+        Some(val) => val == &0,
+        None => true,
+    }
+}
+
+fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
+    match vec {
+        Some(vec) => vec.is_empty(),
+        None => true,
+    }
+}
 
 /// ## An Algorand Transaction
 ///
@@ -44,7 +59,7 @@ pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
     /// The amount of an asset to transfer.
-    #[serde(rename(serialize = "aamt"))]
+    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero")]
     pub asset_amount: Option<u64>,
 
     /// ## Asset Close To
@@ -62,7 +77,7 @@ pub struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"))]
+    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero")]
     pub amount: Option<u64>,
 
     /// ## On Completion
@@ -101,7 +116,7 @@ pub struct AlgorandTransaction {
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
-    #[serde(rename(serialize = "caid"))]
+    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero")]
     // FIXME This is the config tx asset id! Add a prefix for clarity?
     pub asset_id: Option<u64>,
 
@@ -139,7 +154,7 @@ pub struct AlgorandTransaction {
     /// ## Genesis ID
     ///
     /// The human-readable form of the genesis hash.
-    #[serde(skip_serializing, rename(serialize = "gen"))]
+    #[serde(rename(serialize = "gen"))]
     pub genesis_id: Option<String>,
 
     /// ## Genesis Hash
@@ -148,16 +163,10 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "gh"))]
     pub genesis_hash: Option<AlgorandHash>,
 
-    /// ## ID
-    ///
-    /// The ID of the transaction.
-    #[serde(skip_serializing)]
-    pub id: Option<String>,
-
     /// ## Group
     ///
     /// The hash of the tx group this tx belongs to, if any.
-    #[serde(rename(serialize = "group"))]
+    #[serde(rename(serialize = "grp"))]
     pub group: Option<AlgorandHash>,
 
     /// ## Last Valid Round
@@ -216,10 +225,15 @@ pub struct AlgorandTransaction {
     #[serde(rename(serialize = "xaid"))]
     pub transfer_asset_id: Option<u64>,
 
-    // FIXME Do we even need these here? They're in the jsons but never encoded in when signing a
-    // tx.
+    // NOTE: These fields are retained when building tx from JSON
+    #[serde(skip_serializing)]
     pub signature: Option<AlgorandSignature>,
+
+    #[serde(skip_serializing)]
     pub asset_close_amount: Option<u64>,
+
+    #[serde(skip_serializing)]
+    pub close_amount: Option<u64>,
 }
 
 impl FromStr for AlgorandTransaction {
@@ -236,13 +250,6 @@ impl AlgorandTransaction {
     /// Convert the transaction to its msgpack-ed bytes.
     fn to_bytes(&self) -> Result<Bytes> {
         self.to_msg_pack_bytes()
-    }
-
-    pub fn get_id(&self) -> Result<AlgorandHash> {
-        match &self.id {
-            Some(id) => AlgorandHash::from_slice(&base32_decode(id)?),
-            None => Err("No `id` field in tx!".into()),
-        }
     }
 
     fn to_msg_pack_bytes(&self) -> Result<Bytes> {
@@ -315,27 +322,22 @@ impl AlgorandTransaction {
     ///
     /// Sign the transaction with an AlgorandKey.
     pub fn sign(&self, keys: &AlgorandKeys) -> Result<AlgorandSignedTransaction> {
+        let signer_address = keys.to_address()?;
         Ok(AlgorandSignedTransaction {
             transaction: self.clone(),
             transaction_id: Some(self.to_id()?),
             signature: keys.sign(&self.encode_for_signing()?),
+            signer: match &self.sender {
+                Some(sender) if signer_address != *sender => Some(signer_address),
+                _ => None,
+            },
         })
     }
 
     pub fn from_json(json: &AlgorandTransactionJson) -> Result<Self> {
         Ok(Self {
             fee: json.fee,
-            id: json.id.clone(),
-            amount: match &json.amount {
-                Some(json_value) => {
-                    if json_value.is_f64() {
-                        Some(u64::MAX)
-                    } else {
-                        Some(json_value.as_u64().unwrap_or_default())
-                    }
-                },
-                None => None,
-            },
+            amount: json.maybe_get_amount(),
             application_id: match &json.application_transaction {
                 Some(app) => app.application_id,
                 None => None,
@@ -394,8 +396,8 @@ impl AlgorandTransaction {
                 Some(json) => Some(AssetParameters::from_json(&json.params)?),
                 None => None,
             },
-            receiver: match &json.receiver {
-                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
+            receiver: match json.maybe_get_receiver() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
             close_remainder_to: match &json.close_remainder_to {
@@ -428,6 +430,10 @@ impl AlgorandTransaction {
                     None => None,
                 },
             },
+            close_amount: match json.payment_transaction.as_ref() {
+                Some(payment_json) => payment_json.close_amount,
+                None => None,
+            },
         })
     }
 
@@ -456,14 +462,12 @@ impl AlgorandTransaction {
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
             first_valid: self.first_valid_round,
-            id: self.id.as_ref().map(|x| x.to_string()),
+            id: Some(self.to_id()?),
             group: self.group.as_ref().map(|x| x.to_string()),
             lease: self.lease.as_ref().map(|x| x.to_string()),
             sender: self.sender.as_ref().map(|x| x.to_string()),
             tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
-            receiver: self.receiver.as_ref().map(|x| x.to_string()),
             key_reg_transaction: self.to_key_ref_transaction_json(),
-            amount: self.amount.map(|u64_amount| json!(u64_amount)),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
@@ -480,6 +484,7 @@ impl AlgorandTransaction {
                 )),
             },
             asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
+            payment_transaction: self.to_payment_transaction_json(),
             application_transaction: self.to_application_transaction_json(),
         })
     }
@@ -513,6 +518,19 @@ impl AlgorandTransaction {
         }
     }
 
+    fn to_payment_transaction_json(&self) -> Option<PaymentTransactionJson> {
+        let json = PaymentTransactionJson {
+            close_amount: self.close_amount,
+            amount: self.amount.as_ref().map(|u_64| json!(u_64)),
+            receiver: self.receiver.as_ref().map(|x| x.to_string()),
+        };
+        if json.is_empty() {
+            None
+        } else {
+            Some(json)
+        }
+    }
+
     fn to_asset_freeze_transaction_json(&self) -> Option<AssetFreezeTransactionJson> {
         let json = AssetFreezeTransactionJson {
             asset_id: self.asset_freeze_id,
@@ -531,8 +549,12 @@ impl AlgorandTransaction {
 ///
 /// A struct to hold a signed algorand transaction, in a format which when serialized is able to be
 /// broadcast to the algorand network.
+#[skip_serializing_none]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AlgorandSignedTransaction {
+    #[serde(rename(serialize = "sgnr"))]
+    signer: Option<AlgorandAddress>,
+
     #[serde(rename(serialize = "sig"))]
     signature: AlgorandSignature,
 
@@ -549,11 +571,8 @@ impl AlgorandSignedTransaction {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
     }
 
-    pub fn to_tx_id(&self) -> Result<String> {
-        match &self.transaction_id {
-            Some(hash) => Ok(hash.clone()),
-            None => Err("No transaction ID in `AlgorandSignedTransaction`!".into()),
-        }
+    pub fn transaction(&self) -> AlgorandTransaction {
+        self.transaction.clone()
     }
 }
 
@@ -637,7 +656,8 @@ mod tests {
             if AlgorandTransaction::from_json(json).is_err() {
                 println!("JSON which failed to parse: {:?}", json);
             }
-            AlgorandTransaction::from_json(json).unwrap();
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
         });
     }
 
