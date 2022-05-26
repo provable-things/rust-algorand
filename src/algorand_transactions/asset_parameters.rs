@@ -11,6 +11,17 @@ use crate::{
     algorand_types::Result,
 };
 
+fn is_zero(num: &u64) -> bool {
+    *num == 0
+}
+
+fn is_false(val: &Option<bool>) -> bool {
+    return match val {
+        Some(val) => !val,
+        None => true
+    };
+}
+
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct AssetParameters {
@@ -32,13 +43,13 @@ pub struct AssetParameters {
     #[serde(rename(serialize = "c"))]
     pub clawback_address: Option<AlgorandAddress>,
 
-    #[serde(rename(serialize = "dc"))]
+    #[serde(rename(serialize = "dc"), skip_serializing_if="is_zero")]
     pub decimals: u64,
 
     /// ## Default Frozen
     ///
     /// Whether the asset is created in a froze state.
-    #[serde(rename(serialize = "df"))]
+    #[serde(rename(serialize = "df"), skip_serializing_if="is_false")]
     pub default_frozen: Option<bool>,
 
     /// ## Freeze Address
@@ -166,7 +177,7 @@ pub struct AssetParametersJson {
     #[serde(rename = "name")]
     pub asset_name: Option<String>,
 
-    #[serde(rename = "unit")]
+    #[serde(rename = "unit-name")]
     pub unit_name: Option<String>,
 
     #[serde(rename = "url")]
