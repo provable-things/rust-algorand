@@ -14,7 +14,6 @@ use crate::{
     algorand_types::{Bytes, Result},
 };
 
-
 #[skip_serializing_none]
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, Constructor)]
 pub struct PaymentTransactionJson {
@@ -28,9 +27,7 @@ pub struct PaymentTransactionJson {
 
 impl PaymentTransactionJson {
     pub fn is_empty(&self) -> bool {
-        self.amount.is_none()
-            && self.receiver.is_none()
-            && self.close_amount.is_none()
+        self.amount.is_none() && self.receiver.is_none() && self.close_amount.is_none()
     }
 
     pub fn maybe_get_amount(&self) -> Option<u64> {
@@ -165,6 +162,9 @@ mod tests {
         let result = hex::encode(signed_tx.to_msg_pack_bytes().unwrap());
         let expected_result = "83a473676e72c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da3736967c4402e222c86ac989bc5ba5e1e19a5020a3e28fe295818648e4b0e845b772b2220334969530b6236f902efbec584aed004526be0c662f8a2d3083563ec5a4c28bb00a374786e88a3616d74ce000f4779a3666565cd03e8a26676cd03e8a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76cd07d0a3726376c4203516382099d0a8f0c8eabc6d4b7efb58b0be7008e98d239dd0199490674e0372a3736e64c420e23319d1dfd271db1f8752ea384948a975594617fa0b546d44740e768a14b899a474797065a3706179";
         assert_eq!(result, expected_result);
-        assert_eq!(signed_tx.to_tx_id().unwrap(), "4J3U5D7WUZN235TPZKPBKEGZTQC4DEXINFCZZIDTL3LRF562ZUXQ");
+        assert_eq!(
+            signed_tx.to_tx_id().unwrap(),
+            "4J3U5D7WUZN235TPZKPBKEGZTQC4DEXINFCZZIDTL3LRF562ZUXQ"
+        );
     }
 }

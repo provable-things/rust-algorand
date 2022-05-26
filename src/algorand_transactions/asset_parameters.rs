@@ -18,7 +18,7 @@ fn is_zero(num: &u64) -> bool {
 fn is_false(val: &Option<bool>) -> bool {
     return match val {
         Some(val) => !val,
-        None => true
+        None => true,
     };
 }
 
@@ -43,13 +43,13 @@ pub struct AssetParameters {
     #[serde(rename(serialize = "c"))]
     pub clawback_address: Option<AlgorandAddress>,
 
-    #[serde(rename(serialize = "dc"), skip_serializing_if="is_zero")]
+    #[serde(rename(serialize = "dc"), skip_serializing_if = "is_zero")]
     pub decimals: u64,
 
     /// ## Default Frozen
     ///
     /// Whether the asset is created in a froze state.
-    #[serde(rename(serialize = "df"), skip_serializing_if="is_false")]
+    #[serde(rename(serialize = "df"), skip_serializing_if = "is_false")]
     pub default_frozen: Option<bool>,
 
     /// ## Freeze Address

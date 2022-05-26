@@ -171,7 +171,10 @@ mod tests {
             .unwrap();
         let expected_result = "82a3736967c4404e714fa39e98ed14a1220a9fe25efbba3b47ccbf784b28bdff0c5fa1f71d1d289034f1157b97ceb63c0cedb3a6790ba87930f6a7a40d495d41ecde101597cd09a374786e88a461726376c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da3666565cd03e8a26676ce01121536a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76ce0112191ea3736e64c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da474797065a56178666572a478616964ce1b9cddb0";
         assert_eq!(result, expected_result);
-        assert_eq!(tx.to_id().unwrap(), "3ZXSVZHCV6N4G6MUXR45KN2HJONJIXXLC3Q2KX6WHUCWSHFDD54A");
+        assert_eq!(
+            tx.to_id().unwrap(),
+            "3ZXSVZHCV6N4G6MUXR45KN2HJONJIXXLC3Q2KX6WHUCWSHFDD54A"
+        );
     }
 
     #[test]
@@ -190,15 +193,17 @@ mod tests {
                 .unwrap(),
         )
         .unwrap();
-        let signed_tx = tx
-            .sign(&get_sample_algorand_keys())
-            .unwrap();
-        let result = signed_tx
-            .to_hex()
-            .unwrap();
+        let signed_tx = tx.sign(&get_sample_algorand_keys()).unwrap();
+        let result = signed_tx.to_hex().unwrap();
         let expected_result = "83a473676e72c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da3736967c440df49d27ce4b5436e7bee58ffcdbe7ff2fb87b56c96309c997f9b525dcac33a78df3992c0ab4ce92b5da3bd7933b7318fdd15e92043bc6d120047e108e437ab07a374786e89a461616d74ce05f5e639a461726376c42032a7dbdfcde7695d91ac438152fc908617ffbf9db94f843c250268e6fe21a0a0a3666565cd03e8a26676ce01121609a26768c420c061c4d8fc1dbdded2d7604be4568e3f6d041987ac37bde4b620b5ab39248adfa26c76ce011219f1a3736e64c420349567ad1fc2fee2eb65e927d5fcf22ad695ecbd1d1df01f4782dd27707189e3a474797065a56178666572a478616964ce1b9cddb0";
         assert_eq!(result, expected_result);
-        assert_eq!(tx.to_id().unwrap(), "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ");
-        assert_eq!(signed_tx.to_tx_id().unwrap(), "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ");
+        assert_eq!(
+            tx.to_id().unwrap(),
+            "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ"
+        );
+        assert_eq!(
+            signed_tx.to_tx_id().unwrap(),
+            "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ"
+        );
     }
 }

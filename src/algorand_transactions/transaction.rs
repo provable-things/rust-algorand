@@ -23,8 +23,8 @@ use crate::{
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
         asset_transfer_transaction::AssetTransferTransactionJson,
-        pay_transaction::PaymentTransactionJson,
         key_reg_transaction::KeyRegTransactionJson,
+        pay_transaction::PaymentTransactionJson,
         signature_json::AlgorandSignatureJson,
         transaction_json::AlgorandTransactionJson,
         transaction_type::AlgorandTransactionType,
@@ -39,7 +39,7 @@ impl ToMsgPackBytes for AlgorandSignedTransaction {}
 fn is_zero(num: &Option<u64>) -> bool {
     return match num {
         Some(val) => val == &0,
-        None => true
+        None => true,
     };
 }
 
@@ -60,7 +60,7 @@ pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
     /// The amount of an asset to transfer.
-    #[serde(rename(serialize = "aamt"), skip_serializing_if="is_zero")]
+    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero")]
     pub asset_amount: Option<u64>,
 
     /// ## Asset Close To
@@ -78,7 +78,7 @@ pub struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"), skip_serializing_if="is_zero")]
+    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero")]
     pub amount: Option<u64>,
 
     /// ## On Completion
@@ -117,7 +117,7 @@ pub struct AlgorandTransaction {
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
-    #[serde(rename(serialize = "caid"), skip_serializing_if="is_zero")]
+    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero")]
     // FIXME This is the config tx asset id! Add a prefix for clarity?
     pub asset_id: Option<u64>,
 
@@ -329,7 +329,7 @@ impl AlgorandTransaction {
             transaction: self.clone(),
             transaction_id: Some(self.to_id()?),
             signature: keys.sign(&self.encode_for_signing()?),
-            signer
+            signer,
         })
     }
 
