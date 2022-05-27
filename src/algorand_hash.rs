@@ -18,7 +18,7 @@ const ALGORAND_HASH_NUM_BYTES: usize = 32;
 ///
 /// Stuct to hold the Algorand Hash type, and have the correct serialization and display formats
 /// implemented upon it.
-#[derive(Debug, Clone, PartialEq, Eq, Default, Constructor)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Constructor)]
 pub struct AlgorandHash([Byte; ALGORAND_HASH_NUM_BYTES]);
 
 impl AlgorandHash {
@@ -68,8 +68,8 @@ impl AlgorandHash {
         Self::from_slice(&base64_decode(s)?)
     }
 
-    fn to_base_64(&self) -> String {
-        base64_encode(&self.0)
+    fn to_base_64(self) -> String {
+        base64_encode(self.0)
     }
 
     #[cfg(test)]

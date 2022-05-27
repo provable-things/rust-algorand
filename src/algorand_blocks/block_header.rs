@@ -304,7 +304,7 @@ impl AlgorandBlockHeader {
 
     fn to_compact_certificate_state(&self) -> CompactCertificateState {
         CompactCertificateState {
-            compact_cert_voters: self.compact_cert_voters.clone(),
+            compact_cert_voters: self.compact_cert_voters,
             compact_cert_next_round: self.compact_cert_next_round,
             compact_cert_voters_total: self.compact_cert_voters_total,
         }
