@@ -7,7 +7,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_errors::AlgorandError,
     algorand_transactions::{
-        application_transaction_json::ApplicationTransactionJson,
+        application_transaction::ApplicationTransactionJson,
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_transfer_transaction::AssetTransferTransactionJson,

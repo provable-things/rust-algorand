@@ -18,7 +18,7 @@ use crate::{
     algorand_signature::AlgorandSignature,
     algorand_traits::ToMsgPackBytes,
     algorand_transactions::{
-        application_transaction_json::ApplicationTransactionJson,
+        application_transaction::ApplicationTransactionJson,
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_parameters::AssetParameters,
