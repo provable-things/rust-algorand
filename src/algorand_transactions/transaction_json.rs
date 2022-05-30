@@ -1,17 +1,18 @@
 use std::{fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value as JsonValue};
+use serde_json::json;
 use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_errors::AlgorandError,
     algorand_transactions::{
-        application_transaction_json::ApplicationTransactionJson,
+        application_transaction::ApplicationTransactionJson,
         asset_config_transaction::AssetConfigTransactionJson,
         asset_freeze_transaction::AssetFreezeTransactionJson,
         asset_transfer_transaction::AssetTransferTransactionJson,
         key_reg_transaction::KeyRegTransactionJson,
+        pay_transaction::PaymentTransactionJson,
         signature_json::AlgorandSignatureJson,
         transaction_type::AlgorandTransactionType,
     },
@@ -21,7 +22,7 @@ use crate::{
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, Default)]
 pub struct AlgorandTransactionJson {
-    #[serde(rename = "asset-freeze-transaction")]
+    #[serde(rename = "application-transaction")]
     pub application_transaction: Option<ApplicationTransactionJson>,
 
     #[serde(rename = "asset-freeze-transaction")]
@@ -29,6 +30,9 @@ pub struct AlgorandTransactionJson {
 
     #[serde(rename = "asset-transfer-transaction")]
     pub asset_transfer_transaction: Option<AssetTransferTransactionJson>,
+
+    #[serde(rename = "payment-transaction")]
+    pub payment_transaction: Option<PaymentTransactionJson>,
 
     pub sender: Option<String>,
 
@@ -60,10 +64,6 @@ pub struct AlgorandTransactionJson {
 
     #[serde(rename = "rekey-to")]
     pub rekey_to: Option<String>,
-
-    pub receiver: Option<String>,
-
-    pub amount: Option<JsonValue>,
 
     pub signature: Option<AlgorandSignatureJson>,
 
@@ -124,11 +124,35 @@ impl AlgorandTransactionJson {
         }
     }
 
+    pub fn maybe_get_receiver(&self) -> Option<String> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            // FIXME Other types of tx!
+            AlgorandTransactionType::Pay => match &self.payment_transaction {
+                Some(x) => x.maybe_get_receiver(),
+                None => None,
+            },
+            _ => None,
+        }
+    }
+
     pub fn maybe_get_asset_amount(&self) -> Option<u64> {
         // FIXME Test!
         match self.get_tx_type() {
             AlgorandTransactionType::AssetTransfer => match &self.asset_transfer_transaction {
                 Some(x) => x.maybe_get_asset_amount(),
+                None => None,
+            },
+            // FIXME Other types of tx!
+            _ => None,
+        }
+    }
+
+    pub fn maybe_get_amount(&self) -> Option<u64> {
+        // FIXME Test!
+        match self.get_tx_type() {
+            AlgorandTransactionType::Pay => match &self.payment_transaction {
+                Some(x) => x.maybe_get_amount(),
                 None => None,
             },
             // FIXME Other types of tx!
@@ -188,8 +212,10 @@ impl AlgorandTransactionJson {
             }
         }
         assert_equality!(
+            "asset_config_transaction",
             "asset_freeze_transaction",
             "asset_transfer_transaction",
+            "payment_transaction",
             "sender",
             "fee",
             "first_valid",
@@ -201,10 +227,6 @@ impl AlgorandTransactionJson {
             "group",
             "lease",
             "rekey_to",
-            "receiver",
-            "amount",
-            "signature",
-            "asset_config_transaction",
             "close_remainder_to"
         );
     }

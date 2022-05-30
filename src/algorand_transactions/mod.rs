@@ -1,5 +1,5 @@
 pub(crate) mod algorand_transaction_proof;
-mod application_transaction_json;
+mod application_transaction;
 mod asset_config_transaction;
 mod asset_destroy_transaction;
 mod asset_freeze_transaction;
