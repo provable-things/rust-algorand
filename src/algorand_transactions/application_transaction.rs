@@ -210,15 +210,15 @@ impl AlgorandTransaction {
     /// Before an account can call a specific application it must opt-in.
     pub fn application_opt_in(
         application_id: u64,
-        fee: MicroAlgos,
+        fee: &MicroAlgos,
         first_valid_round: u64,
-        sender: AlgorandAddress,
-        genesis_hash: AlgorandHash,
+        sender: &AlgorandAddress,
+        genesis_hash: &AlgorandHash,
         last_valid_round: Option<u64>,
     ) -> Result<AlgorandTransaction> {
         Ok(Self {
-            sender: Some(sender),
-            genesis_hash: Some(genesis_hash),
+            sender: Some(*sender),
+            genesis_hash: Some(*genesis_hash),
             application_id: Some(application_id),
             on_completion: Some(OnCompletion::Optin.to_u64()),
             first_valid_round: Some(first_valid_round),
@@ -289,10 +289,10 @@ mod tests {
     fn should_sign_opt_in_transaction() {
         let tx = AlgorandTransaction::application_opt_in(
             90556484,
-            MicroAlgos(1000),
+            &MicroAlgos(1000),
             21_682_035,
-            get_sample_algorand_address(),
-            AlgorandHash::testnet_genesis_hash().unwrap(),
+            &get_sample_algorand_address(),
+            &AlgorandHash::testnet_genesis_hash().unwrap(),
             None,
         )
         .unwrap();
