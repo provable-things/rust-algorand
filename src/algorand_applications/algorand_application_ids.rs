@@ -17,7 +17,6 @@ impl ToApplicationArg for AlgorandAppId {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::algorand_types::Bytes;
 
     #[test]
     fn should_convert_algorand_app_id_to_app_arg() {

@@ -4,10 +4,12 @@ use base64::encode as base64_encode;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{
+    algorand_applications::algorand_application_args::AlgorandApplicationArg,
     algorand_checksum::{AlgorandChecksum, CheckSummableType},
     algorand_encoding::U8_32Visitor,
     algorand_errors::AlgorandError,
     algorand_keys::AlgorandKeys,
+    algorand_traits::ToApplicationArg,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_decode, base32_encode_with_no_padding},
 };
@@ -17,6 +19,12 @@ pub const ALGORAND_ADDRESS_CHECKSUM_NUM_BYTES: usize = 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AlgorandAddress([Byte; ALGORAND_ADDRESS_NUM_BYTES]);
+
+impl ToApplicationArg for AlgorandAddress {
+    fn to_application_arg(&self) -> AlgorandApplicationArg {
+        AlgorandApplicationArg::new(self.to_bytes())
+    }
+}
 
 impl AlgorandChecksum for AlgorandAddress {
     fn get_check_summable_type() -> CheckSummableType {
@@ -188,5 +196,13 @@ mod tests {
     fn should_create_random_algorand_address() {
         let result = AlgorandAddress::create_random();
         assert!(result.is_ok())
+    }
+
+    #[test]
+    fn should_convert_address_to_app_arg() {
+        let address = get_sample_algorand_address();
+        let result = address.to_application_arg().to_hex();
+        let expected_result = "32a7dbdfcde7695d91ac438152fc908617ffbf9db94f843c250268e6fe21a0a0";
+        assert_eq!(result, expected_result);
     }
 }
