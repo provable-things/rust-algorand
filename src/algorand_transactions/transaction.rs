@@ -618,13 +618,13 @@ impl AlgorandTransaction {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AlgorandSignedTransaction {
     #[serde(rename(serialize = "sgnr"))]
-    signer: Option<AlgorandAddress>,
+    pub signer: Option<AlgorandAddress>,
 
     #[serde(rename(serialize = "sig"))]
-    signature: AlgorandSignature,
+    pub signature: AlgorandSignature,
 
     #[serde(rename(serialize = "txn"))]
-    transaction: AlgorandTransaction,
+    pub transaction: AlgorandTransaction,
 
     #[serde(skip_serializing)]
     #[serde(rename(serialize = "txid"))]
@@ -634,10 +634,6 @@ pub struct AlgorandSignedTransaction {
 impl AlgorandSignedTransaction {
     pub fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
-    }
-
-    pub fn transaction(&self) -> AlgorandTransaction {
-        self.transaction.clone()
     }
 }
 

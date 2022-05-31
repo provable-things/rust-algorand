@@ -202,7 +202,7 @@ mod tests {
             "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ"
         );
         assert_eq!(
-            signed_tx.transaction().to_id().unwrap(),
+            signed_tx.transaction.to_id().unwrap(),
             "GBTFK2AEQMC6N262N2ESOJMQUM2QIYYVMBBGE4JHL6ORAFWPZXVQ"
         );
     }
