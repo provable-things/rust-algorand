@@ -29,7 +29,7 @@ impl AlgorandBlock {
     /// Returns the previous block has from the block header
     pub fn get_previous_block_hash(&self) -> Result<AlgorandHash> {
         match &self.block_header.previous_block_hash {
-            Some(hash) => Ok(hash.clone()),
+            Some(hash) => Ok(*hash),
             None => Err("Could not get previous block hash from block!".into()),
         }
     }
@@ -123,7 +123,7 @@ impl AlgorandBlock {
     pub fn get_transactions_root(&self) -> Result<AlgorandHash> {
         // TODO test!
         match &self.block_header.transactions_root {
-            Some(root) => Ok(root.clone()),
+            Some(root) => Ok(*root),
             None => Err("No tx root in block header!".into()),
         }
     }

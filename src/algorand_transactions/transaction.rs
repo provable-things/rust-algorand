@@ -301,8 +301,21 @@ impl AlgorandTransaction {
             .map(|ref msg_pack_bytes| Self::prefix_tx_byte(msg_pack_bytes))
     }
 
+    pub fn assign_group_id(&self, group_id: AlgorandHash) -> Self {
+        let mut mutable_self = self.clone();
+        mutable_self.group = Some(group_id);
+        mutable_self
+    }
+
     pub fn to_raw_tx_id(&self) -> Result<AlgorandHash> {
         AlgorandHash::from_slice(&sha512_256_hash_bytes(&self.encode_for_signing()?))
+    }
+
+    pub fn group(&self) -> Result<AlgorandHash> {
+        match self.group {
+            Some(hash) => Ok(hash),
+            None => Err("No group ID set in transaction!".into()),
+        }
     }
 
     pub(crate) fn check_amount_is_above_minimum(amount: u64) -> Result<u64> {
@@ -618,13 +631,13 @@ impl AlgorandTransaction {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AlgorandSignedTransaction {
     #[serde(rename(serialize = "sgnr"))]
-    signer: Option<AlgorandAddress>,
+    pub signer: Option<AlgorandAddress>,
 
     #[serde(rename(serialize = "sig"))]
-    signature: AlgorandSignature,
+    pub signature: AlgorandSignature,
 
     #[serde(rename(serialize = "txn"))]
-    transaction: AlgorandTransaction,
+    pub transaction: AlgorandTransaction,
 
     #[serde(skip_serializing)]
     #[serde(rename(serialize = "txid"))]
@@ -634,10 +647,6 @@ pub struct AlgorandSignedTransaction {
 impl AlgorandSignedTransaction {
     pub fn to_hex(&self) -> Result<String> {
         Ok(hex::encode(self.to_msg_pack_bytes()?))
-    }
-
-    pub fn transaction(&self) -> AlgorandTransaction {
-        self.transaction.clone()
     }
 }
 
