@@ -8,7 +8,7 @@ use crate::{
     crypto_utils::sha512_256_hash_bytes,
 };
 
-#[derive(Clone, Debug, Default, Constructor, Deref)]
+#[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref)]
 pub struct AlgorandAppId(pub i64);
 
 impl ToApplicationArg for AlgorandAppId {
@@ -18,8 +18,22 @@ impl ToApplicationArg for AlgorandAppId {
 }
 
 impl AlgorandAppId {
-    fn to_bytes(&self) -> Bytes {
+    pub fn to_bytes(&self) -> Bytes {
         self.to_be_bytes().to_vec()
+    }
+
+    pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
+        const I64_NUM_BYTES: usize = 8;
+        match bytes.len() {
+            0..=7 => Err("✘ Not enough bytes to convert to i64!".into()),
+            I64_NUM_BYTES => {
+                let mut arr = [0u8; I64_NUM_BYTES];
+                let bytes = &bytes[..I64_NUM_BYTES];
+                arr.copy_from_slice(bytes);
+                Ok(Self::new(i64::from_be_bytes(arr)))
+            },
+            _ => Err("✘ Too many bytes to convert to i64 without overflowing!".into()),
+        }
     }
 
     fn prefix_app_id_bytes(bytes: &[Byte]) -> Bytes {
@@ -60,5 +74,13 @@ mod tests {
                 .unwrap();
         let result = app_id.to_address().unwrap();
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_serde_app_id_to_and_from_bytes() {
+        let app_id = AlgorandAppId::new(1337);
+        let bytes = app_id.to_bytes();
+        let result = AlgorandAppId::from_bytes(&bytes).unwrap();
+        assert_eq!(result, app_id);
     }
 }
