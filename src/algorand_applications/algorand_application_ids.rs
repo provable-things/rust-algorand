@@ -52,6 +52,12 @@ impl AlgorandAppId {
     }
 }
 
+impl std::fmt::Display for AlgorandAppId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
