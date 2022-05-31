@@ -24,7 +24,7 @@ impl AlgorandChecksum for AlgorandAddress {
     }
 
     fn to_bytes(&self) -> Result<Bytes> {
-        self.to_bytes()
+        Ok(self.to_bytes())
     }
 
     fn get_checksum_num_bytes() -> usize {
@@ -43,9 +43,8 @@ impl AlgorandAddress {
     /// ## To Bytes
     ///
     /// Convert the AlgorandAddress to the underlying bytes.
-    pub fn to_bytes(&self) -> Result<Bytes> {
-        // FIXME Why a result?
-        Ok(self.0.to_vec())
+    pub fn to_bytes(&self) -> Bytes {
+        self.0.to_vec()
     }
 
     /// ## From Bytes
@@ -157,7 +156,7 @@ mod tests {
     #[test]
     fn address_should_make_bytes_roundtrip() {
         let address = get_sample_algorand_address();
-        let bytes = address.to_bytes().unwrap();
+        let bytes = address.to_bytes();
         let result = AlgorandAddress::from_bytes(&bytes).unwrap();
         assert_eq!(result, address);
     }
