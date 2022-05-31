@@ -4,6 +4,7 @@ use sha2::Digest;
 use crate::{
     algorand_errors::AlgorandError,
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::base32_encode_with_no_padding,
     AlgorandHash,
     AlgorandKeys,
     AlgorandSignedTransaction,
@@ -52,7 +53,14 @@ impl AlgorandTxGroup {
             })
     }
 
-    pub fn compute_group_id(&self) -> Result<AlgorandHash> {
+    /// ## To ID
+    ///
+    /// Calculate the transaction hash for this transaction.
+    pub fn to_id(&self) -> Result<String> {
+        Ok(base32_encode_with_no_padding(&self.group_id.to_bytes()))
+    }
+
+    fn compute_group_id(&self) -> Result<AlgorandHash> {
         if self.tx_group_hashes.is_empty() {
             return Err(AlgorandError::Custom("Empty transactions list".to_string()));
         }
@@ -81,7 +89,7 @@ impl AlgorandTxGroup {
             .map(|ref msg_pack_bytes| Self::prefix_group_byte(msg_pack_bytes))
     }
 
-    pub fn to_hex(txns: Vec<AlgorandSignedTransaction>) -> Result<String> {
+    fn to_hex(txns: Vec<AlgorandSignedTransaction>) -> Result<String> {
         Ok(txns
             .iter()
             .map(|t| t.to_hex())
@@ -89,7 +97,7 @@ impl AlgorandTxGroup {
             .join(""))
     }
 
-    pub fn sign_transactions(&self, keys: &[AlgorandKeys]) -> Result<String> {
+    pub fn sign_transactions(&self, keys: &[&AlgorandKeys]) -> Result<String> {
         let num_keys = keys.len();
         match num_keys {
             1 => {
@@ -239,7 +247,7 @@ mod tests {
             .iter()
             .for_each(|tx| assert_eq!(hex::encode(tx.group().unwrap().to_bytes()), expected_group));
         let result = group
-            .sign_transactions(&[get_sample_algorand_keys()])
+            .sign_transactions(&[&get_sample_algorand_keys()])
             .unwrap();
         let expected_result = "82a3736967c440aa8e3e06eddc79054d01120663a7c7e79485b56577896c31aa6284d4062b23ddd0b749f39edb353b0cadb81afd9651bfa533b4d4c988e7c97309d38878a92000a374786e8aa461616d74ce000f4240a461726376c42042fb844697effeb4f4b5730133cc3ebc7ea80d33358dae5563314f4d35d651fda3666565cd03e8a26676ce014ad773a26768c4204863b518a4b3c84ec810f22d4f1081cb0f71f059a7ac20dec62f7f70e5093a22a3677270c420e37a82859898dc3df4525d7379a313702ce418341ce601d67f4ef266c63e9141a26c76ce014adb5ba3736e64c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da474797065a56178666572a478616964cd4e1f82a3736967c4400d21eaceb069838fcb773bfef7f96a8cd7a38561a008f4353db9ebb22f3c1f6ac0199fe2b521f70dffb10d91bff9be21763c520090e6ba3d772deac11d1f3301a374786e8ba46170616192c418323032322d30352d32305431323a35333a35392e3030305ac40800000000499602d2a46170617492c42032a7dbdfcde7695d91ac438152fc908617ffbf9db94f843c250268e6fe21a0a0c420c3a3d439ff6c61367a15c4d2872ffebac9a6c7a03c273812bc64de26726b76d5a46170666191ce075bcd15a461706964ce0565c844a3666565cd03e8a26676ce014ad773a26768c4204863b518a4b3c84ec810f22d4f1081cb0f71f059a7ac20dec62f7f70e5093a22a3677270c420e37a82859898dc3df4525d7379a313702ce418341ce601d67f4ef266c63e9141a26c76ce014adb5ba3736e64c42090826960db089ee5636266600d56a9f41f5d037e5c90a18007e384fc1558603da474797065a46170706c";
         assert_eq!(result, expected_result);
