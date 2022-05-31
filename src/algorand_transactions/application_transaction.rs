@@ -334,8 +334,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let tx = AlgorandTransaction::application_call_noop(
             90556484,
             MicroAlgos(1000),
@@ -388,8 +388,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -426,8 +426,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let accounts: Vec<AlgorandAddress> = Vec::new();
         let tx = AlgorandTransaction::application_call_noop(
             90556484,
@@ -456,8 +456,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -497,8 +497,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -537,8 +537,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -581,8 +581,8 @@ mod tests {
         let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg::from(arg1));
+        args.push(AlgorandApplicationArg::from(arg2));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")

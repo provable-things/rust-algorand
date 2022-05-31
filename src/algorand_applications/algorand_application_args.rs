@@ -17,3 +17,27 @@ impl AsRef<[u8]> for AlgorandApplicationArg {
         &self.0
     }
 }
+
+impl From<&str> for AlgorandApplicationArg {
+    fn from(s: &str) -> Self {
+        Self::new(s.as_bytes().to_vec())
+    }
+}
+
+impl From<String> for AlgorandApplicationArg {
+    fn from(s: String) -> Self {
+        Self::new(s.as_bytes().to_vec())
+    }
+}
+
+impl From<i64> for AlgorandApplicationArg {
+    fn from(n: i64) -> Self {
+        Self::new(n.to_be_bytes().to_vec())
+    }
+}
+
+impl From<u64> for AlgorandApplicationArg {
+    fn from(n: u64) -> Self {
+        Self::new(n.to_be_bytes().to_vec())
+    }
+}
