@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref)]
-pub struct AlgorandAppId(pub i64);
+pub struct AlgorandAppId(pub u64);
 
 impl ToApplicationArg for AlgorandAppId {
     fn to_application_arg(&self) -> AlgorandApplicationArg {
@@ -23,16 +23,16 @@ impl AlgorandAppId {
     }
 
     pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
-        const I64_NUM_BYTES: usize = 8;
+        const U64_NUM_BYTES: usize = 8;
         match bytes.len() {
-            0..=7 => Err("✘ Not enough bytes to convert to i64!".into()),
-            I64_NUM_BYTES => {
-                let mut arr = [0u8; I64_NUM_BYTES];
-                let bytes = &bytes[..I64_NUM_BYTES];
+            0..=7 => Err("✘ Not enough bytes to convert to u64!".into()),
+            U64_NUM_BYTES => {
+                let mut arr = [0u8; U64_NUM_BYTES];
+                let bytes = &bytes[..U64_NUM_BYTES];
                 arr.copy_from_slice(bytes);
-                Ok(Self::new(i64::from_be_bytes(arr)))
+                Ok(Self::new(u64::from_be_bytes(arr)))
             },
-            _ => Err("✘ Too many bytes to convert to i64 without overflowing!".into()),
+            _ => Err("✘ Too many bytes to convert to u64 without overflowing!".into()),
         }
     }
 
