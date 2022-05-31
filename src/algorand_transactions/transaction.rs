@@ -10,6 +10,7 @@ use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_address::AlgorandAddress,
+    algorand_applications::algorand_application_args::AlgorandApplicationArg,
     algorand_constants::ALGORAND_MAX_NUM_ROUNDS,
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
@@ -50,15 +51,6 @@ fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
     }
 }
 
-#[derive(Default, Debug, Eq, PartialEq, Clone, Serialize, Deserialize)]
-pub struct ApplicationArg(#[serde(with = "serde_bytes")] pub Vec<u8>);
-
-impl AsRef<[u8]> for ApplicationArg {
-    fn as_ref(&self) -> &[u8] {
-        &self.0
-    }
-}
-
 /// ## An Algorand Transaction
 ///
 /// A struct holding the various fields required in an Algorand Transaction.
@@ -93,7 +85,7 @@ pub struct AlgorandTransaction {
     ///
     /// Application arguments to be passed to the application being called
     #[serde(rename(serialize = "apaa"), skip_serializing_if = "is_empty_vec")]
-    pub application_args: Option<Vec<ApplicationArg>>,
+    pub application_args: Option<Vec<AlgorandApplicationArg>>,
 
     /// ## On Completion
     ///

@@ -10,6 +10,7 @@ extern crate quick_error;
 extern crate lazy_static;
 
 mod algorand_address;
+mod algorand_applications;
 mod algorand_blocks;
 mod algorand_checksum;
 mod algorand_compact_certificates;
@@ -30,6 +31,10 @@ mod test_utils;
 
 pub use crate::{
     algorand_address::AlgorandAddress,
+    algorand_applications::{
+        algorand_application_args::AlgorandApplicationArg,
+        algorand_application_ids::AlgorandAppId,
+    },
     algorand_blocks::{block::AlgorandBlock, block_json::AlgorandBlockJson},
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,

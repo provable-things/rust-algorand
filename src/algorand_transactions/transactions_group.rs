@@ -123,8 +123,8 @@ mod tests {
 
     use super::*;
     use crate::{
+        algorand_applications::algorand_application_args::AlgorandApplicationArg,
         algorand_hash::AlgorandHash,
-        algorand_transactions::transaction::ApplicationArg,
         test_utils::{get_sample_algorand_address, get_sample_algorand_keys},
         AlgorandAddress,
         MicroAlgos,
@@ -196,11 +196,11 @@ mod tests {
             tx1.to_id().unwrap(),
             "FN7OG2DDLXJCPCBZGHFRVCR6CS62AFQ47RIRDWP7PC2H4XJXAFNA"
         );
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")

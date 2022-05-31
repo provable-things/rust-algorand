@@ -5,11 +5,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     algorand_address::AlgorandAddress,
+    algorand_applications::algorand_application_args::AlgorandApplicationArg,
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_micro_algos::MicroAlgos,
     algorand_transactions::{
-        transaction::{AlgorandTransaction, ApplicationArg},
+        transaction::AlgorandTransaction,
         transaction_type::AlgorandTransactionType,
     },
     algorand_types::Result,
@@ -182,12 +183,12 @@ impl ApplicationTransactionJson {
             && self.on_completion.is_none()
     }
 
-    pub fn maybe_get_application_args(&self) -> Result<Vec<ApplicationArg>> {
+    pub fn maybe_get_application_args(&self) -> Result<Vec<AlgorandApplicationArg>> {
         match &self.application_args {
             None => Ok(vec![]),
             Some(encoded_strs) => encoded_strs
                 .iter()
-                .map(|encoded_str| Ok(ApplicationArg(base64_decode(encoded_str)?)))
+                .map(|encoded_str| Ok(AlgorandApplicationArg(base64_decode(encoded_str)?)))
                 .collect(),
         }
     }
@@ -249,7 +250,7 @@ impl AlgorandTransaction {
         sender: AlgorandAddress,
         genesis_hash: AlgorandHash,
         last_valid_round: Option<u64>,
-        application_args: Option<Vec<ApplicationArg>>,
+        application_args: Option<Vec<AlgorandApplicationArg>>,
         accounts: Option<Vec<AlgorandAddress>>,
         foreign_apps: Option<Vec<u64>>,
         foreign_assets: Option<Vec<u64>>,
@@ -330,11 +331,11 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_args() {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let tx = AlgorandTransaction::application_call_noop(
             90556484,
             MicroAlgos(1000),
@@ -359,7 +360,7 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_empty_args() {
-        let args: Vec<ApplicationArg> = Vec::new();
+        let args: Vec<AlgorandApplicationArg> = Vec::new();
         let tx = AlgorandTransaction::application_call_noop(
             90556484,
             MicroAlgos(1000),
@@ -384,11 +385,11 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_accounts() {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -422,11 +423,11 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_empty_accounts() {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let accounts: Vec<AlgorandAddress> = Vec::new();
         let tx = AlgorandTransaction::application_call_noop(
             90556484,
@@ -452,11 +453,11 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_accounts_and_foreign_apps() {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -493,11 +494,11 @@ mod tests {
 
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_accounts_and_empty_foreign_apps() {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -533,11 +534,11 @@ mod tests {
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_accounts_and_foreign_apps_and_foreign_assets(
     ) {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
@@ -577,11 +578,11 @@ mod tests {
     #[test]
     fn should_sign_noop_call_transaction_with_args_and_accounts_and_foreign_apps_and_empty_foreign_assets(
     ) {
-        let mut args: Vec<ApplicationArg> = Vec::new();
+        let mut args: Vec<AlgorandApplicationArg> = Vec::new();
         let arg1: &str = "2022-05-20T12:53:59.000Z";
         let arg2: i64 = 1234567890;
-        args.push(ApplicationArg(arg1.as_bytes().to_vec()));
-        args.push(ApplicationArg(arg2.to_be_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg1.as_bytes().to_vec()));
+        args.push(AlgorandApplicationArg(arg2.to_be_bytes().to_vec()));
         let mut accounts: Vec<AlgorandAddress> = Vec::new();
         accounts.push(
             AlgorandAddress::from_str("GKT5XX6N45UV3ENMIOAVF7EQQYL77P45XFHYIPBFAJUON7RBUCQPX572TI")
