@@ -47,5 +47,6 @@ pub use crate::{
         asset_parameters::AssetParameters,
         transaction::{AlgorandSignedTransaction, AlgorandTransaction},
         transactions::AlgorandTransactions,
+        transactions_group::AlgorandTxGroup,
     },
 };

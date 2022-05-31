@@ -11,7 +11,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
-pub struct TxGroup {
+pub struct AlgorandTxGroup {
     #[serde(rename = "txlist", default)]
     tx_group_hashes: Vec<AlgorandHash>,
 
@@ -22,10 +22,10 @@ pub struct TxGroup {
     group_id: AlgorandHash,
 }
 
-impl TxGroup {
+impl AlgorandTxGroup {
     const MAX_TX_GROUP_SIZE: usize = 16;
 
-    pub fn new(transactions: &[AlgorandTransaction]) -> Result<TxGroup> {
+    pub fn new(transactions: &[AlgorandTransaction]) -> Result<AlgorandTxGroup> {
         transactions
             .iter()
             .map(|tx| tx.to_raw_tx_id())
@@ -167,7 +167,7 @@ mod tests {
             tx2.to_id().unwrap(),
             "IWCO45FDR2IUU6ZUFORAD5ZVQ3R6JK5VWQWD4VJFJ6EZK5OCPKZQ"
         );
-        let txs_group = TxGroup::new(&[tx1, tx2]).unwrap();
+        let txs_group = AlgorandTxGroup::new(&[tx1, tx2]).unwrap();
         let expected_group = "d9420d6df510ca93139938e6fda2fa91a3738840a8e88775c4d6b7e73c4072b4";
         assert_eq!(hex::encode(txs_group.group_id.to_bytes()), expected_group);
         txs_group
@@ -230,7 +230,7 @@ mod tests {
             tx2.to_id().unwrap(),
             "3S5V64XDP6SF6OKCNSIMHUSEWJVAJYHBG5HJGTEMYF3ZJ2L76ZPQ"
         );
-        let group = TxGroup::new(&[tx1.clone(), tx2.clone()]).unwrap();
+        let group = AlgorandTxGroup::new(&[tx1.clone(), tx2.clone()]).unwrap();
         let expected_group = "e37a82859898dc3df4525d7379a313702ce418341ce601d67f4ef266c63e9141";
         assert_eq!(hex::encode(group.group_id.to_bytes()), expected_group);
         group
