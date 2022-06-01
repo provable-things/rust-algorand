@@ -1,6 +1,9 @@
 use serde::Serialize;
 
-use crate::algorand_types::{Bytes, Result};
+use crate::{
+    algorand_applications::algorand_application_args::AlgorandApplicationArg,
+    algorand_types::{Bytes, Result},
+};
 
 /// To Message-Pack Bytes
 ///
@@ -12,4 +15,8 @@ pub trait ToMsgPackBytes {
     {
         Ok(rmp_serde::to_vec_named(&self)?)
     }
+}
+
+pub trait ToApplicationArg {
+    fn to_application_arg(&self) -> AlgorandApplicationArg;
 }

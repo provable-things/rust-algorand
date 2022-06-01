@@ -13,4 +13,4 @@ pub(crate) mod transaction;
 pub(crate) mod transaction_json;
 mod transaction_type;
 pub(crate) mod transactions;
-mod transactions_group;
+pub(crate) mod transactions_group;
