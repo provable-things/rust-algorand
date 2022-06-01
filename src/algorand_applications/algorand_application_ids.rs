@@ -53,6 +53,10 @@ impl AlgorandAppId {
     pub fn to_address(&self) -> Result<AlgorandAddress> {
         AlgorandAddress::from_bytes(&sha512_256_hash_bytes(&self.to_prefixed_bytes()))
     }
+
+    pub fn to_u64(&self) -> u64 {
+        self.0
+    }
 }
 
 impl std::fmt::Display for AlgorandAppId {
