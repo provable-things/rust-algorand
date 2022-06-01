@@ -1,10 +1,10 @@
+use base64::encode as base64_encode;
 use serde::{Deserialize, Serialize};
 use sha2::Digest;
 
 use crate::{
     algorand_errors::AlgorandError,
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::base32_encode_with_no_padding,
     AlgorandHash,
     AlgorandKeys,
     AlgorandSignedTransaction,
@@ -55,9 +55,9 @@ impl AlgorandTxGroup {
 
     /// ## To ID
     ///
-    /// Calculate the transaction hash for this transaction.
+    /// Get the group ID of this tx in base64 encoding, as shown on explorers.
     pub fn to_id(&self) -> Result<String> {
-        Ok(base32_encode_with_no_padding(&self.group_id.to_bytes()))
+        Ok(base64_encode(&self.group_id.to_bytes()))
     }
 
     fn compute_group_id(&self) -> Result<AlgorandHash> {
