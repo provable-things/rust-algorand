@@ -104,7 +104,7 @@ impl AlgorandTxGroup {
                 // NOTE: We assume that all txs are to be signed with this one key...
                 self.txs
                     .iter()
-                    .map(|tx| tx.sign(&keys[0]))
+                    .map(|tx| tx.sign(keys[0]))
                     .collect::<Result<Vec<AlgorandSignedTransaction>>>()
             },
             num_keys if num_keys == self.txs.len() => {
