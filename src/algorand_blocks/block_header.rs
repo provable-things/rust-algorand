@@ -20,6 +20,13 @@ use crate::{
     crypto_utils::sha512_256_hash_bytes,
 };
 
+fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
+    match hash {
+        Some(hash) => hash.is_zero(),
+        _ => false,
+    }
+}
+
 #[skip_serializing_none]
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlockHeader {
@@ -85,7 +92,7 @@ pub struct AlgorandBlockHeader {
     #[serde(rename = "ts")]
     pub timestamp: i64,
 
-    #[serde(rename = "txn")]
+    #[serde(rename = "txn", skip_serializing_if = "is_zero_hash")]
     pub transactions_root: Option<AlgorandHash>,
 
     #[serde(rename = "upgradedelay")]
