@@ -57,18 +57,18 @@ impl AlgorandAddress {
 
     /// ## From Bytes
     ///
-    /// Construct an AlgorandAddress from a slice of bytes. Errors if number of bytes are not the
-    /// expected amount.
+    /// Construct an AlgorandAddress from a slice of bytes. Errors if number of bytes are not
+    /// sufficient.
     pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
         let number_of_bytes = bytes.len();
-        if number_of_bytes != ALGORAND_ADDRESS_NUM_BYTES {
+        if number_of_bytes < ALGORAND_ADDRESS_NUM_BYTES {
             Err(format!(
-                "Wrong number of bytes to create `AlgorandAddress`! Got {}, expected {}.",
+                "Too few bytes to create `AlgorandAddress`! Got {}, expected {}.",
                 number_of_bytes, ALGORAND_ADDRESS_NUM_BYTES
             )
             .into())
         } else {
-            Ok(Self(bytes.try_into()?))
+            Ok(Self(bytes[..ALGORAND_ADDRESS_NUM_BYTES].try_into()?))
         }
     }
 
@@ -129,8 +129,7 @@ impl FromStr for AlgorandAddress {
     type Err = AlgorandError;
 
     fn from_str(s: &str) -> Result<Self> {
-        base32_decode(s)
-            .and_then(|ref bytes| Self::from_bytes(&bytes[..ALGORAND_ADDRESS_NUM_BYTES]))
+        base32_decode(s).and_then(|ref bytes| Self::from_bytes(bytes))
     }
 }
 
@@ -204,5 +203,16 @@ mod tests {
         let result = address.to_application_arg().to_hex();
         let expected_result = "32a7dbdfcde7695d91ac438152fc908617ffbf9db94f843c250268e6fe21a0a0";
         assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_err_when_converting_empty_string_to_algorand_address() {
+        let s = "";
+        let expected_error = "Too few bytes to create `AlgorandAddress`! Got 0, expected 32.";
+        match AlgorandAddress::from_str(s) {
+            Ok(_) => panic!("Should not have succeeded!"),
+            Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
+            Err(_) => panic!("Wrong error received"),
+        }
     }
 }
