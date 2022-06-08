@@ -4,6 +4,8 @@ use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
+#[cfg(test)]
+use crate::crypto_utils::base32_encode_with_no_padding;
 use crate::{
     algorand_constants::{ALGORAND_MAINNET_GENESIS_HASH, ALGORAND_TESTNET_GENESIS_HASH},
     algorand_encoding::U8_32Visitor,
@@ -43,6 +45,15 @@ impl AlgorandHash {
         }
     }
 
+    /// ## Check if all hash elements are 0
+    ///
+    /// This will return true in case all 32 bytes are 0, false otherwise.
+    /// Base64 representation of the all-zero-elements hash is
+    /// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+    pub fn is_zero(self) -> bool {
+        self == Self::default()
+    }
+
     /// ## Mainnet Genesis Hash
     ///
     /// Get the mainnet genesis hash.
@@ -70,6 +81,11 @@ impl AlgorandHash {
 
     fn to_base_64(self) -> String {
         base64_encode(self.0)
+    }
+
+    #[cfg(test)]
+    pub fn to_base_32(&self) -> String {
+        base32_encode_with_no_padding(&self.0)
     }
 
     #[cfg(test)]
@@ -190,5 +206,20 @@ mod tests {
         let base_64_encoded = hash.to_base_64();
         let result = AlgorandHash::from_base_64(&base_64_encoded).unwrap();
         assert_eq!(result, hash);
+    }
+
+    #[test]
+    fn should_return_true_if_hash_is_all_zeros() {
+        let hash = AlgorandHash::default();
+        let result = hash.is_zero();
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn should_return_false_if_hash_has_is_not_all_zeros() {
+        let genesis_hash = "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=";
+        let hash = AlgorandHash::from_base_64(genesis_hash).unwrap();
+        let result = hash.is_zero();
+        assert_eq!(result, false);
     }
 }

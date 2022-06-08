@@ -337,11 +337,11 @@ impl AlgorandTransaction {
             },
         };
         if last_round > first_valid_round + ALGORAND_MAX_NUM_ROUNDS {
-            return Err(format!(
+            Err(format!(
                 "Last valid round of {} is > {} away from first valid round of {}!",
                 last_round, ALGORAND_MAX_NUM_ROUNDS, first_valid_round
             )
-            .into());
+            .into())
         } else {
             Ok(last_round)
         }

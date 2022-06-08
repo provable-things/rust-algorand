@@ -20,6 +20,13 @@ use crate::{
     crypto_utils::sha512_256_hash_bytes,
 };
 
+fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
+    match hash {
+        Some(hash) => hash.is_zero(),
+        _ => false,
+    }
+}
+
 #[skip_serializing_none]
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlockHeader {
@@ -85,7 +92,7 @@ pub struct AlgorandBlockHeader {
     #[serde(rename = "ts")]
     pub timestamp: i64,
 
-    #[serde(rename = "txn")]
+    #[serde(rename = "txn", skip_serializing_if = "is_zero_hash")]
     pub transactions_root: Option<AlgorandHash>,
 
     #[serde(rename = "upgradedelay")]
@@ -400,6 +407,15 @@ mod tests {
             .previous_block_hash
             .unwrap()
             .clone();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash() {
+        let header = get_sample_block_header_n(8);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/21139432
+        let expected_result = "B5XIGC53IAOAE46IRLPINQDQUB4FTPKCBPEO2RR7GIPSSRHEFJ3Q".to_string();
         assert_eq!(result, expected_result);
     }
 }

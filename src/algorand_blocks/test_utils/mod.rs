@@ -42,7 +42,8 @@ write_paths_and_getter_fxn!(
     4 => "src/algorand_blocks/test_utils/block-17964858.json",
     5 => "src/algorand_blocks/test_utils/block-19560833.json",
     6 => "src/algorand_blocks/test_utils/block-21039277.json",
-    7 => "src/algorand_blocks/test_utils/block-21094710.json"
+    7 => "src/algorand_blocks/test_utils/block-21094710.json",
+    8 => "src/algorand_blocks/test_utils/block-21139432.json"
 );
 
 pub fn get_sample_block_json_str_n(n: usize) -> String {
