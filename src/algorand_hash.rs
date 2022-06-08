@@ -10,6 +10,7 @@ use crate::{
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::base32_encode_with_no_padding,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -70,6 +71,11 @@ impl AlgorandHash {
 
     fn to_base_64(self) -> String {
         base64_encode(self.0)
+    }
+
+    #[cfg(test)]
+    pub fn to_base_32(&self) -> String {
+        base32_encode_with_no_padding(&self.0)
     }
 
     #[cfg(test)]
