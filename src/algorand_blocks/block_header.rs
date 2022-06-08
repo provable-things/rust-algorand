@@ -402,4 +402,13 @@ mod tests {
             .clone();
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_calculate_block_header_hash() {
+        let header = get_sample_block_header_n(8);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/21139432
+        let expected_result = "B5XIGC53IAOAE46IRLPINQDQUB4FTPKCBPEO2RR7GIPSSRHEFJ3Q".to_string();
+        assert_eq!(result, expected_result);
+    }
 }
