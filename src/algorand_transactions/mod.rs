@@ -11,6 +11,6 @@ mod signature_json;
 mod test_utils;
 pub(crate) mod transaction;
 pub(crate) mod transaction_json;
-mod transaction_type;
+pub mod transaction_type;
 pub(crate) mod transactions;
 pub(crate) mod transactions_group;

@@ -46,6 +46,7 @@ pub use crate::{
         algorand_transaction_proof::{AlgorandTransactionProof, AlgorandTransactionProofJson},
         asset_parameters::AssetParameters,
         transaction::{AlgorandSignedTransaction, AlgorandTransaction},
+        transaction_type::AlgorandTransactionType,
         transactions::AlgorandTransactions,
         transactions_group::AlgorandTxGroup,
     },
