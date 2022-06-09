@@ -12,6 +12,7 @@ use crate::{
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
     algorand_types::{Byte, Bytes, Result},
+    crypto_utils::base32_decode,
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -77,6 +78,11 @@ impl AlgorandHash {
 
     fn from_base_64(s: &str) -> Result<Self> {
         Self::from_slice(&base64_decode(s)?)
+    }
+
+    pub fn from_base_32(s: &str) -> Result<Self> {
+        let slice = base32_decode(s)?;
+        Self::from_slice(&slice)
     }
 
     fn to_base_64(self) -> String {

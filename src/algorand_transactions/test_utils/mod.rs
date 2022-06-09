@@ -34,7 +34,8 @@ macro_rules! write_paths_and_getter_fxn {
 
 write_paths_and_getter_fxn!(
     0 => "src/algorand_transactions/test_utils/sample-transactions-block-17962555.json",
-    1 => "src/algorand_transactions/test_utils/sample-transactions-block-19560833.json"
+    1 => "src/algorand_transactions/test_utils/sample-transactions-block-19560833.json",
+    2 => "src/algorand_transactions/test_utils/sample-transactions-block-21516112.json"
 );
 
 pub fn get_sample_txs_json_strs_n(n: usize) -> Vec<String> {

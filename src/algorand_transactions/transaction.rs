@@ -262,6 +262,9 @@ pub struct AlgorandTransaction {
 
     #[serde(skip_serializing)]
     pub inner_txs: Option<Vec<AlgorandTransaction>>,
+
+    #[serde(skip_serializing)]
+    pub parent_tx_id: Option<AlgorandHash>,
 }
 
 impl FromStr for AlgorandTransaction {
@@ -299,6 +302,12 @@ impl AlgorandTransaction {
     pub fn assign_group_id(&self, group_id: AlgorandHash) -> Self {
         let mut mutable_self = self.clone();
         mutable_self.group = Some(group_id);
+        mutable_self
+    }
+
+    pub fn assign_parent_id(&self, parent_id: AlgorandHash) -> Self {
+        let mut mutable_self = self.clone();
+        mutable_self.parent_tx_id = Some(parent_id);
         mutable_self
     }
 
@@ -354,9 +363,12 @@ impl AlgorandTransaction {
     ///
     /// Calculate the transaction hash for this transaction.
     pub fn to_id(&self) -> Result<String> {
-        Ok(base32_encode_with_no_padding(
-            &self.to_raw_tx_id()?.to_bytes(),
-        ))
+        match &self.parent_tx_id {
+            Some(parent_tx_id) => Ok(base32_encode_with_no_padding(&parent_tx_id.to_bytes())),
+            None => Ok(base32_encode_with_no_padding(
+                &self.to_raw_tx_id()?.to_bytes(),
+            )),
+        }
     }
 
     /// ## Sign
@@ -491,15 +503,23 @@ impl AlgorandTransaction {
                 Some(app) => app.foreign_assets.clone(),
                 None => None,
             },
-            inner_txs: match &json.inner_txs {
-                Some(inner_txs) => Some(
-                    inner_txs
-                        .iter()
-                        .map(AlgorandTransaction::from_json)
-                        .collect::<Result<Vec<AlgorandTransaction>>>()?,
-                ),
+            inner_txs: match &json.id {
+                Some(id) => match &json.inner_txs {
+                    Some(inner_txs) => Some(
+                        inner_txs
+                            .iter()
+                            .map(|tx| {
+                                AlgorandTransaction::from_json(tx).and_then(|tx| {
+                                    Ok(tx.assign_parent_id(AlgorandHash::from_base_32(id)?))
+                                })
+                            })
+                            .collect::<Result<Vec<AlgorandTransaction>>>()?,
+                    ),
+                    None => None,
+                },
                 None => None,
             },
+            parent_tx_id: None,
         })
     }
 
@@ -712,7 +732,7 @@ mod tests {
     use super::*;
     use crate::{
         algorand_errors::AlgorandError,
-        algorand_transactions::test_utils::get_sample_txs_jsons,
+        algorand_transactions::test_utils::{get_sample_txs_jsons, get_sample_txs_n},
     };
 
     #[test]
@@ -765,5 +785,25 @@ mod tests {
             .iter()
             .zip(results.iter())
             .for_each(|(json_before, json_after)| json_before.assert_equality(json_after))
+    }
+
+    #[test]
+    fn should_calculate_inner_tx_id_correctly() {
+        let txs = get_sample_txs_n(2);
+        let tx = txs
+            .iter()
+            .filter(|tx| {
+                tx.txn_type == Some(AlgorandTransactionType::ApplicationCall)
+                    && tx.inner_txs.is_some()
+            })
+            .cloned()
+            .collect::<Vec<AlgorandTransaction>>()[0]
+            .clone()
+            .inner_txs
+            .unwrap()[0]
+            .clone();
+        let result = tx.to_id().unwrap();
+        let expected_result = "5IBWPOEE3ZB7UBO3G42T34YVPVK6CT32T46HHECESD5BJC5SVK3A";
+        assert_eq!(result, expected_result);
     }
 }
