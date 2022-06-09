@@ -259,6 +259,9 @@ pub struct AlgorandTransaction {
 
     #[serde(skip_serializing)]
     pub close_amount: Option<u64>,
+
+    #[serde(skip_serializing)]
+    pub inner_txs: Option<Vec<AlgorandTransaction>>,
 }
 
 impl FromStr for AlgorandTransaction {
@@ -488,6 +491,15 @@ impl AlgorandTransaction {
                 Some(app) => app.foreign_assets.clone(),
                 None => None,
             },
+            inner_txs: match &json.inner_txs {
+                Some(inner_txs) => Some(
+                    inner_txs
+                        .iter()
+                        .map(AlgorandTransaction::from_json)
+                        .collect::<Result<Vec<AlgorandTransaction>>>()?,
+                ),
+                None => None,
+            },
         })
     }
 
@@ -522,6 +534,15 @@ impl AlgorandTransaction {
             asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
             payment_transaction: self.to_payment_transaction_json(),
             application_transaction: self.to_application_transaction_json()?,
+            inner_txs: match &self.inner_txs {
+                Some(inner_txs) => Some(
+                    inner_txs
+                        .iter()
+                        .map(|tx| tx.to_json())
+                        .collect::<Result<Vec<AlgorandTransactionJson>>>()?,
+                ),
+                _ => None,
+            },
         })
     }
 

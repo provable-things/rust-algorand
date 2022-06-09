@@ -77,6 +77,9 @@ pub struct AlgorandTransactionJson {
     pub key_reg_transaction: Option<KeyRegTransactionJson>,
 
     pub id: Option<String>,
+
+    #[serde(rename = "inner-txns")]
+    pub inner_txs: Option<Vec<AlgorandTransactionJson>>,
 }
 
 impl AlgorandTransactionJson {
@@ -243,6 +246,17 @@ mod tests {
     #[test]
     fn should_get_txs_from_strs() {
         let txs = get_sample_txs_json_strs_n(0);
+        txs.iter().for_each(|tx_json_str| {
+            let result = AlgorandTransactionJson::from_str(tx_json_str);
+            if result.is_err() {
+                assert!(false)
+            }
+        });
+    }
+
+    #[test]
+    fn should_get_txs_from_strs_with_inner_txs() {
+        let txs = get_sample_txs_json_strs_n(1);
         txs.iter().for_each(|tx_json_str| {
             let result = AlgorandTransactionJson::from_str(tx_json_str);
             if result.is_err() {
