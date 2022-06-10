@@ -16,7 +16,7 @@ use crate::{
         signature_json::AlgorandSignatureJson,
         transaction_type::AlgorandTransactionType,
     },
-    algorand_types::Result,
+    algorand_types::{Byte, Bytes, Result},
 };
 
 #[skip_serializing_none]
@@ -184,6 +184,14 @@ impl AlgorandTransactionJson {
             Some(x) => x.maybe_get_asset_id(),
             None => None,
         }
+    }
+
+    pub fn to_bytes(&self) -> Result<Bytes> {
+        Ok(serde_json::to_vec(&self)?)
+    }
+
+    pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
+        Ok(serde_json::from_slice(bytes)?)
     }
 }
 
