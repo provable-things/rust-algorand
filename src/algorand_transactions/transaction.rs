@@ -835,4 +835,28 @@ mod tests {
         let expected_result = "5IBWPOEE3ZB7UBO3G42T34YVPVK6CT32T46HHECESD5BJC5SVK3A";
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_calculate_inner_tx_id_correctly_after_json_bytes_serialization() {
+        let txs = get_sample_txs_n(2);
+        let tx = txs
+            .iter()
+            .filter(|tx| {
+                tx.txn_type == Some(AlgorandTransactionType::ApplicationCall)
+                    && tx.inner_txs.is_some()
+            })
+            .cloned()
+            .collect::<Vec<AlgorandTransaction>>()[0]
+            .clone()
+            .inner_txs
+            .unwrap()[0]
+            .clone();
+        let bytes = tx.to_json().unwrap().to_bytes().unwrap();
+        let tx_from_bytes =
+            AlgorandTransaction::from_json(&AlgorandTransactionJson::from_bytes(&bytes).unwrap())
+                .unwrap();
+        let result = tx_from_bytes.to_id().unwrap();
+        let expected_result = "5IBWPOEE3ZB7UBO3G42T34YVPVK6CT32T46HHECESD5BJC5SVK3A";
+        assert_eq!(result, expected_result);
+    }
 }
