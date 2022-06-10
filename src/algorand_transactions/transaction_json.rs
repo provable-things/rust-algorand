@@ -80,6 +80,9 @@ pub struct AlgorandTransactionJson {
 
     #[serde(rename = "inner-txns")]
     pub inner_txs: Option<Vec<AlgorandTransactionJson>>,
+
+    #[serde(skip_serializing)]
+    pub parent_tx_id: Option<String>,
 }
 
 impl AlgorandTransactionJson {

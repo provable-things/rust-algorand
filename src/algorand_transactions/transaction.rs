@@ -519,7 +519,10 @@ impl AlgorandTransaction {
                 },
                 None => None,
             },
-            parent_tx_id: None,
+            parent_tx_id: match &json.parent_tx_id {
+                Some(parent_tx_id) => Some(AlgorandHash::from_str(parent_tx_id)?),
+                None => None,
+            },
         })
     }
 
@@ -563,6 +566,10 @@ impl AlgorandTransaction {
                 ),
                 _ => None,
             },
+            parent_tx_id: self
+                .parent_tx_id
+                .as_ref()
+                .map(|parent_tx_id| parent_tx_id.to_string()),
         })
     }
 
@@ -803,6 +810,28 @@ mod tests {
             .unwrap()[0]
             .clone();
         let result = tx.to_id().unwrap();
+        let expected_result = "5IBWPOEE3ZB7UBO3G42T34YVPVK6CT32T46HHECESD5BJC5SVK3A";
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_inner_tx_id_correctly_after_json_serialization() {
+        let txs = get_sample_txs_n(2);
+        let tx = txs
+            .iter()
+            .filter(|tx| {
+                tx.txn_type == Some(AlgorandTransactionType::ApplicationCall)
+                    && tx.inner_txs.is_some()
+            })
+            .cloned()
+            .collect::<Vec<AlgorandTransaction>>()[0]
+            .clone()
+            .inner_txs
+            .unwrap()[0]
+            .clone();
+        let json = tx.to_json().unwrap();
+        let tx_from_bytes = AlgorandTransaction::from_json(&json).unwrap();
+        let result = tx_from_bytes.to_id().unwrap();
         let expected_result = "5IBWPOEE3ZB7UBO3G42T34YVPVK6CT32T46HHECESD5BJC5SVK3A";
         assert_eq!(result, expected_result);
     }
