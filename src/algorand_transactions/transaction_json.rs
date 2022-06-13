@@ -16,7 +16,7 @@ use crate::{
         signature_json::AlgorandSignatureJson,
         transaction_type::AlgorandTransactionType,
     },
-    algorand_types::Result,
+    algorand_types::{Byte, Bytes, Result},
 };
 
 #[skip_serializing_none]
@@ -77,6 +77,11 @@ pub struct AlgorandTransactionJson {
     pub key_reg_transaction: Option<KeyRegTransactionJson>,
 
     pub id: Option<String>,
+
+    #[serde(rename = "inner-txns")]
+    pub inner_txs: Option<Vec<AlgorandTransactionJson>>,
+
+    pub parent_tx_id: Option<String>,
 }
 
 impl AlgorandTransactionJson {
@@ -179,6 +184,14 @@ impl AlgorandTransactionJson {
             None => None,
         }
     }
+
+    pub fn to_bytes(&self) -> Result<Bytes> {
+        Ok(serde_json::to_vec(&self)?)
+    }
+
+    pub fn from_bytes(bytes: &[Byte]) -> Result<Self> {
+        Ok(serde_json::from_slice(bytes)?)
+    }
 }
 
 impl FromStr for AlgorandTransactionJson {
@@ -243,6 +256,17 @@ mod tests {
     #[test]
     fn should_get_txs_from_strs() {
         let txs = get_sample_txs_json_strs_n(0);
+        txs.iter().for_each(|tx_json_str| {
+            let result = AlgorandTransactionJson::from_str(tx_json_str);
+            if result.is_err() {
+                assert!(false)
+            }
+        });
+    }
+
+    #[test]
+    fn should_get_txs_from_strs_with_inner_txs() {
+        let txs = get_sample_txs_json_strs_n(1);
         txs.iter().for_each(|tx_json_str| {
             let result = AlgorandTransactionJson::from_str(tx_json_str);
             if result.is_err() {
