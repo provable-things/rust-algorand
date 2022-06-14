@@ -418,4 +418,13 @@ mod tests {
         let expected_result = "B5XIGC53IAOAE46IRLPINQDQUB4FTPKCBPEO2RR7GIPSSRHEFJ3Q".to_string();
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_calculate_block_header_hash_2() {
+        let header = get_sample_block_header_n(9);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/21595838
+        let expected_result = "TOK6N7YCFFO27ALBWPJY6EMODHNX3IXM7ZKWTC7UPDE6XLEIFMQQ".to_string();
+        assert_eq!(result, expected_result);
+    }
 }
