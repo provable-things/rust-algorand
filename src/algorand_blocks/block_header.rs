@@ -7,7 +7,6 @@ use crate::{
     algorand_address::AlgorandAddress,
     algorand_blocks::{
         block_header_json::AlgorandBlockHeaderJson,
-        participation_updates::ParticipationUpdates,
         rewards_state::RewardsState,
         upgrade_state::UpgradeState,
         upgrade_vote::UpgradeVote,
@@ -267,7 +266,11 @@ impl AlgorandBlockHeader {
                 None => None,
             },
             expired_participation_accounts: match &json.participation_updates {
-                Some(x) => ParticipationUpdates::from_json(x)?.expired_participation_accounts,
+                Some(x) => Some(
+                    x.iter()
+                        .map(|up| AlgorandAddress::from_str(up))
+                        .collect::<Result<Vec<AlgorandAddress>>>()?,
+                ),
                 None => None,
             },
         })
@@ -303,9 +306,18 @@ impl AlgorandBlockHeader {
         }
     }
 
-    fn to_participation_updates(&self) -> ParticipationUpdates {
-        ParticipationUpdates {
-            expired_participation_accounts: self.expired_participation_accounts.clone(),
+    fn to_participation_updates(&self) -> Result<Option<Vec<String>>> {
+        let json = match &self.expired_participation_accounts {
+            Some(accounts) => accounts
+                .iter()
+                .map(|account| account.to_base32())
+                .collect::<Result<Vec<String>>>()?,
+            None => vec![],
+        };
+        if json.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(json))
         }
     }
 
@@ -324,12 +336,7 @@ impl AlgorandBlockHeader {
         } else {
             Some(maybe_compact_certificates_state_json)
         };
-        let maybe_participation_updates_json = self.to_participation_updates().to_json();
-        let participation_updates = if maybe_participation_updates_json.is_empty() {
-            Some(maybe_participation_updates_json)
-        } else {
-            None
-        };
+        let participation_updates = self.to_participation_updates()?;
         let maybe_upgrade_vote_json = self.get_upgrade_vote().to_json();
         let upgrade_vote = if maybe_upgrade_vote_json.is_empty() {
             None
@@ -422,6 +429,7 @@ mod tests {
     #[test]
     fn should_calculate_block_header_hash_2() {
         let header = get_sample_block_header_n(9);
+        println!("{:?}", header.encode_with_prefix());
         let result = header.hash().unwrap().to_base_32();
         // NOTE: See https://algoexplorer.io/block/21595838
         let expected_result = "TOK6N7YCFFO27ALBWPJY6EMODHNX3IXM7ZKWTC7UPDE6XLEIFMQQ".to_string();

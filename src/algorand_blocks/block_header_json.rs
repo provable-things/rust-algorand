@@ -6,7 +6,6 @@ use serde_with::skip_serializing_none;
 
 use crate::{
     algorand_blocks::{
-        participation_updates::ParticipationUpdatesJson,
         rewards_state::RewardsStateJson,
         upgrade_state::UpgradeStateJson,
         upgrade_vote::UpgradeVoteJson,
@@ -51,8 +50,8 @@ pub struct AlgorandBlockHeaderJson {
     #[serde(rename = "upgrade-vote")]
     pub upgrade_vote: Option<UpgradeVoteJson>,
 
-    #[serde(rename = "participation-updates")]
-    pub participation_updates: Option<ParticipationUpdatesJson>,
+    #[serde(rename = "expired-participation-accounts")]
+    pub participation_updates: Option<Vec<String>>,
 }
 
 impl FromStr for AlgorandBlockHeaderJson {
