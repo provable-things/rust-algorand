@@ -212,6 +212,7 @@ pub struct AlgorandTransaction {
     /// spends. For example, if I send a tx to the network and later realize my fee was too
     /// low, I could send another tx with a higher fee, but the same lease value. This would
     /// ensure that only one of those txs ends up getting confirmed during the validity period.
+    #[serde(rename(serialize = "lx"))]
     pub lease: Option<AlgorandHash>,
 
     /// # Note
