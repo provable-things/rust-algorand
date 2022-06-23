@@ -212,6 +212,7 @@ pub struct AlgorandTransaction {
     /// spends. For example, if I send a tx to the network and later realize my fee was too
     /// low, I could send another tx with a higher fee, but the same lease value. This would
     /// ensure that only one of those txs ends up getting confirmed during the validity period.
+    #[serde(rename(serialize = "lx"))]
     pub lease: Option<AlgorandHash>,
 
     /// # Note
@@ -766,6 +767,41 @@ mod tests {
     #[test]
     fn should_get_algorand_transactions_from_jsons() {
         let jsons = get_sample_txs_jsons(0);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+    #[test]
+    fn should_get_algorand_transactions_from_jsons_1() {
+        let jsons = get_sample_txs_jsons(1);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+
+    #[test]
+    fn should_get_algorand_transactions_from_jsons_2() {
+        let jsons = get_sample_txs_jsons(2);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+
+    #[test]
+    fn should_get_algorand_transactions_from_jsons_3() {
+        let jsons = get_sample_txs_jsons(3);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
                 println!("JSON which failed to parse: {:?}", json);

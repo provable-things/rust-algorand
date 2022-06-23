@@ -1,0 +1,27 @@
+[{
+    "close-rewards": 0,
+    "closing-amount": 0,
+    "confirmed-round": 21595838,
+    "fee": 1000,
+    "first-valid": 21595836,
+    "genesis-hash": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+    "group": "3VoMx7o/RlZaasS4gRCaNMaTB9r0uqkTKg5FgtOVN1M=",
+    "id": "X27J7DDKHWFP6LQVEOV6EWWY3SI5IMJY4ZVHL2C63CWJH72VLITQ",
+    "intra-round-offset": 13,
+    "last-valid": 21595840,
+    "lease": "fYaKEmlHM/zbEX3ZLV3UgepEaRJHR9W06Enwavnpd3o=",
+    "note": "AKGdTwtqMJp0kUdP7qtkDvuniZKfH9hC1BNFU7aYthVFok1buyRvoGCJmqc9XnmmihY=",
+    "payment-transaction": {
+        "amount": 163749449,
+        "close-amount": 0,
+        "receiver": "LUKPHRCKPCX4SC32ZI2BXH2OQ3HDCQGKFTFCZEVXOWICY4AG7AQ4S5NKEQ"
+    },
+    "receiver-rewards": 0,
+    "round-time": 1655136189,
+    "sender": "J4BJWP67LHXT7LQTWZYWJGNSB25VZMO6SFZPKBSY7HJUCXJIFVE2PEOTVA",
+    "sender-rewards": 0,
+    "signature": {
+        "sig": "g2+xIdjIkGrJDqpYOHFE0M8wCKtcLecbEebuIPh467QJkDs65WWHi0UYjMnZ6p2wldpfiF5MLzbYXMF685mSAg=="
+    },
+    "tx-type": "pay"
+}]

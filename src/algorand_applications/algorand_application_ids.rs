@@ -104,7 +104,6 @@ mod tests {
     fn should_serde_app_id_to_and_from_bytes() {
         let app_id = AlgorandAppId::new(760689183);
         let bytes = app_id.to_bytes();
-        println!("{}", hex::encode(&bytes));
         let result = AlgorandAppId::from_bytes(&bytes).unwrap();
         assert_eq!(result, app_id);
     }
