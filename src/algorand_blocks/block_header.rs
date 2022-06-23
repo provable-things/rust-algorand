@@ -429,7 +429,6 @@ mod tests {
     #[test]
     fn should_calculate_block_header_hash_2() {
         let header = get_sample_block_header_n(9);
-        println!("{:?}", header.encode_with_prefix());
         let result = header.hash().unwrap().to_base_32();
         // NOTE: See https://algoexplorer.io/block/21595838
         let expected_result = "TOK6N7YCFFO27ALBWPJY6EMODHNX3IXM7ZKWTC7UPDE6XLEIFMQQ".to_string();

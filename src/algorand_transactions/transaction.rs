@@ -807,7 +807,6 @@ mod tests {
                 println!("JSON which failed to parse: {:?}", json);
             }
             let tx = AlgorandTransaction::from_json(json).unwrap();
-            println!("{:?}", tx.encode_for_signing());
             assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
         });
     }
