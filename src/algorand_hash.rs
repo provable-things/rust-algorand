@@ -4,15 +4,13 @@ use base64::{decode as base64_decode, encode as base64_encode};
 use derive_more::Constructor;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-#[cfg(test)]
-use crate::crypto_utils::base32_encode_with_no_padding;
 use crate::{
     algorand_constants::{ALGORAND_MAINNET_GENESIS_HASH, ALGORAND_TESTNET_GENESIS_HASH},
     algorand_encoding::U8_32Visitor,
     algorand_errors::AlgorandError,
     algorand_genesis_id::AlgorandGenesisId,
     algorand_types::{Byte, Bytes, Result},
-    crypto_utils::base32_decode,
+    crypto_utils::{base32_decode, base32_encode_with_no_padding},
 };
 
 const ALGORAND_HASH_NUM_BYTES: usize = 32;
@@ -89,7 +87,6 @@ impl AlgorandHash {
         base64_encode(self.0)
     }
 
-    #[cfg(test)]
     pub fn to_base_32(&self) -> String {
         base32_encode_with_no_padding(&self.0)
     }
