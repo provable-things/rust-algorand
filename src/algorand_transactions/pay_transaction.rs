@@ -59,12 +59,12 @@ impl AlgorandTransaction {
         Ok(Self {
             note,
             sender: Some(sender),
+            amount: Some(amount),
             receiver: Some(receiver),
             genesis_hash: Some(genesis_hash),
             first_valid_round: Some(first_valid_round),
             txn_type: Some(AlgorandTransactionType::Pay),
             fee: Some(fee.check_if_satisfies_minimum_fee()?.0),
-            amount: Some(Self::check_amount_is_above_minimum(amount)?),
             last_valid_round: Some(Self::calculate_last_valid_round(
                 first_valid_round,
                 last_valid_round,
