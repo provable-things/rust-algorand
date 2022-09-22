@@ -154,7 +154,7 @@ mod tests {
     }
 
     fn get_sample_32_bytes() -> Bytes {
-        hex::decode(&get_sample_32_bytes_of_hex()).unwrap()
+        hex::decode(get_sample_32_bytes_of_hex()).unwrap()
     }
 
     fn get_sample_algorand_hash() -> AlgorandHash {
@@ -175,8 +175,7 @@ mod tests {
         bytes.push(0u8);
         let number_of_bytes = bytes.len();
         let expected_error = format!(
-            "Not enough bytes to create hash from slice! Got {}, expected {}.",
-            number_of_bytes, ALGORAND_HASH_NUM_BYTES
+            "Not enough bytes to create hash from slice! Got {number_of_bytes}, expected {ALGORAND_HASH_NUM_BYTES}."
         );
         match AlgorandHash::from_slice(&bytes) {
             Ok(_) => panic!("Should not have succeeded!"),

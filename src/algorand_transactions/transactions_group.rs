@@ -238,7 +238,7 @@ mod tests {
             tx2.to_id().unwrap(),
             "3S5V64XDP6SF6OKCNSIMHUSEWJVAJYHBG5HJGTEMYF3ZJ2L76ZPQ"
         );
-        let group = AlgorandTxGroup::new(&[tx1.clone(), tx2.clone()]).unwrap();
+        let group = AlgorandTxGroup::new(&[tx1, tx2]).unwrap();
         let expected_group = "e37a82859898dc3df4525d7379a313702ce418341ce601d67f4ef266c63e9141";
         assert_eq!(hex::encode(group.group_id.to_bytes()), expected_group);
         group
@@ -305,7 +305,7 @@ mod tests {
             tx2.to_id().unwrap(),
             "REHOU6HGWROGVSAXPAWVZ7LIYB2BBONIYPBLW6REH5SDSYSNGJAA"
         );
-        let group = AlgorandTxGroup::new(&[tx1.clone(), tx2.clone()]).unwrap();
+        let group = AlgorandTxGroup::new(&[tx1, tx2]).unwrap();
         let expected_group = "0695bc9a20f8e12ae75d6784ec013693c9ba9020b9d3af9c3678033b8a0650e3";
         assert_eq!(hex::encode(group.group_id.to_bytes()), expected_group);
         group
@@ -365,7 +365,7 @@ mod tests {
             tx2.to_id().unwrap(),
             "3WO7GIMA7GDZJMJZAEOCUN7IRYNM27EC5ESH7BYG25DCTMKBYV7Q"
         );
-        let group = AlgorandTxGroup::new(&[tx1.clone(), tx2.clone()]).unwrap();
+        let group = AlgorandTxGroup::new(&[tx1, tx2]).unwrap();
         let expected_group = "ce571219776520db5dfb789a9686e9b4ed44509724f7a256cb93258621453670";
         assert_eq!(hex::encode(group.group_id.to_bytes()), expected_group);
         group

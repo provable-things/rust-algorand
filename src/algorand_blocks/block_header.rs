@@ -421,10 +421,7 @@ mod tests {
     fn should_get_alogrand_block_header_hash() {
         let header = get_sample_block_header_n(0);
         let result = header.hash().unwrap();
-        let expected_result = get_sample_block_header_n(1)
-            .previous_block_hash
-            .unwrap()
-            .clone();
+        let expected_result = get_sample_block_header_n(1).previous_block_hash.unwrap();
         assert_eq!(result, expected_result);
     }
 
@@ -452,15 +449,6 @@ mod tests {
         let result = header.hash().unwrap().to_base_32();
         // NOTE: See https://algoexplorer.io/block/23373185
         let expected_result = "MPKXXXRFQHOF6MBYSTOFHEAS7257JDLUQD6GSR47TDPVY2JWZ6VQ".to_string();
-        assert_eq!(result, expected_result);
-    }
-
-    #[test]
-    fn should_calculate_block_header_hash_4() {
-        let header = get_sample_block_header_n(11);
-        let result = header.hash().unwrap().to_base_32();
-        // NOTE: See https://algoexplorer.io/block/23595044
-        let expected_result = "KNAJZCN55ACWGHAPSAXHLV5WF5GVRFEDHBE2QJ24I26G3XGFLR7Q".to_string();
         assert_eq!(result, expected_result);
     }
 }

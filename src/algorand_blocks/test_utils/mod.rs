@@ -63,7 +63,7 @@ pub fn get_sample_block_json_n(n: usize) -> AlgorandBlockJson {
 }
 
 pub fn get_sample_block_header_json_n(n: usize) -> AlgorandBlockHeaderJson {
-    get_sample_block_json_n(n).block_header.clone()
+    get_sample_block_json_n(n).block_header
 }
 
 pub fn get_sample_block_header_n(n: usize) -> AlgorandBlockHeader {

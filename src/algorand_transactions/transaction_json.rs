@@ -281,7 +281,7 @@ mod tests {
         let strs = txs.iter().map(|tx| tx.to_string()).collect::<Vec<String>>();
         let results = strs
             .iter()
-            .map(|tx_str| AlgorandTransactionJson::from_str(&tx_str))
+            .map(|tx_str| AlgorandTransactionJson::from_str(tx_str))
             .collect::<Result<Vec<AlgorandTransactionJson>>>()
             .unwrap();
         results.iter().enumerate().for_each(|(i, tx)| {

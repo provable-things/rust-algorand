@@ -525,18 +525,18 @@ impl AlgorandTransaction {
     pub fn to_json(&self) -> Result<AlgorandTransactionJson> {
         Ok(AlgorandTransactionJson {
             fee: self.fee,
+            id: Some(self.to_id()?),
             last_valid: self.last_valid_round,
             genesis_id: self.genesis_id.clone(),
             signature: self.to_signature_json(),
             first_valid: self.first_valid_round,
-            id: Some(self.to_id()?),
+            note: self.note.as_ref().map(base64_encode),
             group: self.group.as_ref().map(|x| x.to_string()),
             lease: self.lease.as_ref().map(|x| x.to_string()),
             sender: self.sender.as_ref().map(|x| x.to_string()),
             tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
             key_reg_transaction: self.to_key_ref_transaction_json(),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
-            note: self.note.as_ref().map(base64_encode),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
             close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
@@ -748,10 +748,8 @@ mod tests {
     #[test]
     fn amount_less_than_than_minimum_should_fail_amount_check() {
         let amount = MICRO_ALGOS_MULTIPLIER - 1;
-        let expected_error = format!(
-            "Amount is < minimum amount of {} algos!",
-            MICRO_ALGOS_MULTIPLIER
-        );
+        let expected_error =
+            format!("Amount is < minimum amount of {MICRO_ALGOS_MULTIPLIER} algos!");
         match AlgorandTransaction::check_amount_is_above_minimum(amount) {
             Ok(_) => panic!("Should not have succeeded!"),
             Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
@@ -764,7 +762,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(0);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
-                println!("JSON which failed to parse: {:?}", json);
+                println!("JSON which failed to parse: {json:?}");
             }
             let tx = AlgorandTransaction::from_json(json).unwrap();
             assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
@@ -775,7 +773,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(1);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
-                println!("JSON which failed to parse: {:?}", json);
+                println!("JSON which failed to parse: {json:?}");
             }
             let tx = AlgorandTransaction::from_json(json).unwrap();
             assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
@@ -787,7 +785,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(2);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
-                println!("JSON which failed to parse: {:?}", json);
+                println!("JSON which failed to parse: {json:?}");
             }
             let tx = AlgorandTransaction::from_json(json).unwrap();
             assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
@@ -799,7 +797,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(3);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
-                println!("JSON which failed to parse: {:?}", json);
+                println!("JSON which failed to parse: {json:?}");
             }
             let tx = AlgorandTransaction::from_json(json).unwrap();
             assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
@@ -811,7 +809,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(0);
         let txs = jsons
             .iter()
-            .map(|json| AlgorandTransaction::from_json(&json))
+            .map(|json| AlgorandTransaction::from_json(json))
             .collect::<Result<Vec<AlgorandTransaction>>>()
             .unwrap();
         let results = txs

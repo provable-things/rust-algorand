@@ -272,8 +272,7 @@ mod tests {
     fn should_err_when_safely_getting_out_of_range_word_from_list() {
         let index = NUMBER_OF_WORDS_IN_BIP_39_WORDLIST + 1;
         let expected_error = format!(
-            "Cannot get word number {}! BIP39 word list is only {} words long!",
-            index, NUMBER_OF_WORDS_IN_BIP_39_WORDLIST
+            "Cannot get word number {index}! BIP39 word list is only {NUMBER_OF_WORDS_IN_BIP_39_WORDLIST} words long!"
         );
         match AlgorandMnemonic::safely_get_word_from_list(index) {
             Ok(_) => panic!("Should not have succeeded!"),
@@ -328,7 +327,7 @@ mod tests {
     #[test]
     fn should_fail_safely_get_index_from_word() {
         let word = "notinlist";
-        let expected_error = format!("No '{}' in english BIP39 word list!", word);
+        let expected_error = format!("No '{word}' in english BIP39 word list!");
         match AlgorandMnemonic::safely_get_index_from_word(word) {
             Ok(_) => panic!("Should not have succeeded!"),
             Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
@@ -362,7 +361,7 @@ mod tests {
         let word_1 = "word1";
         let word_2 = "word2";
         let word_3 = "word3";
-        let s = format!("{} {} {}", word_1, word_2, word_3);
+        let s = format!("{word_1} {word_2} {word_3}");
         let expected_result = vec![word_1, word_2, word_3];
         let result = AlgorandMnemonic::str_to_words(&s);
         assert_eq!(result, expected_result)

@@ -59,7 +59,7 @@ pub fn get_sample_txs_n(n: usize) -> AlgorandTransactions {
     AlgorandTransactions::new(
         get_sample_txs_jsons(n)
             .iter()
-            .map(|tx_json| AlgorandTransaction::from_json(&tx_json))
+            .map(|tx_json| AlgorandTransaction::from_json(tx_json))
             .collect::<Result<Vec<AlgorandTransaction>>>()
             .unwrap(),
     )
