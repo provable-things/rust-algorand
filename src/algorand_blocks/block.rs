@@ -155,6 +155,7 @@ mod test {
         get_all_sample_blocks,
         get_sample_block_json_str_n,
         get_sample_block_n,
+        get_sample_block_with_state_proof_tx_json_string,
     };
 
     #[test]
@@ -275,5 +276,12 @@ mod test {
                     assert!(false, "Block {i} failed equality test assertion!");
                 }
             })
+    }
+
+    #[test]
+    fn should_parse_block_with_state_proof_tx() {
+        let json_string = get_sample_block_with_state_proof_tx_json_string();
+        let result = AlgorandBlock::from_str(&json_string);
+        assert!(result.is_ok());
     }
 }
