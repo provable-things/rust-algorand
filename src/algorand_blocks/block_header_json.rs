@@ -41,6 +41,9 @@ pub struct AlgorandBlockHeaderJson {
     #[serde(rename = "transactions-root")]
     pub transactions_root: Option<String>,
 
+    #[serde(rename = "transactions-root-sha256")]
+    pub transactions_root_sha256: Option<String>,
+
     #[serde(rename = "txn-counter")]
     pub transactions_counter: u64,
 
