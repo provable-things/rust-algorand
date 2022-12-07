@@ -9,6 +9,7 @@ pub enum AlgorandTransactionType {
     Pay,
     StateProof,
     AssetFreeze,
+    Unrecognized,
     AssetTransfer,
     ApplicationCall,
     KeyRegistration,
@@ -25,6 +26,7 @@ impl fmt::Display for AlgorandTransactionType {
             Self::ApplicationCall => write!(f, "appl"),
             Self::KeyRegistration => write!(f, "keyreg"),
             Self::AssetConfiguration => write!(f, "acfg"),
+            Self::Unrecognized => write!(f, "unrecognized"),
         }
     }
 }
@@ -59,7 +61,7 @@ impl FromStr for AlgorandTransactionType {
             "appl" => Ok(Self::ApplicationCall),
             "keyreg" => Ok(Self::KeyRegistration),
             "acfg" => Ok(Self::AssetConfiguration),
-            _ => Err(format!("Unrecognized Algorand tx type: '{s}'!").into()),
+            _ => Ok(Self::Unrecognized),
         }
     }
 }
