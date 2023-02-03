@@ -18,8 +18,7 @@ pub trait AlgorandChecksum {
     fn check_checksum_num_bytes(checksum_num_bytes: usize) -> Result<usize> {
         if checksum_num_bytes > ALGORAND_MAX_CHECKSUM_BYTES {
             Err(format!(
-                "You asked for {} bytes, but you cannot get > {} bytes!",
-                checksum_num_bytes, ALGORAND_MAX_CHECKSUM_BYTES
+                "You asked for {checksum_num_bytes} bytes, but you cannot get > {ALGORAND_MAX_CHECKSUM_BYTES} bytes!"
             )
             .into())
         } else {

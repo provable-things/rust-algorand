@@ -35,7 +35,7 @@ impl Serialize for AlgorandTransactionType {
     where
         S: Serializer,
     {
-        serializer.serialize_str(&format!("{}", self))
+        serializer.serialize_str(&format!("{self}"))
     }
 }
 
@@ -56,7 +56,7 @@ impl FromStr for AlgorandTransactionType {
             "appl" => Ok(Self::ApplicationCall),
             "keyreg" => Ok(Self::KeyRegistration),
             "acfg" => Ok(Self::AssetConfiguration),
-            _ => Err(format!("Unrecognized Algorand tx type: '{}'!", s).into()),
+            _ => Err(format!("Unrecognized Algorand tx type: '{s}'!").into()),
         }
     }
 }

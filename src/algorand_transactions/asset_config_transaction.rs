@@ -46,8 +46,7 @@ impl AlgorandTransaction {
             Self::calculate_last_valid_round(first_valid_round, last_valid_round)?;
         if calculated_last_valid_round > first_valid_round + ALGORAND_MAX_NUM_ROUNDS {
             return Err(format!(
-                "Last valid round of {} is > {} away from first valid round of {}!",
-                calculated_last_valid_round, ALGORAND_MAX_NUM_ROUNDS, first_valid_round
+                "Last valid round of {calculated_last_valid_round} is > {ALGORAND_MAX_NUM_ROUNDS} away from first valid round of {first_valid_round}!"
             )
             .into());
         };

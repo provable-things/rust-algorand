@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use derive_more::{Constructor, Deref};
+use serde::{Deserialize, Serialize};
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -11,7 +12,7 @@ use crate::{
     crypto_utils::sha512_256_hash_bytes,
 };
 
-#[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref)]
+#[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref, Serialize, Deserialize)]
 pub struct AlgorandAppId(pub u64);
 
 impl ToApplicationArg for AlgorandAppId {
@@ -71,7 +72,7 @@ impl FromStr for AlgorandAppId {
     fn from_str(s: &str) -> Result<Self> {
         match s.parse::<u64>() {
             Ok(u_64) => Ok(Self::new(u_64)),
-            Err(_) => Err(format!("Cannot convert '{}' to 'AlgorandAppId'!", s).into()),
+            Err(_) => Err(format!("Cannot convert '{s}' to 'AlgorandAppId'!").into()),
         }
     }
 }

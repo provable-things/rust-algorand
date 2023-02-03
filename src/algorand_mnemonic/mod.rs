@@ -119,8 +119,7 @@ impl AlgorandMnemonic {
             Ok(bytes)
         } else {
             Err(format!(
-                "Algroand mnemonic requires {} bytes, found {} bytes!",
-                NUMBER_OF_BYTES_IN_PRIVATE_KEY, number_of_bytes
+                "Algroand mnemonic requires {NUMBER_OF_BYTES_IN_PRIVATE_KEY} bytes, found {number_of_bytes} bytes!"
             )
             .into())
         }
@@ -162,7 +161,7 @@ impl AlgorandMnemonic {
                     if i == 0 {
                         word.to_string()
                     } else {
-                        format!("{} {}", word, mnemonic)
+                        format!("{word} {mnemonic}")
                     }
                 }),
         )
@@ -172,8 +171,7 @@ impl AlgorandMnemonic {
         match ENGLISH_BIP_39_WORDS_HASH_MAP.get(&index) {
             Some(word) => Ok(word),
             None => Err(format!(
-                "Cannot get word number {}! BIP39 word list is only {} words long!",
-                index, NUMBER_OF_WORDS_IN_BIP_39_WORDLIST
+                "Cannot get word number {index}! BIP39 word list is only {NUMBER_OF_WORDS_IN_BIP_39_WORDLIST} words long!"
             )
             .into()),
         }
@@ -183,7 +181,7 @@ impl AlgorandMnemonic {
         ENGLISH_BIP_39_WORD_LIST
             .iter()
             .position(|bip_39_word| *bip_39_word == word)
-            .ok_or_else(|| format!("No '{}' in english BIP39 word list!", word).into())
+            .ok_or_else(|| format!("No '{word}' in english BIP39 word list!").into())
             .map(|u_size| u_size as u32)
     }
 
@@ -206,8 +204,7 @@ impl AlgorandMnemonic {
         let number_of_words = words.len();
         if number_of_words != NUMBER_OF_WORDS_IN_MNEMONIC {
             Err(format!(
-                "Expected {} words in mnemonic, but got {} instead!",
-                NUMBER_OF_WORDS_IN_MNEMONIC, number_of_words
+                "Expected {NUMBER_OF_WORDS_IN_MNEMONIC} words in mnemonic, but got {number_of_words} instead!"
             )
             .into())
         } else {

@@ -57,7 +57,7 @@ impl AlgorandTxGroup {
     ///
     /// Get the group ID of this tx in base64 encoding, as shown on explorers.
     pub fn to_id(&self) -> Result<String> {
-        Ok(base64_encode(&self.group_id.to_bytes()))
+        Ok(base64_encode(self.group_id.to_bytes()))
     }
 
     fn compute_group_id(&self) -> Result<AlgorandHash> {
@@ -116,8 +116,7 @@ impl AlgorandTxGroup {
                     .collect::<Result<Vec<AlgorandSignedTransaction>>>()
             },
             _ => Err(format!(
-                "Please provide either ONE private key, or {} private keys! (IE: one for each tx!)",
-                num_keys
+                "Please provide either ONE private key, or {num_keys} private keys! (IE: one for each tx!)"
             )
             .into()),
         }

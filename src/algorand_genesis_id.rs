@@ -43,7 +43,7 @@ impl AlgorandGenesisId {
         );
         match maybe_self {
             Some(id) => Ok(id),
-            None => Err(format!("No Algorand Genesis ID has hash {}!", needle).into()),
+            None => Err(format!("No Algorand Genesis ID has hash {needle}!").into()),
         }
     }
 

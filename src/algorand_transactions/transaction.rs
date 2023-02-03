@@ -327,11 +327,7 @@ impl AlgorandTransaction {
         if amount >= MICRO_ALGOS_MULTIPLIER {
             Ok(amount)
         } else {
-            Err(format!(
-                "Amount is < minimum amount of {} algos!",
-                MICRO_ALGOS_MULTIPLIER
-            )
-            .into())
+            Err(format!("Amount is < minimum amount of {MICRO_ALGOS_MULTIPLIER} algos!").into())
         }
     }
 
@@ -351,8 +347,7 @@ impl AlgorandTransaction {
         };
         if last_round > first_valid_round + ALGORAND_MAX_NUM_ROUNDS {
             Err(format!(
-                "Last valid round of {} is > {} away from first valid round of {}!",
-                last_round, ALGORAND_MAX_NUM_ROUNDS, first_valid_round
+                "Last valid round of {last_round} is > {ALGORAND_MAX_NUM_ROUNDS} away from first valid round of {first_valid_round}!"
             )
             .into())
         } else {
@@ -439,7 +434,7 @@ impl AlgorandTransaction {
                 None => None,
             },
             note: match &json.note {
-                Some(base64_str) => Some(base64_decode(&base64_str)?),
+                Some(base64_str) => Some(base64_decode(base64_str)?),
                 None => None,
             },
             rekey_to: match &json.rekey_to {
@@ -541,7 +536,7 @@ impl AlgorandTransaction {
             tx_type: self.txn_type.as_ref().map(|x| x.to_string()),
             key_reg_transaction: self.to_key_ref_transaction_json(),
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
-            note: self.note.as_ref().map(|bytes| base64_encode(&bytes)),
+            note: self.note.as_ref().map(base64_encode),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
             close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),

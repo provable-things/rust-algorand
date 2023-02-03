@@ -35,8 +35,7 @@ impl AlgorandHash {
         let number_of_bytes = bytes.len();
         if number_of_bytes != ALGORAND_HASH_NUM_BYTES {
             Err(format!(
-                "Not enough bytes to create hash from slice! Got {}, expected {}.",
-                number_of_bytes, ALGORAND_HASH_NUM_BYTES
+                "Not enough bytes to create hash from slice! Got {number_of_bytes}, expected {ALGORAND_HASH_NUM_BYTES}."
             )
             .into())
         } else {
@@ -103,8 +102,7 @@ impl AlgorandHash {
         let num_bytes = bytes.len();
         if num_bytes != 32 {
             return Err(format!(
-                "Cannot get algorandHash from bytes! Got {}, expected {}!",
-                num_bytes, ALGORAND_HASH_NUM_BYTES
+                "Cannot get algorandHash from bytes! Got {num_bytes}, expected {ALGORAND_HASH_NUM_BYTES}!"
             )
             .into());
         }
