@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use derive_more::{Constructor, Deref};
+use serde::{Deserialize, Serialize};
 
 use crate::{
     algorand_address::AlgorandAddress,
@@ -11,7 +12,7 @@ use crate::{
     crypto_utils::sha512_256_hash_bytes,
 };
 
-#[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref)]
+#[derive(Clone, Debug, Eq, PartialEq, Default, Constructor, Deref, Serialize, Deserialize)]
 pub struct AlgorandAppId(pub u64);
 
 impl ToApplicationArg for AlgorandAppId {
