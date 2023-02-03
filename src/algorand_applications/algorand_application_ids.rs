@@ -72,7 +72,7 @@ impl FromStr for AlgorandAppId {
     fn from_str(s: &str) -> Result<Self> {
         match s.parse::<u64>() {
             Ok(u_64) => Ok(Self::new(u_64)),
-            Err(_) => Err(format!("Cannot convert '{}' to 'AlgorandAppId'!", s).into()),
+            Err(_) => Err(format!("Cannot convert '{s}' to 'AlgorandAppId'!").into()),
         }
     }
 }

@@ -46,8 +46,7 @@ impl MicroAlgos {
             Ok(*self)
         } else {
             Err(format!(
-                "Fee is below the minimum algorand fee of {} MicroAlgos!",
-                ALGORAND_MINIMUM_FEE
+                "Fee is below the minimum algorand fee of {ALGORAND_MINIMUM_FEE} MicroAlgos!"
             )
             .into())
         }

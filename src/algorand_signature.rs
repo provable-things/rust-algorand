@@ -44,8 +44,7 @@ impl AlgorandSignature {
         let number_of_bytes = bytes.len();
         if number_of_bytes != ALGORAND_SIGNATURE_NUM_BYTES {
             Err(format!(
-                "Not enough bytes to create hash from slice! Got {}, expected {}.",
-                number_of_bytes, ALGORAND_SIGNATURE_NUM_BYTES
+                "Not enough bytes to create hash from slice! Got {number_of_bytes}, expected {ALGORAND_SIGNATURE_NUM_BYTES}."
             )
             .into())
         } else {
@@ -60,7 +59,7 @@ impl AlgorandSignature {
 
 impl fmt::Display for AlgorandSignature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", base64_encode(&self.0))
+        write!(f, "{}", base64_encode(self.0))
     }
 }
 

@@ -106,7 +106,7 @@ impl AlgorandTransactionProof {
             tree_depth: self.tree_depth,
             hash_type: self.hash_type.clone(),
             stib_hash: base64_encode(&self.stib_hash),
-            proof: base64_encode(&self.proof.concat()),
+            proof: base64_encode(self.proof.concat()),
         }
     }
 

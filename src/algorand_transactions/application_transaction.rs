@@ -58,7 +58,7 @@ impl OnCompletion {
             3 => Ok(Self::Clear),
             4 => Ok(Self::Update),
             5 => Ok(Self::Delete),
-            _ => Err(format!("Unrecognized u64 '{}' for `OnCompletion`!", num).into()),
+            _ => Err(format!("Unrecognized u64 '{num}' for `OnCompletion`!").into()),
         }
     }
 }
@@ -73,7 +73,7 @@ impl Display for OnCompletion {
             Self::Update => "update",
             Self::Delete => "delete",
         };
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
@@ -88,7 +88,7 @@ impl FromStr for OnCompletion {
             "delete" => Ok(Self::Delete),
             "update" => Ok(Self::Update),
             "closeout" => Ok(Self::Closeout),
-            _ => Err(format!("Unrecognised `OnCompletion` fxn: {}!", s).into()),
+            _ => Err(format!("Unrecognised `OnCompletion` fxn: {s}!").into()),
         }
     }
 }

@@ -63,8 +63,7 @@ impl AlgorandAddress {
         let number_of_bytes = bytes.len();
         if number_of_bytes < ALGORAND_ADDRESS_NUM_BYTES {
             Err(format!(
-                "Too few bytes to create `AlgorandAddress`! Got {}, expected {}.",
-                number_of_bytes, ALGORAND_ADDRESS_NUM_BYTES
+                "Too few bytes to create `AlgorandAddress`! Got {number_of_bytes}, expected {ALGORAND_ADDRESS_NUM_BYTES}."
             )
             .into())
         } else {
@@ -73,7 +72,7 @@ impl AlgorandAddress {
     }
 
     pub fn to_base64(&self) -> Result<String> {
-        Ok(base64_encode(&self.append_checksum_bytes()?))
+        Ok(base64_encode(self.append_checksum_bytes()?))
     }
 
     pub fn to_base32(&self) -> Result<String> {
@@ -113,7 +112,7 @@ impl<'de> Deserialize<'de> for AlgorandAddress {
 impl std::fmt::Display for AlgorandAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.to_base32() {
-            Ok(address) => write!(f, "{}", address),
+            Ok(address) => write!(f, "{address}"),
             Err(_) => write!(f, "Could not get base32 encoding for AlgorandAddress!"),
         }
     }
