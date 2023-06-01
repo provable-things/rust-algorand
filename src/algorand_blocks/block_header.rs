@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -8,6 +8,7 @@ use crate::{
     algorand_blocks::{
         block_header_json::AlgorandBlockHeaderJson,
         rewards_state::RewardsState,
+        state_proof_tracking::StateProofTracking,
         upgrade_state::UpgradeState,
         upgrade_vote::UpgradeVote,
     },
@@ -29,6 +30,13 @@ fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
 fn is_zero_hash_or_none(hash: &Option<AlgorandHash>) -> bool {
     match hash {
         Some(hash) => hash.is_zero(),
+        _ => true,
+    }
+}
+
+fn is_empty_or_none<K, V>(hash_map: &Option<HashMap<K, V>>) -> bool {
+    match hash_map {
+        Some(hash_map) => hash_map.is_empty(),
         _ => true,
     }
 }
@@ -88,6 +96,9 @@ pub struct AlgorandBlockHeader {
     pub rewards_pool: Option<AlgorandAddress>,
 
     pub seed: Option<AlgorandHash>,
+
+    #[serde(rename = "spt", skip_serializing_if = "is_empty_or_none")]
+    pub state_proof_tracking: Option<HashMap<u64, StateProofTracking>>,
 
     #[serde(rename = "t")]
     pub compact_cert_voters_total: Option<MicroAlgos>,
@@ -287,6 +298,7 @@ impl AlgorandBlockHeader {
                 ),
                 None => None,
             },
+            state_proof_tracking: json.maybe_get_state_proof_tracking(),
         })
     }
 
@@ -387,6 +399,12 @@ impl AlgorandBlockHeader {
                 .transactions_root_sha256
                 .as_ref()
                 .map(|x| x.to_string()),
+            state_proof_tracking: self.state_proof_tracking.as_ref().map(|proofs| {
+                proofs
+                    .iter()
+                    .map(|(key, value)| value.to_json(*key))
+                    .collect()
+            }),
         })
     }
 }

@@ -1,4 +1,4 @@
-use std::{fmt::Display, str::FromStr};
+use std::{collections::HashMap, fmt::Display, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -7,6 +7,7 @@ use serde_with::skip_serializing_none;
 use crate::{
     algorand_blocks::{
         rewards_state::RewardsStateJson,
+        state_proof_tracking::{StateProofTracking, StateProofTrackingJson},
         upgrade_state::UpgradeStateJson,
         upgrade_vote::UpgradeVoteJson,
     },
@@ -55,6 +56,9 @@ pub struct AlgorandBlockHeaderJson {
 
     #[serde(rename = "expired-participation-accounts")]
     pub participation_updates: Option<Vec<String>>,
+
+    #[serde(rename = "state-proof-tracking")]
+    pub state_proof_tracking: Option<Vec<StateProofTrackingJson>>,
 }
 
 impl FromStr for AlgorandBlockHeaderJson {
@@ -68,6 +72,20 @@ impl FromStr for AlgorandBlockHeaderJson {
 impl Display for AlgorandBlockHeaderJson {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", json!(self))
+    }
+}
+
+impl AlgorandBlockHeaderJson {
+    pub fn maybe_get_state_proof_tracking(&self) -> Option<HashMap<u64, StateProofTracking>> {
+        self.state_proof_tracking.as_ref().map(|proofs| {
+            let mut hash_map = HashMap::new();
+            proofs.iter().for_each(|proof| {
+                if let (Some(k), Ok(v)) = (proof.proof_type, StateProofTracking::from_json(proof)) {
+                    hash_map.insert(k, v);
+                };
+            });
+            hash_map
+        })
     }
 }
 
