@@ -23,6 +23,9 @@ pub struct PaymentTransactionJson {
 
     #[serde(rename = "close-amount")]
     pub close_amount: Option<u64>,
+
+    #[serde(rename = "close-remainder-to")]
+    pub close_remainder_to: Option<String>,
 }
 
 impl PaymentTransactionJson {
@@ -39,6 +42,10 @@ impl PaymentTransactionJson {
 
     pub fn maybe_get_receiver(&self) -> Option<String> {
         self.receiver.clone()
+    }
+
+    pub fn maybe_get_close_remainder_to(&self) -> Option<String> {
+        self.close_remainder_to.clone()
     }
 }
 

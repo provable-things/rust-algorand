@@ -70,9 +70,6 @@ pub struct AlgorandTransactionJson {
     #[serde(rename = "asset-config-transaction")]
     pub asset_config_transaction: Option<AssetConfigTransactionJson>,
 
-    #[serde(rename = "close-remainder-to")]
-    pub close_remainder_to: Option<String>,
-
     #[serde(rename = "key-reg-transaction")]
     pub key_reg_transaction: Option<KeyRegTransactionJson>,
 
@@ -165,6 +162,16 @@ impl AlgorandTransactionJson {
         }
     }
 
+    pub fn maybe_get_close_remainder_to(&self) -> Option<String> {
+        match self.get_tx_type() {
+            AlgorandTransactionType::Pay => match &self.payment_transaction {
+                Some(x) => x.maybe_get_close_remainder_to(),
+                None => None,
+            },
+            _ => None,
+        }
+    }
+
     pub fn maybe_get_asset_close_to(&self) -> Option<String> {
         // FIXME Test!
         match self.get_tx_type() {
@@ -239,8 +246,7 @@ impl AlgorandTransactionJson {
             "tx_type",
             "group",
             "lease",
-            "rekey_to",
-            "close_remainder_to"
+            "rekey_to"
         );
     }
 }

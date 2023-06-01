@@ -449,8 +449,8 @@ impl AlgorandTransaction {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
-            close_remainder_to: match &json.close_remainder_to {
-                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
+            close_remainder_to: match json.maybe_get_close_remainder_to() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
             asset_freeze_id: match &json.asset_freeze_transaction {
@@ -539,7 +539,6 @@ impl AlgorandTransaction {
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
-            close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
             asset_config_transaction: match &self.asset_parameters {
                 None => None,
                 Some(params) => Some(AssetConfigTransactionJson::new(
@@ -637,6 +636,7 @@ impl AlgorandTransaction {
             close_amount: self.close_amount,
             amount: self.amount.as_ref().map(|u_64| json!(u_64)),
             receiver: self.receiver.as_ref().map(|x| x.to_string()),
+            close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
         };
         if json.is_empty() {
             None
