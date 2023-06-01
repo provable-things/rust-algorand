@@ -26,6 +26,13 @@ fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
     }
 }
 
+fn is_zero_hash_or_none(hash: &Option<AlgorandHash>) -> bool {
+    match hash {
+        Some(hash) => hash.is_zero(),
+        _ => true,
+    }
+}
+
 #[skip_serializing_none]
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AlgorandBlockHeader {
@@ -94,7 +101,7 @@ pub struct AlgorandBlockHeader {
     #[serde(rename = "txn", skip_serializing_if = "is_zero_hash")]
     pub transactions_root: Option<AlgorandHash>,
 
-    #[serde(skip_serializing)]
+    #[serde(rename = "txn256", skip_serializing_if = "is_zero_hash_or_none")]
     pub transactions_root_sha256: Option<AlgorandHash>,
 
     #[serde(rename = "upgradedelay")]
