@@ -809,7 +809,7 @@ mod tests {
         let jsons = get_sample_txs_jsons(0);
         let txs = jsons
             .iter()
-            .map(|json| AlgorandTransaction::from_json(json))
+            .map(AlgorandTransaction::from_json)
             .collect::<Result<Vec<AlgorandTransaction>>>()
             .unwrap();
         let results = txs

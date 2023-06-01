@@ -212,7 +212,7 @@ mod tests {
     fn should_return_true_if_hash_is_all_zeros() {
         let hash = AlgorandHash::default();
         let result = hash.is_zero();
-        assert_eq!(result, true);
+        assert!(result);
     }
 
     #[test]
@@ -220,6 +220,6 @@ mod tests {
         let genesis_hash = "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=";
         let hash = AlgorandHash::from_base_64(genesis_hash).unwrap();
         let result = hash.is_zero();
-        assert_eq!(result, false);
+        assert!(!result);
     }
 }
