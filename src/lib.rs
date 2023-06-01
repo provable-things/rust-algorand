@@ -27,6 +27,7 @@ mod algorand_traits;
 mod algorand_transactions;
 mod algorand_types;
 mod crypto_utils;
+mod predicates;
 mod test_utils;
 
 pub use crate::{

@@ -5,27 +5,14 @@ use serde::{Deserialize, Serialize};
 use crate::{
     algorand_errors::AlgorandError,
     algorand_types::{Bytes, Result},
+    predicates::{is_empty_vec, is_zero_option},
 };
-
-fn is_zero(num: &Option<u64>) -> bool {
-    match num {
-        Some(val) => val == &0,
-        None => true,
-    }
-}
-
-fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
-    match vec {
-        Some(vec) => vec.is_empty(),
-        None => true,
-    }
-}
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct StateProofTracking {
     #[serde(rename = "v", skip_serializing_if = "is_empty_vec")]
     pub voters_commitment: Option<Bytes>,
-    #[serde(rename(serialize = "t"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "t"), skip_serializing_if = "is_zero_option")]
     pub online_total_weight: Option<u64>,
     #[serde(rename = "n")]
     pub next_round: Option<u64>,

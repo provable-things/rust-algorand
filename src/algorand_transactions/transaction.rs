@@ -32,24 +32,11 @@ use crate::{
     },
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
+    predicates::{is_empty_vec, is_zero_option},
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
 impl ToMsgPackBytes for AlgorandSignedTransaction {}
-
-fn is_zero(num: &Option<u64>) -> bool {
-    match num {
-        Some(val) => val == &0,
-        None => true,
-    }
-}
-
-fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
-    match vec {
-        Some(vec) => vec.is_empty(),
-        None => true,
-    }
-}
 
 /// ## An Algorand Transaction
 ///
@@ -60,7 +47,7 @@ pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
     /// The amount of an asset to transfer.
-    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero_option")]
     pub asset_amount: Option<u64>,
 
     /// ## Asset Close To
@@ -78,7 +65,7 @@ pub struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero_option")]
     pub amount: Option<u64>,
 
     /// ## App Arguments
@@ -93,7 +80,7 @@ pub struct AlgorandTransaction {
     /// will have on the balance record of the sender or the application's
     /// creator. See the documentation for the OnCompletion type for more
     /// information on each possible value.
-    #[serde(rename(serialize = "apan"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "apan"), skip_serializing_if = "is_zero_option")]
     pub on_completion: Option<u64>,
 
     /// ## Asset Parameters
@@ -141,7 +128,7 @@ pub struct AlgorandTransaction {
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
-    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero_option")]
     // FIXME This is the config tx asset id! Add a prefix for clarity?
     pub asset_id: Option<u64>,
 

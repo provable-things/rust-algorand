@@ -18,28 +18,8 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
+    predicates::{is_empty_or_none, is_zero_hash, is_zero_hash_or_none},
 };
-
-fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
-    match hash {
-        Some(hash) => hash.is_zero(),
-        _ => false,
-    }
-}
-
-fn is_zero_hash_or_none(hash: &Option<AlgorandHash>) -> bool {
-    match hash {
-        Some(hash) => hash.is_zero(),
-        _ => true,
-    }
-}
-
-fn is_empty_or_none<K, V>(hash_map: &Option<HashMap<K, V>>) -> bool {
-    match hash_map {
-        Some(hash_map) => hash_map.is_empty(),
-        _ => true,
-    }
-}
 
 #[skip_serializing_none]
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
