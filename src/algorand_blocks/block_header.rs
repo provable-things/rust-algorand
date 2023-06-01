@@ -451,4 +451,31 @@ mod tests {
         let expected_result = "MPKXXXRFQHOF6MBYSTOFHEAS7257JDLUQD6GSR47TDPVY2JWZ6VQ".to_string();
         assert_eq!(result, expected_result);
     }
+
+    #[test]
+    fn should_calculate_block_header_hash_4() {
+        let header = get_sample_block_header_n(13);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285128
+        let expected_result = "3N42ATIC6DDITHDV3FXEAGKVGX5CTBKEXWU2T5OVBHOLIOQA2KUQ".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_5() {
+        let header = get_sample_block_header_n(14);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285129
+        let expected_result = "SXHKXOZTZLHKKLG7S47ZTAIVAVK5TDAWWRRLI3QAA6G7DJ5OBRNA".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_6() {
+        let header = get_sample_block_header_n(15);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285130
+        let expected_result = "2FI2UN6DNEAOFFCKWVW673YOD57JV5ZQFQCMW7CPDEN4GFKQ5XWA".to_string();
+        assert_eq!(result, expected_result);
+    }
 }
