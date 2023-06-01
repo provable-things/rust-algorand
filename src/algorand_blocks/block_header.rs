@@ -94,6 +94,9 @@ pub struct AlgorandBlockHeader {
     #[serde(rename = "txn", skip_serializing_if = "is_zero_hash")]
     pub transactions_root: Option<AlgorandHash>,
 
+    #[serde(skip_serializing)]
+    pub transactions_root_sha256: Option<AlgorandHash>,
+
     #[serde(rename = "upgradedelay")]
     pub upgrade_delay: Option<u64>,
 
@@ -160,6 +163,10 @@ impl AlgorandBlockHeader {
             },
             timestamp: json.timestamp,
             transactions_root: match json.transactions_root {
+                Some(ref root) => Some(AlgorandHash::from_str(root)?),
+                None => None,
+            },
+            transactions_root_sha256: match json.transactions_root_sha256 {
                 Some(ref root) => Some(AlgorandHash::from_str(root)?),
                 None => None,
             },
@@ -369,6 +376,10 @@ impl AlgorandBlockHeader {
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             transactions_root: self.transactions_root.as_ref().map(|x| x.to_string()),
             previous_block_hash: self.previous_block_hash.as_ref().map(|x| x.to_string()),
+            transactions_root_sha256: self
+                .transactions_root_sha256
+                .as_ref()
+                .map(|x| x.to_string()),
         })
     }
 }
@@ -410,10 +421,7 @@ mod tests {
     fn should_get_alogrand_block_header_hash() {
         let header = get_sample_block_header_n(0);
         let result = header.hash().unwrap();
-        let expected_result = get_sample_block_header_n(1)
-            .previous_block_hash
-            .unwrap()
-            .clone();
+        let expected_result = get_sample_block_header_n(1).previous_block_hash.unwrap();
         assert_eq!(result, expected_result);
     }
 
@@ -432,6 +440,15 @@ mod tests {
         let result = header.hash().unwrap().to_base_32();
         // NOTE: See https://algoexplorer.io/block/21595838
         let expected_result = "TOK6N7YCFFO27ALBWPJY6EMODHNX3IXM7ZKWTC7UPDE6XLEIFMQQ".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_3() {
+        let header = get_sample_block_header_n(10);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/23373185
+        let expected_result = "MPKXXXRFQHOF6MBYSTOFHEAS7257JDLUQD6GSR47TDPVY2JWZ6VQ".to_string();
         assert_eq!(result, expected_result);
     }
 }

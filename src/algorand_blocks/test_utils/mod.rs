@@ -44,8 +44,15 @@ write_paths_and_getter_fxn!(
     6 => "src/algorand_blocks/test_utils/block-21039277.json",
     7 => "src/algorand_blocks/test_utils/block-21094710.json",
     8 => "src/algorand_blocks/test_utils/block-21139432.json",
-    9 => "src/algorand_blocks/test_utils/block-21595838.json"
+    9 => "src/algorand_blocks/test_utils/block-21595838.json",
+    10 => "src/algorand_blocks/test_utils/block-23373185.json",
+    11 => "src/algorand_blocks/test_utils/block-23595044.json",
+    12 => "src/algorand_blocks/test_utils/block-23595666.json"
 );
+
+pub fn get_sample_block_with_state_proof_tx_json_string() -> String {
+    read_to_string(get_path_n(12).unwrap()).unwrap()
+}
 
 pub fn get_sample_block_json_str_n(n: usize) -> String {
     read_to_string(get_path_n(n).unwrap()).unwrap()
@@ -56,7 +63,7 @@ pub fn get_sample_block_json_n(n: usize) -> AlgorandBlockJson {
 }
 
 pub fn get_sample_block_header_json_n(n: usize) -> AlgorandBlockHeaderJson {
-    get_sample_block_json_n(n).block_header.clone()
+    get_sample_block_json_n(n).block_header
 }
 
 pub fn get_sample_block_header_n(n: usize) -> AlgorandBlockHeader {

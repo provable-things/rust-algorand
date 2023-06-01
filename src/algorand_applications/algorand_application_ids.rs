@@ -112,7 +112,7 @@ mod tests {
     #[test]
     fn should_parse_app_id_from_string() {
         let app_id = 1337;
-        let s = format!("{}", app_id);
+        let s = format!("{app_id}");
         let result = AlgorandAppId::from_str(&s).unwrap();
         let expected_result = AlgorandAppId::new(app_id);
         assert_eq!(result, expected_result);
@@ -121,8 +121,8 @@ mod tests {
     #[test]
     fn should_fail_to_parse_bad_app_id_from_string() {
         let s = "not an int!";
-        let expected_error = format!("Cannot convert '{}' to 'AlgorandAppId'!", s);
-        match AlgorandAppId::from_str(&s) {
+        let expected_error = format!("Cannot convert '{s}' to 'AlgorandAppId'!");
+        match AlgorandAppId::from_str(s) {
             Ok(_) => panic!("Should not have succeeded!"),
             Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),
             Err(_) => panic!("Wrong error received!"),

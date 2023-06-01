@@ -95,7 +95,7 @@ mod tests {
         let hashes = AlgorandGenesisId::get_all_as_hashes().unwrap();
         let results = hashes
             .iter()
-            .map(|x| AlgorandGenesisId::from_hash(&x))
+            .map(|x| AlgorandGenesisId::from_hash(x))
             .collect::<Result<Vec<AlgorandGenesisId>>>()
             .unwrap();
         AlgorandGenesisId::get_all()
@@ -107,7 +107,7 @@ mod tests {
     #[test]
     fn should_err_when_getting_id_from_unrecognized_hash() {
         let hash = AlgorandHash::default();
-        let expected_error = format!("No Algorand Genesis ID has hash {}!", hash);
+        let expected_error = format!("No Algorand Genesis ID has hash {hash}!");
         match AlgorandGenesisId::from_hash(&hash) {
             Ok(_) => panic!("Should not have succeeded!"),
             Err(AlgorandError::Custom(error)) => assert_eq!(error, expected_error),

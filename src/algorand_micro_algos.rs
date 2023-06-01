@@ -117,10 +117,8 @@ mod tests {
     #[test]
     fn should_fail_minimum_fee_check_if_amount_too_low() {
         let num = (ALGORAND_MINIMUM_FEE * MICRO_ALGOS_MULTIPLIER) - 1;
-        let expected_error = format!(
-            "Fee is below the minimum algorand fee of {} MicroAlgos!",
-            ALGORAND_MINIMUM_FEE
-        );
+        let expected_error =
+            format!("Fee is below the minimum algorand fee of {ALGORAND_MINIMUM_FEE} MicroAlgos!");
         match MicroAlgos::from_algos(num)
             .unwrap()
             .check_if_satisfies_minimum_fee()
