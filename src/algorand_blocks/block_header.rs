@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
@@ -8,6 +8,7 @@ use crate::{
     algorand_blocks::{
         block_header_json::AlgorandBlockHeaderJson,
         rewards_state::RewardsState,
+        state_proof_tracking::StateProofTracking,
         upgrade_state::UpgradeState,
         upgrade_vote::UpgradeVote,
     },
@@ -17,14 +18,8 @@ use crate::{
     algorand_micro_algos::MicroAlgos,
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::sha512_256_hash_bytes,
+    predicates::{is_empty_or_none, is_zero_hash, is_zero_hash_or_none},
 };
-
-fn is_zero_hash(hash: &Option<AlgorandHash>) -> bool {
-    match hash {
-        Some(hash) => hash.is_zero(),
-        _ => false,
-    }
-}
 
 #[skip_serializing_none]
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -82,6 +77,9 @@ pub struct AlgorandBlockHeader {
 
     pub seed: Option<AlgorandHash>,
 
+    #[serde(rename = "spt", skip_serializing_if = "is_empty_or_none")]
+    pub state_proof_tracking: Option<HashMap<u64, StateProofTracking>>,
+
     #[serde(rename = "t")]
     pub compact_cert_voters_total: Option<MicroAlgos>,
 
@@ -94,7 +92,7 @@ pub struct AlgorandBlockHeader {
     #[serde(rename = "txn", skip_serializing_if = "is_zero_hash")]
     pub transactions_root: Option<AlgorandHash>,
 
-    #[serde(skip_serializing)]
+    #[serde(rename = "txn256", skip_serializing_if = "is_zero_hash_or_none")]
     pub transactions_root_sha256: Option<AlgorandHash>,
 
     #[serde(rename = "upgradedelay")]
@@ -280,6 +278,7 @@ impl AlgorandBlockHeader {
                 ),
                 None => None,
             },
+            state_proof_tracking: json.maybe_get_state_proof_tracking(),
         })
     }
 
@@ -380,6 +379,12 @@ impl AlgorandBlockHeader {
                 .transactions_root_sha256
                 .as_ref()
                 .map(|x| x.to_string()),
+            state_proof_tracking: self.state_proof_tracking.as_ref().map(|proofs| {
+                proofs
+                    .iter()
+                    .map(|(key, value)| value.to_json(*key))
+                    .collect()
+            }),
         })
     }
 }
@@ -449,6 +454,33 @@ mod tests {
         let result = header.hash().unwrap().to_base_32();
         // NOTE: See https://algoexplorer.io/block/23373185
         let expected_result = "MPKXXXRFQHOF6MBYSTOFHEAS7257JDLUQD6GSR47TDPVY2JWZ6VQ".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_4() {
+        let header = get_sample_block_header_n(13);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285128
+        let expected_result = "3N42ATIC6DDITHDV3FXEAGKVGX5CTBKEXWU2T5OVBHOLIOQA2KUQ".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_5() {
+        let header = get_sample_block_header_n(14);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285129
+        let expected_result = "SXHKXOZTZLHKKLG7S47ZTAIVAVK5TDAWWRRLI3QAA6G7DJ5OBRNA".to_string();
+        assert_eq!(result, expected_result);
+    }
+
+    #[test]
+    fn should_calculate_block_header_hash_6() {
+        let header = get_sample_block_header_n(15);
+        let result = header.hash().unwrap().to_base_32();
+        // NOTE: See https://algoexplorer.io/block/29285130
+        let expected_result = "2FI2UN6DNEAOFFCKWVW673YOD57JV5ZQFQCMW7CPDEN4GFKQ5XWA".to_string();
         assert_eq!(result, expected_result);
     }
 }

@@ -36,7 +36,8 @@ write_paths_and_getter_fxn!(
     0 => "src/algorand_transactions/test_utils/sample-transactions-block-17962555.json",
     1 => "src/algorand_transactions/test_utils/sample-transactions-block-19560833.json",
     2 => "src/algorand_transactions/test_utils/sample-transactions-block-21516112.json",
-    3 => "src/algorand_transactions/test_utils/sample-transactions-block-21595839.json"
+    3 => "src/algorand_transactions/test_utils/sample-transactions-block-21595839.json",
+    4 => "src/algorand_transactions/test_utils/sample-transactions-block-29285129.json"
 );
 
 pub fn get_sample_txs_json_strs_n(n: usize) -> Vec<String> {
@@ -59,7 +60,7 @@ pub fn get_sample_txs_n(n: usize) -> AlgorandTransactions {
     AlgorandTransactions::new(
         get_sample_txs_jsons(n)
             .iter()
-            .map(|tx_json| AlgorandTransaction::from_json(tx_json))
+            .map(AlgorandTransaction::from_json)
             .collect::<Result<Vec<AlgorandTransaction>>>()
             .unwrap(),
     )

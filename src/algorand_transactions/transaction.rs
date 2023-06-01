@@ -32,24 +32,11 @@ use crate::{
     },
     algorand_types::{Byte, Bytes, Result},
     crypto_utils::{base32_encode_with_no_padding, sha512_256_hash_bytes},
+    predicates::{is_empty_vec, is_zero_option},
 };
 
 impl ToMsgPackBytes for AlgorandTransaction {}
 impl ToMsgPackBytes for AlgorandSignedTransaction {}
-
-fn is_zero(num: &Option<u64>) -> bool {
-    match num {
-        Some(val) => val == &0,
-        None => true,
-    }
-}
-
-fn is_empty_vec<T>(vec: &Option<Vec<T>>) -> bool {
-    match vec {
-        Some(vec) => vec.is_empty(),
-        None => true,
-    }
-}
 
 /// ## An Algorand Transaction
 ///
@@ -60,7 +47,7 @@ pub struct AlgorandTransaction {
     /// ## Asset Amount
     ///
     /// The amount of an asset to transfer.
-    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "aamt"), skip_serializing_if = "is_zero_option")]
     pub asset_amount: Option<u64>,
 
     /// ## Asset Close To
@@ -78,7 +65,7 @@ pub struct AlgorandTransaction {
     /// ## Amount
     ///
     /// The total amount to be sent in microAlgos.
-    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "amt"), skip_serializing_if = "is_zero_option")]
     pub amount: Option<u64>,
 
     /// ## App Arguments
@@ -93,7 +80,7 @@ pub struct AlgorandTransaction {
     /// will have on the balance record of the sender or the application's
     /// creator. See the documentation for the OnCompletion type for more
     /// information on each possible value.
-    #[serde(rename(serialize = "apan"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "apan"), skip_serializing_if = "is_zero_option")]
     pub on_completion: Option<u64>,
 
     /// ## Asset Parameters
@@ -141,7 +128,7 @@ pub struct AlgorandTransaction {
     /// ## Asset ID
     ///
     /// An ID pointing to an asset on the Algorand blockchain.
-    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero")]
+    #[serde(rename(serialize = "caid"), skip_serializing_if = "is_zero_option")]
     // FIXME This is the config tx asset id! Add a prefix for clarity?
     pub asset_id: Option<u64>,
 
@@ -449,8 +436,8 @@ impl AlgorandTransaction {
                 Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
-            close_remainder_to: match &json.close_remainder_to {
-                Some(address_str) => Some(AlgorandAddress::from_str(address_str)?),
+            close_remainder_to: match json.maybe_get_close_remainder_to() {
+                Some(address_str) => Some(AlgorandAddress::from_str(&address_str)?),
                 None => None,
             },
             asset_freeze_id: match &json.asset_freeze_transaction {
@@ -539,7 +526,6 @@ impl AlgorandTransaction {
             rekey_to: self.rekey_to.as_ref().map(|x| x.to_string()),
             genesis_hash: self.genesis_hash.as_ref().map(|x| x.to_string()),
             asset_freeze_transaction: self.to_asset_freeze_transaction_json(),
-            close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
             asset_config_transaction: match &self.asset_parameters {
                 None => None,
                 Some(params) => Some(AssetConfigTransactionJson::new(
@@ -637,6 +623,7 @@ impl AlgorandTransaction {
             close_amount: self.close_amount,
             amount: self.amount.as_ref().map(|u_64| json!(u_64)),
             receiver: self.receiver.as_ref().map(|x| x.to_string()),
+            close_remainder_to: self.close_remainder_to.as_ref().map(|x| x.to_string()),
         };
         if json.is_empty() {
             None
@@ -805,11 +792,23 @@ mod tests {
     }
 
     #[test]
+    fn should_get_algorand_transactions_from_jsons_4() {
+        let jsons = get_sample_txs_jsons(4);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+
+    #[test]
     fn should_serde_algorand_transactions_to_and_from_json() {
         let jsons = get_sample_txs_jsons(0);
         let txs = jsons
             .iter()
-            .map(|json| AlgorandTransaction::from_json(json))
+            .map(AlgorandTransaction::from_json)
             .collect::<Result<Vec<AlgorandTransaction>>>()
             .unwrap();
         let results = txs

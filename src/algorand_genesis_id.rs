@@ -95,7 +95,7 @@ mod tests {
         let hashes = AlgorandGenesisId::get_all_as_hashes().unwrap();
         let results = hashes
             .iter()
-            .map(|x| AlgorandGenesisId::from_hash(x))
+            .map(AlgorandGenesisId::from_hash)
             .collect::<Result<Vec<AlgorandGenesisId>>>()
             .unwrap();
         AlgorandGenesisId::get_all()

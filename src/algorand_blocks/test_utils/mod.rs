@@ -47,7 +47,10 @@ write_paths_and_getter_fxn!(
     9 => "src/algorand_blocks/test_utils/block-21595838.json",
     10 => "src/algorand_blocks/test_utils/block-23373185.json",
     11 => "src/algorand_blocks/test_utils/block-23595044.json",
-    12 => "src/algorand_blocks/test_utils/block-23595666.json"
+    12 => "src/algorand_blocks/test_utils/block-23595666.json",
+    13 => "src/algorand_blocks/test_utils/block-29285128.json",
+    14 => "src/algorand_blocks/test_utils/block-29285129.json",
+    15 => "src/algorand_blocks/test_utils/block-29285130.json"
 );
 
 pub fn get_sample_block_with_state_proof_tx_json_string() -> String {

@@ -9,18 +9,8 @@ use crate::{
     algorand_errors::AlgorandError,
     algorand_hash::AlgorandHash,
     algorand_types::Result,
+    predicates::{is_false, is_zero},
 };
-
-fn is_zero(num: &u64) -> bool {
-    *num == 0
-}
-
-fn is_false(val: &Option<bool>) -> bool {
-    match val {
-        Some(val) => !val,
-        None => true,
-    }
-}
 
 #[skip_serializing_none]
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
