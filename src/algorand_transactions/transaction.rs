@@ -805,6 +805,18 @@ mod tests {
     }
 
     #[test]
+    fn should_get_algorand_transactions_from_jsons_4() {
+        let jsons = get_sample_txs_jsons(4);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+
+    #[test]
     fn should_serde_algorand_transactions_to_and_from_json() {
         let jsons = get_sample_txs_jsons(0);
         let txs = jsons
