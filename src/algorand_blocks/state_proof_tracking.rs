@@ -5,18 +5,22 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     algorand_errors::AlgorandError,
-    algorand_types::{Bytes, Result},
+    algorand_types::Result,
     predicates::{is_empty_vec, is_zero_option},
 };
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 pub struct StateProofTracking {
-    #[serde(rename = "v", skip_serializing_if = "is_empty_vec")]
-    pub voters_commitment: Option<Bytes>,
-    #[serde(rename(serialize = "t"), skip_serializing_if = "is_zero_option")]
-    pub online_total_weight: Option<u64>,
     #[serde(rename = "n")]
     pub next_round: Option<u64>,
+    #[serde(rename(serialize = "t"), skip_serializing_if = "is_zero_option")]
+    pub online_total_weight: Option<u64>,
+    #[serde(
+        with = "serde_bytes",
+        rename = "v",
+        skip_serializing_if = "is_empty_vec"
+    )]
+    pub voters_commitment: Option<Vec<u8>>,
 }
 
 impl StateProofTracking {
