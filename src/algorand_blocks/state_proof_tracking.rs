@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use base64::{decode as base64_decode, encode as base64_encode};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -21,10 +22,10 @@ pub struct StateProofTracking {
 impl StateProofTracking {
     pub fn from_json(json: &StateProofTrackingJson) -> Result<Self> {
         Ok(Self {
-            voters_commitment: json
-                .voters_commitment
-                .as_ref()
-                .map(|commitment| commitment.to_vec()),
+            voters_commitment: match &json.voters_commitment {
+                Some(base64_str) => Some(base64_decode(base64_str)?),
+                None => None,
+            },
             next_round: json.next_round,
             online_total_weight: json.online_total_weight,
         })
@@ -35,7 +36,7 @@ impl StateProofTracking {
             next_round: self.next_round,
             proof_type: Some(proof_type),
             online_total_weight: self.online_total_weight,
-            voters_commitment: self.voters_commitment.clone(),
+            voters_commitment: self.voters_commitment.as_ref().map(base64_encode),
         }
     }
 }
@@ -63,7 +64,7 @@ pub struct StateProofTrackingJson {
     pub proof_type: Option<u64>,
 
     #[serde(rename = "voters-commitment", skip_serializing_if = "Option::is_none")]
-    pub voters_commitment: Option<Bytes>,
+    pub voters_commitment: Option<String>,
 }
 
 impl FromStr for StateProofTrackingJson {
