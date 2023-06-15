@@ -155,6 +155,7 @@ pub struct AlgorandTransaction {
     ///
     /// Paid by the sender to the `FeeSink` account to prevent denial-of-service attacks.
     /// The minimum at time of writing is 1000 MicroAlgos.
+    #[serde(skip_serializing_if = "is_zero_option")]
     pub fee: Option<u64>,
 
     /// ## First Valid Round
@@ -794,6 +795,18 @@ mod tests {
     #[test]
     fn should_get_algorand_transactions_from_jsons_4() {
         let jsons = get_sample_txs_jsons(4);
+        jsons.iter().for_each(|json| {
+            if AlgorandTransaction::from_json(json).is_err() {
+                println!("JSON which failed to parse: {:?}", json);
+            }
+            let tx = AlgorandTransaction::from_json(json).unwrap();
+            assert_eq!(json.id.as_ref().unwrap(), &tx.to_id().unwrap())
+        });
+    }
+
+    #[test]
+    fn should_get_algorand_transactions_from_jsons_5() {
+        let jsons = get_sample_txs_jsons(5);
         jsons.iter().for_each(|json| {
             if AlgorandTransaction::from_json(json).is_err() {
                 println!("JSON which failed to parse: {:?}", json);
