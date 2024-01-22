@@ -38,7 +38,8 @@ write_paths_and_getter_fxn!(
     2 => "src/algorand_transactions/test_utils/sample-transactions-block-21516112.json",
     3 => "src/algorand_transactions/test_utils/sample-transactions-block-21595839.json",
     4 => "src/algorand_transactions/test_utils/sample-transactions-block-29285129.json",
-    5 => "src/algorand_transactions/test_utils/sample-transactions-block-29620737.json"
+    5 => "src/algorand_transactions/test_utils/sample-transactions-block-29620737.json",
+    6 => "src/algorand_transactions/test_utils/sample-block-with-no-params-in-asset-cfg-tx-34866583.json"
 );
 
 pub fn get_sample_txs_json_strs_n(n: usize) -> Vec<String> {
@@ -110,6 +111,7 @@ pub fn get_sample_asset_parameters_json_str() -> String {
 
 mod tests {
     use super::*;
+    use crate::{AlgorandBlock, AlgorandHash};
 
     #[test]
     fn should_get_sample_txs_json_strs_n() {
@@ -124,5 +126,17 @@ mod tests {
     #[test]
     fn should_get_sample_acfg_tx_json_string() {
         get_sample_acfg_tx_json_string();
+    }
+
+    #[test]
+    fn should_get_sample_block_with_no_params_in_asset_cfg_tx() {
+        let block =
+            AlgorandBlock::from_str(&read_to_string(&get_path_n(6).unwrap()).unwrap()).unwrap();
+        let hash = block.hash().unwrap();
+        // NOTE: See: https://algoexplorer.io/block/34866583
+        let expected_hash =
+            AlgorandHash::from_base_32("BNAZSMQLCEPRIUTYE44Q6I2XGAAVAOAU3X45VQEYRGIXJVWEKBPQ")
+                .unwrap();
+        assert_eq!(hash, expected_hash);
     }
 }

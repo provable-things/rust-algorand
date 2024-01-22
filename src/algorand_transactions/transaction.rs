@@ -430,7 +430,13 @@ impl AlgorandTransaction {
                 None => None,
             },
             asset_parameters: match &json.asset_config_transaction {
-                Some(json) => Some(AssetParameters::from_json(&json.params)?),
+                Some(json) => {
+                    if let Some(ref params) = json.params {
+                        Some(AssetParameters::from_json(params)?)
+                    } else {
+                        None
+                    }
+                },
                 None => None,
             },
             receiver: match json.maybe_get_receiver() {
@@ -534,7 +540,7 @@ impl AlgorandTransaction {
                         Some(id) => Result::Ok(*id),
                         None => Result::Ok(0),
                     }?,
-                    params.to_json()?,
+                    Some(params.to_json()?),
                 )),
             },
             asset_transfer_transaction: self.to_asset_transfer_transaction_json(),
