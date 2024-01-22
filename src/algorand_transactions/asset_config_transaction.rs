@@ -20,7 +20,7 @@ use crate::{
 pub struct AssetConfigTransactionJson {
     #[serde(rename = "asset-id")]
     pub asset_id: u64,
-    pub params: AssetParametersJson,
+    pub params: Option<AssetParametersJson>,
 }
 
 impl AssetConfigTransactionJson {
